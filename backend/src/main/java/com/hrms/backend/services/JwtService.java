@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class JwtService {
     private static final Log log = LogFactory.getLog(JwtService.class);
 
-    public static  String SECRET = "my_secret";
+    public static final  String SECRET = "My_key";
 
     public String generateToken(Long userId,String email,String role) {
         log.info(SECRET);
@@ -28,10 +28,10 @@ public class JwtService {
         claims.put("roleTitle",role);
         claims.put("userId",userId);
         claims.put("email",email);
-        return createToken(claims, userId,email,role);
+        return createToken(claims,email);
     }
 
-    private String createToken(Map<String, Object> claims, Long userId,String email,String role) {
+    private String createToken(Map<String, Object> claims,String email) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)
@@ -52,10 +52,7 @@ public class JwtService {
 
     public JwtInfoDto getJwtInfo(String tocken){
         Claims claims = extractAllClaims(tocken);
-        System.out.println(claims.get("roleTitle"));
-        claims.get("email");
-        claims.get("userId");
-        return new JwtInfoDto();
+        return new JwtInfoDto(Long.getLong(claims.get("userId").toString()),claims.get("email").toString(),claims.get("roleTitle").toString());
     }
 
     public Date extractExpiration(String token) {
