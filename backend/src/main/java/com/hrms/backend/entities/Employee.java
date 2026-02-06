@@ -1,5 +1,6 @@
 package com.hrms.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -25,13 +27,24 @@ public class Employee {
     @JoinColumn(name = "mangerId")
     private Employee manager;
     private String designation;
+
     @ManyToOne
     @JoinColumn(name = "roleId")
     private Role role;
     private String email;
     private String password;
+
+    @OneToMany(mappedBy = "createdBy")
+    @JsonIgnore
+    private List<Post> posts;
+
     @CreatedDate
     private Date createdAt;
     @LastModifiedDate
     private  Date updatedAt;
+
+
+    public String getFullName(){
+        return firstName + " " + lastName;
+    }
 }

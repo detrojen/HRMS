@@ -1,28 +1,35 @@
 package com.hrms.backend.entities;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Data
-public class Role {
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String roleTitle;
-    @OneToMany(mappedBy = "role")
-    @JsonIgnore
-    private List<Employee> employees;
+    private String title;
+    private String body;
+    private String attachmentPath;
+    private String tags;
+
+    @ManyToOne()
+    private Employee createdBy;
+
+    private String remarkForDelete;
+    @ManyToOne()
+    private Employee deletedBy;
+    private boolean isDeleted;
+
     @CreationTimestamp
     private Date createdAt;
-    @LastModifiedDate
-    private Date updatedAt;
+    @UpdateTimestamp
+    private Date modifiedAt;
 }

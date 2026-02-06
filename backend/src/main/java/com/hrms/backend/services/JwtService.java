@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class JwtService {
     private static final Log log = LogFactory.getLog(JwtService.class);
 
-    public static final  String SECRET = "My_key";
+    public static final  String SECRET = "5367566859703373367639792F423F452848284D6251655468576D5A71347437";
 
     public String generateToken(Long userId,String email,String role) {
         log.info(SECRET);
@@ -52,7 +52,8 @@ public class JwtService {
 
     public JwtInfoDto getJwtInfo(String tocken){
         Claims claims = extractAllClaims(tocken);
-        return new JwtInfoDto(Long.getLong(claims.get("userId").toString()),claims.get("email").toString(),claims.get("roleTitle").toString());
+        Long userId = claims.get("userId", Long.class);
+        return new JwtInfoDto(userId,claims.get("email").toString(),claims.get("roleTitle").toString());
     }
 
     public Date extractExpiration(String token) {

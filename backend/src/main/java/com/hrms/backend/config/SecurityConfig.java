@@ -25,7 +25,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers("/auth/login").permitAll() // allow login endpoint
                         .requestMatchers("/swagger-ui/**").permitAll() // allow Swagger UI
-                        .requestMatchers("/v3/api-docs/**").permitAll()// allow OpenAPI.requestMatchers()
+                        .requestMatchers("/v3/api-docs/**").hasAuthority("HR")// allow OpenAPI.requestMatchers()
+                        .requestMatchers("/hr/posts/delete-unappropriate").hasAuthority("HR")
+//                        .requestMatchers("/employee/**").hasAuthority("Employee")
                         .anyRequest().authenticated()
                 )
                 // secure all other endpoints
