@@ -1,4 +1,4 @@
-package com.hrms.backend.dtos.requestDtos;
+package com.hrms.backend.dtos.requestDto;
 
 import lombok.Data;
 

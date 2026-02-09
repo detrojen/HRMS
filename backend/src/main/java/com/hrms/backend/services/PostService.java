@@ -1,8 +1,8 @@
 package com.hrms.backend.services;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
-import com.hrms.backend.dtos.requestDtos.CreatePostRequestDto;
-import com.hrms.backend.dtos.requestDtos.deleteUnappropriatedPostRequestDto;
+import com.hrms.backend.dtos.requestDto.CreatePostRequestDto;
+import com.hrms.backend.dtos.requestDto.deleteUnappropriatedPostRequestDto;
 import com.hrms.backend.dtos.responseDtos.DeletePostResponseDto;
 import com.hrms.backend.dtos.responseDtos.PostResponseDto;
 import com.hrms.backend.entities.Employee;

@@ -1,7 +1,9 @@
 package com.hrms.backend.config;
 
 import com.hrms.backend.dtos.responseDtos.DeletePostResponseDto;
+import com.hrms.backend.dtos.responseDtos.GameSlotResponseDto;
 import com.hrms.backend.dtos.responseDtos.PostResponseDto;
+import com.hrms.backend.entities.GameSlot;
 import com.hrms.backend.entities.Post;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -23,6 +25,14 @@ public class ModelMapperConfig {
         modelMapper.createTypeMap(Post.class, PostResponseDto.class)
                 .addMappings(mapper->{
                     mapper.map(src -> src.getCreatedBy().getFullName(),PostResponseDto::setCreatedBy);
+                });
+    }
+
+    public void addGameSlotResponseDto(ModelMapper modelMapper){
+        modelMapper.createTypeMap(GameSlot.class, GameSlotResponseDto.class)
+                .addMappings(mapper->{
+                    mapper.map(src -> src.getGameType().getId(),GameSlotResponseDto::setGameTypeId);
+                    mapper.map(src->src.getGameType().getGame(),GameSlotResponseDto::setGameType);
                 });
     }
 

@@ -1,5 +1,6 @@
 package com.hrms.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -29,6 +30,7 @@ public class GameSlot {
     private  Date updatedAt;
 
     @OneToMany(mappedBy = "gameSlot")
+    @JsonIgnore
     private Collection<SlotRequest> slotRequests;
 
 }

@@ -1,5 +1,6 @@
 package com.hrms.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -22,11 +23,14 @@ public class GameType {
     private int maxNoOfPlayers;
     private Long slotCanBeBookedBefore;
     private boolean isInMaintenance;
-
+    private int maxSlotPerDay;
+    private int maxActiveSlotPerDay;
     @OneToMany(mappedBy = "gameType")
+    @JsonIgnore
     private List<GameSlot> gameSlots;
 
     @OneToMany(mappedBy = "gameType")
+    @JsonIgnore
     private  List<EmployeeWiseGameInterest> employeeWiseGameInterests;
 
     @CreatedDate

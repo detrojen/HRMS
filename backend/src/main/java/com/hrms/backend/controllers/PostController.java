@@ -1,7 +1,7 @@
 package com.hrms.backend.controllers;
 
-import com.hrms.backend.dtos.requestDtos.CreatePostRequestDto;
-import com.hrms.backend.dtos.requestDtos.deleteUnappropriatedPostRequestDto;
+import com.hrms.backend.dtos.requestDto.CreatePostRequestDto;
+import com.hrms.backend.dtos.requestDto.deleteUnappropriatedPostRequestDto;
 import com.hrms.backend.dtos.responseDtos.DeletePostResponseDto;
 import com.hrms.backend.dtos.responseDtos.PostResponseDto;
 import com.hrms.backend.entities.Post;
@@ -9,7 +9,6 @@ import com.hrms.backend.services.PostService;
 import com.hrms.backend.utils.FileUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -40,6 +40,7 @@ public class Employee {
     private List<Post> posts;
 
     @OneToMany(mappedBy = "employee")
+    @JsonIgnore
     private List<EmployeeWiseGameInterest> interestedGames;
 
     @CreatedDate
@@ -48,6 +49,7 @@ public class Employee {
     private  Date updatedAt;
 
     @OneToMany(mappedBy = "requestedBy")
+    @JsonIgnore
     private Collection<SlotRequest> requestedSlots;
 
     public String getFullName(){
@@ -55,6 +57,7 @@ public class Employee {
     }
 
     @OneToMany(mappedBy = "employee")
+    @JsonIgnore
     private Collection<SlotRequestWiseEmployee> slotRequestWiseEmployee;
 
 }
