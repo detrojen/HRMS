@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -38,13 +39,22 @@ public class Employee {
     @JsonIgnore
     private List<Post> posts;
 
+    @OneToMany(mappedBy = "employee")
+    private List<EmployeeWiseGameInterest> interestedGames;
+
     @CreatedDate
     private Date createdAt;
     @LastModifiedDate
     private  Date updatedAt;
 
+    @OneToMany(mappedBy = "requestedBy")
+    private Collection<SlotRequest> requestedSlots;
 
     public String getFullName(){
         return firstName + " " + lastName;
     }
+
+    @OneToMany(mappedBy = "employee")
+    private Collection<SlotRequestWiseEmployee> slotRequestWiseEmployee;
+
 }
