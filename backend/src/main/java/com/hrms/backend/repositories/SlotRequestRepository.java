@@ -13,9 +13,9 @@ import java.util.List;
 @Repository
 public interface SlotRequestRepository extends JpaRepository<SlotRequest,Long>, JpaSpecificationExecutor<SlotRequest> {
     @Procedure(name = "getActiveRequestCount")
-    int getActiveRequestCount(Long employeeId);
+    int getActiveRequestCount(Long employeeId, Long gameTypeId);
 
-    @Query(value = "select count(*) from SlotRequest join GameSlot on GameSlot.id = SlotRequest.gameSlot_id where GameSlot.gameType_id = :gameTypeId and requestedBy_id = :employeeId and SlotRequest.status = 'Confirm'", nativeQuery = true)
+    @Query(value = "select count(*) from SlotRequest join GameSlot on GameSlot.id = SlotRequest.gameSlot_id where GameSlot.gameType_id = :gameTypeId and requestedBy_id = :employeeId and SlotRequest.status = 'Confirm' and FORMAT(slotDate, 'yyyy-MM-dd') = FORMAT(GETDATE(),'yyyy-MM-dd')", nativeQuery = true)
     int getTodaysConsumedSlotCount(Long employeeId, Long gameTypeId);
 
     SlotRequest findByGameSlot_IdAndStatus(Long slotId, String status);

@@ -1,5 +1,6 @@
 package com.hrms.backend.config;
 
+import com.hrms.backend.filters.ExceptionFilter;
 import com.hrms.backend.filters.JwtAuthfilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     @Autowired
     JwtAuthfilter jwtAuthFilter;
+    @Autowired
+    ExceptionFilter exceptionFilter;
 //    @Autowired
 //    FilterChainExceptionHandler filterChainExceptionHandler;
 
@@ -32,7 +35,7 @@ public class SecurityConfig {
                 )
                 // secure all other endpoints
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Add JWT filter before Spring Security's default filter
+                .addFilterBefore(exceptionFilter,UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -1,6 +1,7 @@
 package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.requestDto.LoginRequestDto;
+import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
 import com.hrms.backend.dtos.responseDtos.LoginResponseDto;
 import com.hrms.backend.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,9 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDTO){
+    public ResponseEntity<GlobalResponseDto<LoginResponseDto>> login(@RequestBody LoginRequestDto requestDTO){
         String token = _authService.login(requestDTO.getEmail(),requestDTO.getPassword());
-        return ResponseEntity.ok().body(new LoginResponseDto(token));
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(new LoginResponseDto(token)));
     }
 
 }

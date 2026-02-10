@@ -1,14 +1,15 @@
 package com.hrms.backend.config;
 
-import com.hrms.backend.dtos.responseDtos.DeletePostResponseDto;
-import com.hrms.backend.dtos.responseDtos.GameSlotResponseDto;
-import com.hrms.backend.dtos.responseDtos.PostResponseDto;
+import com.hrms.backend.dtos.responseDtos.*;
 import com.hrms.backend.entities.GameSlot;
 import com.hrms.backend.entities.Post;
+import com.hrms.backend.entities.SlotRequest;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.stream.Collectors;
 
 @Configuration
 public class ModelMapperConfig {
@@ -18,6 +19,8 @@ public class ModelMapperConfig {
         modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
         addPostResponseMapping(modelMapper);
         addDeletedPostResponseDtoMapping(modelMapper);
+        addGameSlotResponseDto(modelMapper);
+        addSlotRequestResponseDtoMapping(modelMapper);
         return modelMapper;
     }
 
@@ -41,6 +44,14 @@ public class ModelMapperConfig {
                 .addMappings(mapper->{
                     mapper.map(src->src.getCreatedBy().getFullName(),DeletePostResponseDto::setCreatedBy);
                     mapper.map(src->src.getDeletedBy().getFullName(),DeletePostResponseDto::setDeletedBy);
+                });
+    }
+
+    public void addSlotRequestResponseDtoMapping(ModelMapper modelMapper){
+        modelMapper.createTypeMap(SlotRequest.class, SlotRequsetResponseDto.class)
+                .addMappings(mapper->{
+//                    mapper.map(src->src.getRequestedBy(),SlotRequsetResponseDto::setRequestedBy);
+//                    mapper.map(src->src.getSlotRequestWiseEmployee().stream().map(item->item.getEmployee()).collect(Collectors.toUnmodifiableList()),SlotRequsetResponseDto::setSlotRequestWiseEmployee);
                 });
     }
 }

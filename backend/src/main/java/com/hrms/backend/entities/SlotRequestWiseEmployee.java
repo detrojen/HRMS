@@ -1,5 +1,6 @@
 package com.hrms.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,6 +12,7 @@ public class SlotRequestWiseEmployee {
     private Long id;
 
     @ManyToOne()
+    @JsonIgnore
     private SlotRequest slotRequest;
 
     @ManyToOne()

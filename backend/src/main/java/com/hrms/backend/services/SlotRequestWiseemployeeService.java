@@ -1,6 +1,5 @@
 package com.hrms.backend.services;
 
-import com.hrms.backend.entities.GameSlot;
 import com.hrms.backend.entities.SlotRequest;
 import com.hrms.backend.entities.SlotRequestWiseEmployee;
 import com.hrms.backend.repositories.SlotRequestWiseEmployeeRepository;
@@ -24,4 +23,6 @@ public class SlotRequestWiseemployeeService {
         slotRequestWiseEmployee.setEmployee(employeeService.getReference(id));
         return slotRequestWiseEmployeeRepository.save(slotRequestWiseEmployee);
     }
+
+
 }

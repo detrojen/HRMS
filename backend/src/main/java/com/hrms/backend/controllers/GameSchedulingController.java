@@ -2,8 +2,10 @@ package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.EmployeeWiseGameTypeUsageDto;
 import com.hrms.backend.dtos.requestDto.BookSlotRequestDto;
+import com.hrms.backend.dtos.responseDtos.EmployeeResponseDto;
 import com.hrms.backend.dtos.responseDtos.GameSlotResponseDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
+import com.hrms.backend.dtos.responseDtos.SlotRequsetResponseDto;
 import com.hrms.backend.entities.Employee;
 import com.hrms.backend.entities.EmployeeWiseGameInterest;
 import com.hrms.backend.entities.SlotRequest;
@@ -26,13 +28,13 @@ public class GameSchedulingController {
 
     private final GameSlotService gameSlotService;
     private final SlotRequestService slotRequestService;
-    private final EmployeeWiseGameInterestService employeeService;
+    private final EmployeeWiseGameInterestService employeeWiseGameInterestService;
 
     @Autowired
-    public  GameSchedulingController(GameSlotService gameSlotService, SlotRequestService slotRequestService,EmployeeWiseGameInterestService employeeService){
+    public  GameSchedulingController(GameSlotService gameSlotService, SlotRequestService slotRequestService,EmployeeWiseGameInterestService employeeWiseGameInterestService){
         this.gameSlotService = gameSlotService;
         this.slotRequestService = slotRequestService;
-        this.employeeService = employeeService;
+        this.employeeWiseGameInterestService = employeeWiseGameInterestService;
     }
 
     @GetMapping("/game-slots/{gameTypeId}")
@@ -42,14 +44,27 @@ public class GameSchedulingController {
     }
 
     @PostMapping("/game-slot/book")
-    public ResponseEntity<GlobalResponseDto<String>> bookSlot(@RequestBody BookSlotRequestDto requestDto){
-        String bookedSlot = this.slotRequestService.bookSlot(requestDto.getSlotId(), requestDto.getOtherPlayersId());
-        return ResponseEntity.ok().body(new GlobalResponseDto<>(bookedSlot));
+    public ResponseEntity<GlobalResponseDto<SlotRequsetResponseDto>> bookSlot(@RequestBody BookSlotRequestDto requestDto){
+        SlotRequsetResponseDto bookedSlot = this.slotRequestService.bookSlot(requestDto.getSlotId(), requestDto.getOtherPlayersId());
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(bookedSlot,"Your slot is requested",null));
     }
 
-    @DeleteMapping("/game-slot/cancel/{slotRequestId}")
-    public SlotRequest cancel(@PathVariable Long slotRequestId){
-        return slotRequestService.cancelConfirmRequest(slotRequestId);
+    @DeleteMapping("/game-slots/cancel/{slotRequestId}")
+    public SlotRequsetResponseDto cancel(@PathVariable Long slotRequestId){
+        return slotRequestService.cancelRequest(slotRequestId);
     }
+
+    @GetMapping("/employee/interested-game/{gameTypeId}")
+    public ResponseEntity<GlobalResponseDto<List<EmployeeResponseDto>>> getInterestedEmployees(@PathVariable Long gameTypeId, @RequestParam String nameLike){
+        var data = employeeWiseGameInterestService.getEmployeeOfGameIntersetOf(gameTypeId,nameLike);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(data));
+    }
+
+    @GetMapping("/game-slots/active")
+    public ResponseEntity<GlobalResponseDto<List<SlotRequsetResponseDto>>> getActiveSlots(){
+        List<SlotRequsetResponseDto> slotRequsetResponseDtos = slotRequestService.getActiveSlotRequests();
+        return ResponseEntity.ok(new GlobalResponseDto<>(slotRequsetResponseDtos));
+    }
+
 
 }

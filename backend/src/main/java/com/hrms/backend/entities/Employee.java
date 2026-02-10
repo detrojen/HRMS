@@ -3,8 +3,6 @@ package com.hrms.backend.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -26,6 +24,7 @@ public class Employee {
     private Date joinedAt;
     @ManyToOne
     @JoinColumn(name = "mangerId")
+    @JsonIgnore
     private Employee manager;
     private String designation;
 
@@ -33,6 +32,7 @@ public class Employee {
     @JoinColumn(name = "roleId")
     private Role role;
     private String email;
+    @JsonIgnore
     private String password;
 
     @OneToMany(mappedBy = "createdBy")

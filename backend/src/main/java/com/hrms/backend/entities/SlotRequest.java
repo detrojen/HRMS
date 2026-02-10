@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Collection;
 import java.util.Date;
@@ -13,8 +14,10 @@ import java.util.List;
 @Entity
 @Data
 @NamedStoredProcedureQuery(name ="getActiveRequestCount", procedureName = "sp_activeRequestCount",parameters = {
-        @StoredProcedureParameter(name = "employeeId", type = Long.class)
+        @StoredProcedureParameter(name = "employeeId", type = Long.class),
+        @StoredProcedureParameter(name = "gameTypeId", type = Long.class)
 })
+@EntityListeners(AuditingEntityListener.class)
 public class SlotRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +26,11 @@ public class SlotRequest {
     private String status;
 
     @ManyToOne()
+//    @JsonIgnore
     private Employee requestedBy;
 
     @ManyToOne()
+    @JsonIgnore
     private GameSlot gameSlot;
 
     @CreatedDate
@@ -33,7 +38,7 @@ public class SlotRequest {
     @LastModifiedDate
     private  Date updatedAt;
     @OneToMany(mappedBy = "slotRequest")
-    @JsonIgnore
+//    @JsonIgnore
     private List<SlotRequestWiseEmployee> slotRequestWiseEmployee;
 
 }

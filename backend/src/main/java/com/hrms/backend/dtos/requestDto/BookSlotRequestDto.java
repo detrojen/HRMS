@@ -7,5 +7,5 @@ import java.util.List;
 @Data
 public class BookSlotRequestDto {
     private Long slotId;
-    private Long[] otherPlayersId;
+    private List<Long> otherPlayersId;
 }
