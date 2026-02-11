@@ -1,14 +1,20 @@
 import { useQuery } from "@tanstack/react-query"
-import { getActiveSlots, getGameSlotByGameTypeIdOfDate, getIntrestedEmployeeByNameLike } from "../services/gameScheduling.service"
+import { getActiveSlots, getAllGameTypes, getGameInterests, getGameSlotByGameTypeIdOfDate, getGameTypeById, getIntrestedEmployeeByNameLike, getRequestedSlotDetail } from "../services/game-scheduling.service"
 import type { TQueryGameSlots } from "@/types/apiRequestTypes/TQueryGameSlots.type"
 import type { TGlobalResponse } from "@/types/apiResponseTypes/TGlobalResponse.type"
 import type { TQueryInterestedEmployeeByNameLike } from "@/types/apiRequestTypes/TQueryInterestedEmployeeByNameLike.type"
+import useSyncDataStore from "@/hooks/use-sync-data-store"
+import { setInitialData } from "@/store/slices/game-interest-slice"
+import type { TGameInterest } from "@/types/apiResponseTypes/TGameInterest.type"
+import type { TRequestedSlotDetail } from "@/types/apiResponseTypes/TRequestedSlotDetail.type"
+import type { TGameType } from "@/types/apiResponseTypes/TGameType.type"
 
 export const useQueryGameSlots = (data:TQueryGameSlots)=>{
 
     return useQuery<TGlobalResponse<any>>({
-        queryKey: ["game-slots"],
+        queryKey: ["game-slots",`game-slot-id-${data.gameTypeId}`],
         queryFn: ()=> getGameSlotByGameTypeIdOfDate(data),
+        staleTime:0
     })
 }
 
@@ -29,3 +35,35 @@ export const useFetchActiveSlots = () => {
         }
     )
 }
+
+export const useFetchGameInterests = ()=> useSyncDataStore<TGlobalResponse<TGameInterest[]>>(
+        {
+            queryKey: ["game-interest"],
+            queryFn:() => getGameInterests(),
+            action: setInitialData
+        }
+)
+
+export const useFetctRequestedSlotDetail = (requestId:string) => {
+    return useQuery<TRequestedSlotDetail>(
+        {
+            queryKey:["requested-slot-detail", `requested-slot-detial-${requestId}`],
+            queryFn:()=>getRequestedSlotDetail(requestId)
+        }
+    )
+}
+
+export const useFetchGameTypes = () => {
+    return useQuery<TGameType[]>({
+        queryKey:["game-types"],
+        queryFn: () => getAllGameTypes()
+    })
+}
+export const useFetchGameTypeById = (gameTypeId:string) => {
+    return useQuery<TGameType>({
+        queryKey:["game-types",`game-type-${gameTypeId}`],
+        queryFn: () => getGameTypeById(gameTypeId)
+    })
+}
+
+

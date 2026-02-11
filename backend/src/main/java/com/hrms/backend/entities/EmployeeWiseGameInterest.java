@@ -1,5 +1,6 @@
 package com.hrms.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,9 +16,11 @@ public class EmployeeWiseGameInterest {
     private Long id;
 
     @ManyToOne()
+    @JsonIgnore
     private Employee employee;
 
     @ManyToOne()
+    @JsonIgnore
     private GameType gameType;
 
     private boolean isInterested;

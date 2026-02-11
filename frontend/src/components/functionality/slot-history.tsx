@@ -4,9 +4,11 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "../ui/item";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { useCancelSlotMutation } from "@/api/mutations/cancelRequest.mutation";
+import { useCancelSlotMutation } from "@/api/mutations/cancel-request.mutation";
+import { useNavigate } from "react-router-dom";
 
 const SlotHistory = () => {
+    const navTo = useNavigate();
     const { data } = useFetchActiveSlots();
     const cancelRequestMutation = useCancelSlotMutation();
     return (
@@ -29,10 +31,10 @@ const SlotHistory = () => {
                 {/* {JSON.stringify(data)} */}
                 <div className="flex w-full max-w-md flex-col gap-2">
                     {
-                        data && data.data.map(
-                            item => <Item variant="outline">
+                        data && data.map(
+                            item => <Item variant="outline" onClick={()=>navTo(`slots/requested/${item.id}`)}>
                                 <ItemContent>
-                                    <ItemTitle>{item.id} <Badge variant={item.status=="Confirm"?"default":"ghost"}>{item.status}</Badge> </ItemTitle>
+                                    <ItemTitle> <Badge className={`${item.status=="Confirm"?"bg-green-500":"bg-orange-500"}`} variant={item.status=="Confirm"?"default":"ghost"}>{item.status}</Badge> <Badge variant={"outline"}>{item.gameSlot.gameType}</Badge> </ItemTitle>
                                     <ItemDescription>
                                         {item.gameSlot.startsFrom} to {item.gameSlot.endsAt}
                                     </ItemDescription>

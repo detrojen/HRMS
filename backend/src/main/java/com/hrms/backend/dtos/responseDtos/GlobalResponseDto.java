@@ -17,6 +17,7 @@ public class GlobalResponseDto<T> {
     private Map<String,?> errors;
     public GlobalResponseDto(T data){
         this.data = data;
+        this.status = HttpStatus.OK;
     }
     public GlobalResponseDto(T data,String message, HttpStatus status){
         this.data = data;

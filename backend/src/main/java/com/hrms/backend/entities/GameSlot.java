@@ -6,9 +6,10 @@ import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.sql.Date;
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.Date;
+//import java.util.Date;
 
 @Entity
 @Data

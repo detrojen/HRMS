@@ -4,6 +4,7 @@ import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.responseDtos.GameSlotResponseDto;
 import com.hrms.backend.dtos.responseDtos.SlotRequsetResponseDto;
 import com.hrms.backend.entities.*;
+import com.hrms.backend.exceptions.SlotCanNotBeBookedException;
 import com.hrms.backend.repositories.SlotRequestRepository;
 import com.hrms.backend.specs.SlotRequestSpecs;
 import jakarta.transaction.Transactional;
@@ -50,6 +51,11 @@ public class SlotRequestService {
         return requests.stream().map(request->modelMapper.map(request,SlotRequsetResponseDto.class)).collect(Collectors.toUnmodifiableList());
     }
 
+    public SlotRequsetResponseDto getSlotRequestDetail(Long id){
+        SlotRequest slotRequest = slotRequestRepository.findById(id).orElseThrow(()->new RuntimeException("slot request not found"));
+        return modelMapper.map(slotRequest,SlotRequsetResponseDto.class);
+    }
+
     public SlotRequest getConfirmRequest(Long slotId){
         return slotRequestRepository.findByGameSlot_IdAndStatus(slotId, "Confirm");
     }
@@ -70,10 +76,10 @@ public class SlotRequestService {
         int activeSlots = slotRequestRepository.getActiveRequestCount(jwtInfo.getUserId(), slot.getGameType().getId());
         int toDaysSlotsCount = slotRequestRepository.getTodaysConsumedSlotCount(jwtInfo.getUserId(), slot.getGameType().getId());
         if(activeSlots >= gameTypeDetails.getMaxActiveSlotPerDay()){
-            throw new RuntimeException("used active request limit");
+            throw new SlotCanNotBeBookedException("used active request limit");
         }else if(toDaysSlotsCount >= gameTypeDetails.getMaxSlotPerDay()){
 
-            throw new RuntimeException("You reached todays limit");
+            throw new SlotCanNotBeBookedException("You reached todays limit");
         }
         slotRequest.setGameSlot(slot);
         slotRequest.setRequestedBy(requestedBy);

@@ -15,3 +15,8 @@ AS BEGIN
 		set @FLAG = 0
 	END
 END
+
+select * from EmployeeWiseGameInterest
+select * from Employee
+select * from SlotRequest
+select * from GameSlot where id = 42

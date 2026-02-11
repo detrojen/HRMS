@@ -5,6 +5,7 @@ import com.hrms.backend.filters.JwtAuthfilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,8 +19,6 @@ public class SecurityConfig {
     JwtAuthfilter jwtAuthFilter;
     @Autowired
     ExceptionFilter exceptionFilter;
-//    @Autowired
-//    FilterChainExceptionHandler filterChainExceptionHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -28,8 +27,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers("/auth/login").permitAll() // allow login endpoint
                         .requestMatchers("/swagger-ui/**").permitAll() // allow Swagger UI
-                        .requestMatchers("/v3/api-docs/**").permitAll()// allow OpenAPI.requestMatchers()
-                        .requestMatchers("/hr/posts/delete-unappropriate").hasAuthority("HR")
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/game-types").hasAuthority("HR")// allow OpenAPI.requestMatchers()
+                                .requestMatchers(HttpMethod.PUT,"/game-types").hasAuthority("HR")// allow OpenAPI.requestMatchers()
+                        .requestMatchers( "/hr/posts/delete-unappropriate").hasAuthority("HR")
 //                        .requestMatchers("/employee/**").hasAuthority("Employee")
                         .anyRequest().authenticated()
                 )

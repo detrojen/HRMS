@@ -1,15 +1,15 @@
 import { useFetchInterestedEmployeeByNameLike, useQueryGameSlots } from "@/api/queries/game-scheduling.queries"
-import { useQueryClient } from "@tanstack/react-query"
-import { useRef, useState } from "react"
+import { useState } from "react"
 import { useParams, useSearchParams } from "react-router-dom"
 import { Card } from "../ui/card"
-import SlotCard from "./slot-card"
 import { Field, FieldLabel } from "../ui/field"
 import { Input } from "../ui/input"
 import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type"
 import { Button } from "../ui/button"
-import useRequestSlotMutation from "@/api/mutations/requestSlot.mutation"
-
+import useRequestSlotMutation from "@/api/mutations/request-slot.mutation"
+function getSlotAppearnceClass(slotStatus:boolean){
+  return slotStatus ? "available-slot" : "unavailable-slot"
+}
 const GameSlotList = () => {
     const {gameTypeId} = useParams()
     const [searchParams] = useSearchParams()
@@ -25,7 +25,7 @@ const GameSlotList = () => {
            
            <Card className="p-1 h-full">
             <div className="grid grid-cols-15 gap-1">
-                {data && data.data.map(item => <div key={item.id} className={`aspect-square ${selectedSlot == item.id? "selected-slot": "available-slot"}`} onClick={()=>{setSelectedSlot( item.id)}}></div>)}
+                {data && data.map(item => <div key={item.id} className={`aspect-square ${selectedSlot == item.id? "selected-slot": getSlotAppearnceClass(item.available)}`} onClick={()=>{setSelectedSlot( item.id)}}></div>)}
             </div>
             <Field>
                 <FieldLabel htmlFor="email">Add player</FieldLabel>
@@ -37,7 +37,8 @@ const GameSlotList = () => {
                 />
               </Field>
               {
-                interestedEmployees?.data.map(e=><h1 onClick={()=>{setNameQuery(""); setPlayers([...plyers,e])}}>{e.firstName}</h1>)
+                // JSON.stringify(interestedEmployees)
+                interestedEmployees?.map(e=><h1 onClick={()=>{setNameQuery(""); setPlayers([...plyers,e])}}>{e.firstName}</h1>)
               }
 
               {

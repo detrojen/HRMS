@@ -13,7 +13,7 @@ export function AppSidebar() {
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup />
-           <Link to='/game-slots' >Game slots</Link>
+           <Link to='/game' >Game slots</Link>
            <Link to='/login' >Login</Link>
         <SidebarGroup />
       </SidebarContent>

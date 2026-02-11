@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { cancelRequestedSlot } from "../services/gameScheduling.service";
+import { cancelRequestedSlot } from "../services/game-scheduling.service";
 
 const useCancelSlotMutation = () => {
     return useMutation(

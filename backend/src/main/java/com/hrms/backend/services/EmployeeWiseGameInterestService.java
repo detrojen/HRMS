@@ -1,7 +1,9 @@
 package com.hrms.backend.services;
 
 import com.hrms.backend.dtos.EmployeeWiseGameTypeUsageDto;
+import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.responseDtos.EmployeeResponseDto;
+import com.hrms.backend.dtos.responseDtos.EmployeeWiseGameInterestResponseDto;
 import com.hrms.backend.entities.Employee;
 import com.hrms.backend.entities.EmployeeWiseGameInterest;
 import com.hrms.backend.repositories.EmployeeWiseGameInterestRepository;
@@ -9,6 +11,7 @@ import com.hrms.backend.specs.InterestedEmployeeSpec;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,5 +50,19 @@ public class EmployeeWiseGameInterestService {
         List<EmployeeWiseGameInterest> employeeWiseGameInterests = employeeWiseGameInterestRepository.findAll(specs);
         List<EmployeeResponseDto> employees = employeeWiseGameInterests.stream().map(e->modelMapper.map(e.getEmployee(),EmployeeResponseDto.class)).collect(Collectors.toUnmodifiableList());
         return employees;
+    }
+
+    public List<EmployeeWiseGameInterestResponseDto> getEmployeeWiseGameInterests(){
+        JwtInfoDto jwtInfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<EmployeeWiseGameInterest> games = employeeWiseGameInterestRepository.findAllByEmployee_Id(jwtInfo.getUserId());
+        return games.stream().map(game->modelMapper.map(game,EmployeeWiseGameInterestResponseDto.class)).collect(Collectors.toUnmodifiableList());
+    }
+
+    public EmployeeWiseGameInterestResponseDto updateInterest(Long gameTypeId,boolean isInterested){
+        JwtInfoDto jwtInfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        EmployeeWiseGameInterest gameInterest =  employeeWiseGameInterestRepository.findByEmployee_IdAndGameType_Id(jwtInfo.getUserId(), gameTypeId);
+        gameInterest.setInterested(isInterested);
+        gameInterest =  employeeWiseGameInterestRepository.save(gameInterest);
+        return modelMapper.map(gameInterest,EmployeeWiseGameInterestResponseDto.class);
     }
 }

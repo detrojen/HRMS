@@ -21,10 +21,11 @@ axiosInstence.interceptors.response.use((response)=>{
     if(response.data.message){
       toast(response.data.message)
     }
-    return response;
+    return response.data;
   },(error)=>{
     
-    errorHandler(error);
+    errorHandler(error.response);
+    return error.response
   }
 )
 export default axiosInstence;

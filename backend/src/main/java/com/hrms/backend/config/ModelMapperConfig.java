@@ -1,15 +1,11 @@
 package com.hrms.backend.config;
 
 import com.hrms.backend.dtos.responseDtos.*;
-import com.hrms.backend.entities.GameSlot;
-import com.hrms.backend.entities.Post;
-import com.hrms.backend.entities.SlotRequest;
+import com.hrms.backend.entities.*;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.stream.Collectors;
 
 @Configuration
 public class ModelMapperConfig {
@@ -20,7 +16,8 @@ public class ModelMapperConfig {
         addPostResponseMapping(modelMapper);
         addDeletedPostResponseDtoMapping(modelMapper);
         addGameSlotResponseDto(modelMapper);
-        addSlotRequestResponseDtoMapping(modelMapper);
+        addEmployeeWiseGameInterestResponseDto(modelMapper);
+//        addGameTypeResponseDto(modelMapper);
         return modelMapper;
     }
 
@@ -47,11 +44,21 @@ public class ModelMapperConfig {
                 });
     }
 
-    public void addSlotRequestResponseDtoMapping(ModelMapper modelMapper){
-        modelMapper.createTypeMap(SlotRequest.class, SlotRequsetResponseDto.class)
-                .addMappings(mapper->{
-//                    mapper.map(src->src.getRequestedBy(),SlotRequsetResponseDto::setRequestedBy);
-//                    mapper.map(src->src.getSlotRequestWiseEmployee().stream().map(item->item.getEmployee()).collect(Collectors.toUnmodifiableList()),SlotRequsetResponseDto::setSlotRequestWiseEmployee);
-                });
+    public void addEmployeeWiseGameInterestResponseDto(ModelMapper modelMapper){
+        modelMapper.createTypeMap(EmployeeWiseGameInterest.class,EmployeeWiseGameInterestResponseDto.class).addMappings(
+                mapper->{
+                    mapper.map(src->src.getGameType().getGame(),EmployeeWiseGameInterestResponseDto::setGameType);
+                    mapper.map(src->src.getGameType().getId(),EmployeeWiseGameInterestResponseDto::setGameTypeId);
+                }
+        );
     }
+
+    public void addGameTypeResponseDto(ModelMapper modelMapper){
+        modelMapper.createTypeMap(GameType.class, UpdateGameTypeResponseDto.class).addMappings(
+          mapper->{
+              mapper.map(src->src.getEmployeeWiseGameInterests(), UpdateGameTypeResponseDto::setNoOfInteretedEmployees);
+          }
+        );
+    }
+
 }

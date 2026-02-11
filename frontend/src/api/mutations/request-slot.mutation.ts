@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { requestSlot } from "../services/gameScheduling.service";
+import { requestSlot } from "../services/game-scheduling.service";
 import { useNavigate } from "react-router-dom";
 
 const useRequestSlotMutation = () => {
@@ -8,7 +8,7 @@ const useRequestSlotMutation = () => {
     {
         mutationFn: (payload: { slotId: number; otherPlayersId: number[]; })=>requestSlot(payload),
         onSuccess: (data)=>{
-            navTo("/game-slots")
+            navTo("/game")
         }
     }
 )

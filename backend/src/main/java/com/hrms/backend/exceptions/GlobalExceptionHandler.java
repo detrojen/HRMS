@@ -22,5 +22,12 @@ public class GlobalExceptionHandler {
                 .body(new GlobalResponseDto<>(null,"please login!",HttpStatus.UNAUTHORIZED));
 
     }
-//    ExpiredJwtException
+
+    @ExceptionHandler(SlotCanNotBeBookedException.class)
+    public ResponseEntity<?> handleSlotCanNotBeBookedException(SlotCanNotBeBookedException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new GlobalResponseDto<>(null,e.getMessage(),HttpStatus.BAD_REQUEST));
+
+    }
+
 }

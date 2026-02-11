@@ -6,7 +6,7 @@ const errorHandler = (error:TGlobalResponse<any>) => {
     
     console.log(error)
     if(error.status == 401){
-        debugger
+        
         window.location.assign("/login")
         toast("please login again")
     }else{
