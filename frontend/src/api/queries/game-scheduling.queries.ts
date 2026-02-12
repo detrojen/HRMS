@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { getActiveSlots, getAllGameTypes, getGameInterests, getGameSlotByGameTypeIdOfDate, getGameTypeById, getIntrestedEmployeeByNameLike, getRequestedSlotDetail } from "../services/game-scheduling.service"
 import type { TQueryGameSlots } from "@/types/apiRequestTypes/TQueryGameSlots.type"
-import type { TGlobalResponse } from "@/types/apiResponseTypes/TGlobalResponse.type"
+import type { TGlobalResponse } from "@/types/TGlobalResponse.type"
 import type { TQueryInterestedEmployeeByNameLike } from "@/types/apiRequestTypes/TQueryInterestedEmployeeByNameLike.type"
 import useSyncDataStore from "@/hooks/use-sync-data-store"
 import { setInitialData } from "@/store/slices/game-interest-slice"

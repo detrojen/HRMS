@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import  { type TGlobalResponse } from "./types/apiResponseTypes/TGlobalResponse.type";
+import  { type TGlobalResponse } from "./types/TGlobalResponse.type";
 import { toast } from "sonner";
 
 const errorHandler = (error:TGlobalResponse<any>) => {

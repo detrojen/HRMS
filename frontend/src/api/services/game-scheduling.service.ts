@@ -1,6 +1,6 @@
 import type { TQueryGameSlots } from "@/types/apiRequestTypes/TQueryGameSlots.type";
 import api from "../api";
-import { type TGlobalResponse } from "@/types/apiResponseTypes/TGlobalResponse.type";
+import { type TGlobalResponse } from "@/types/TGlobalResponse.type";
 import type { TQueryInterestedEmployeeByNameLike } from "@/types/apiRequestTypes/TQueryInterestedEmployeeByNameLike.type";
 import { type TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type";
 import type { TRequestedSlotDetail } from "@/types/apiResponseTypes/TRequestedSlotDetail.type";
@@ -48,11 +48,11 @@ export const getGameTypeById = (gameTypeId:string) => {
 }
 
 export const createGameType = (payload:Omit<TGameType,"id">) => {
-    debugger
+    
     return api.post<TGameType>("/api/game-types", payload).then(res=>res.data)
 }
 
 export const updateGameType =  (payload:any) => {
-    debugger
+    
     return  api.put<TGameType>(`/api/game-types`,payload).then(res=>res.data)
 }

@@ -1,7 +1,5 @@
 package com.hrms.backend.dtos.responseDtos;
 
-import com.hrms.backend.entities.Employee;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data

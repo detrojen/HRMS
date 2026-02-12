@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class SlotRequestWiseEmployeeDto {
-    private EmployeeResponseDto employee;
+    private EmployeeWithNameOnlyDto employee;
 }

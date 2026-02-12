@@ -4,7 +4,10 @@ import com.hrms.backend.dtos.requestDto.BookSlotRequestDto;
 import com.hrms.backend.dtos.requestDto.CreateUpdateGameTypeRequestDto;
 import com.hrms.backend.dtos.requestDto.UpdateGameInterestRequestDto;
 import com.hrms.backend.dtos.responseDtos.*;
-import com.hrms.backend.services.*;
+import com.hrms.backend.services.GameSchedulingServices.EmployeeWiseGameInterestService;
+import com.hrms.backend.services.GameSchedulingServices.GameSlotService;
+import com.hrms.backend.services.GameSchedulingServices.GameTypeService;
+import com.hrms.backend.services.GameSchedulingServices.SlotRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +53,7 @@ public class GameSchedulingController {
     }
 
     @GetMapping("/employee/interested-game/{gameTypeId}")
-    public ResponseEntity<GlobalResponseDto<List<EmployeeResponseDto>>> getInterestedEmployees(@PathVariable Long gameTypeId, @RequestParam String nameLike){
+    public ResponseEntity<GlobalResponseDto<List<EmployeeWithNameOnlyDto>>> getInterestedEmployees(@PathVariable Long gameTypeId, @RequestParam String nameLike){
         var data = employeeWiseGameInterestService.getEmployeeOfGameIntersetOf(gameTypeId,nameLike);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(data));
     }

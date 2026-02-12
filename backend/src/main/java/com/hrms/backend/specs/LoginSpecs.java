@@ -1,7 +1,6 @@
 package com.hrms.backend.specs;
 
-import com.hrms.backend.entities.Employee;
-import jakarta.persistence.criteria.Join;
+import com.hrms.backend.entities.EmployeeEntities.Employee;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 

@@ -3,15 +3,18 @@ import { createBrowserRouter, RouterProvider, type RouteObject } from 'react-rou
 import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import GameSchedulingPage from './pages/GameSchedulingPage'
-import GameUsageReport from './components/functionality/game-usage-report'
-import GameSlotList from './components/functionality/game-slot-list'
+import GameUsageReport from './components/functionality/game-scheduling/game-usage-report'
+import GameSlotList from './components/functionality/game-scheduling/game-slot-list'
 import { Toaster } from 'sonner'
 import { Provider } from 'react-redux'
 import { store } from './store'
-import RequestedSlotDetail from './components/functionality/requested-slot-detail-view'
-import GameTypeList from './components/functionality/game-type-list'
-import GameTypeForm from './components/functionality/game-type-form'
-import GameTypeDetail from './components/functionality/game-type-detail'
+import RequestedSlotDetail from './components/functionality/game-scheduling/requested-slot-detail-view'
+import GameTypeList from './components/functionality/game-scheduling/game-type-list'
+import GameTypeForm from './components/functionality/game-scheduling/game-type-form'
+import GameTypeDetail from './components/functionality/game-scheduling/game-type-detail'
+import JobForm from './components/functionality/job/job-form'
+import JobListPage from './pages/JobListPage'
+import JobDetailPage from './pages/JobDetailPage'
 const routes : RouteObject[] = [
   {
     path:"/login",
@@ -24,6 +27,18 @@ const routes : RouteObject[] = [
       {
         index: true,
         element: <HomePage />
+      },
+      {
+        path:"jobs",
+        element: <JobListPage />
+      },
+      {
+        path:"jobs/:jobId",
+        element:<JobDetailPage />
+      },
+      {
+        path:"jobs/add",
+        element:<JobForm />
       },
       {
         path:"game",

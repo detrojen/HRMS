@@ -1,6 +1,5 @@
 package com.hrms.backend.dtos.responseDtos;
 
-import com.hrms.backend.entities.GameType;
 import lombok.Data;
 
 @Data

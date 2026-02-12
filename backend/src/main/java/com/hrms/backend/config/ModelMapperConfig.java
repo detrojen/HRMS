@@ -1,7 +1,10 @@
 package com.hrms.backend.config;
 
 import com.hrms.backend.dtos.responseDtos.*;
-import com.hrms.backend.entities.*;
+import com.hrms.backend.entities.GameSchedulingEntities.EmployeeWiseGameInterest;
+import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
+import com.hrms.backend.entities.GameSchedulingEntities.GameType;
+import com.hrms.backend.entities.PostEntities.Post;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

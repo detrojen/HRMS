@@ -1,7 +1,6 @@
 import { useFetchGameInterests } from "@/api/queries/game-scheduling.queries"
-import EmployeeWiseGameInterestList from "@/components/functionality/employee-game-interest-list"
-import GameSlotList from "@/components/functionality/game-slot-list"
-import SlotHistory from "@/components/functionality/slot-history"
+import EmployeeWiseGameInterestList from "@/components/functionality/game-scheduling/employee-game-interest-list"
+import SlotHistory from "@/components/functionality/game-scheduling/slot-history"
 import { Card } from "@/components/ui/card"
 import { Outlet } from "react-router-dom"
 

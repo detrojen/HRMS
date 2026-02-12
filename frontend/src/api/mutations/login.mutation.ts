@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query"
 import login from "../services/login.service"
 import type { TLoginPayload } from "@/types/apiRequestTypes/TLoginPayload.type"
-import type { TGlobalResponse } from "@/types/apiResponseTypes/TGlobalResponse.type"
+import type { TGlobalResponse } from "@/types/TGlobalResponse.type"
 import type { TLoginResponse } from "@/types/apiResponseTypes/TLoginResponse.type"
 import { useNavigate } from "react-router-dom"
 

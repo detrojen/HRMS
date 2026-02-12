@@ -1,8 +1,8 @@
 package com.hrms.backend.specs;
 
-import com.hrms.backend.entities.Employee;
-import com.hrms.backend.entities.GameSlot;
-import com.hrms.backend.entities.SlotRequest;
+import com.hrms.backend.entities.EmployeeEntities.Employee;
+import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
+import com.hrms.backend.entities.GameSchedulingEntities.SlotRequest;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
