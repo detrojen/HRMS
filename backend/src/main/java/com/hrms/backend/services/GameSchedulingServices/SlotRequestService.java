@@ -80,34 +80,37 @@ public class SlotRequestService {
         int toDaysSlotsCount = slotRequestRepository.getTodaysConsumedSlotCount(jwtInfo.getUserId(), slot.getGameType().getId());
         if(activeSlots >= gameTypeDetails.getMaxActiveSlotPerDay()){
             throw new SlotCanNotBeBookedException("used active request limit");
-        }else if(toDaysSlotsCount >= gameTypeDetails.getMaxSlotPerDay()){
+        }else if(toDaysSlotsCount >= gameTypeDetails.getMaxSlotPerDay()) {
 
             throw new SlotCanNotBeBookedException("You reached todays limit");
         }
         slotRequest.setGameSlot(slot);
         slotRequest.setRequestedBy(requestedBy);
+        otherPlayerIds.add(jwtInfo.getUserId());
         if(slotDetails.isAvailable()){
             gameSlotService.makeSlotUnavailable(slot);
             slotRequest.setStatus("Confirm");
+            otherPlayerIds.iterator().forEachRemaining(id->{
+                employeeWiseGameInterestService.addConsumedSlotCount(id,slotDetails.getGameTypeId());
+            });
         }else{
             SlotRequest confirmedSlotRequest = getConfirmRequest(slotId);
             if(hasHighPriorityThen(jwtInfo.getUserId(),confirmedSlotRequest.getRequestedBy().getId(), gameTypeDetails.getId())){
                 confirmToCancelOrOnHold(confirmedSlotRequest,"On hold");
                 slotRequest.setStatus("Confirm");
+                otherPlayerIds.iterator().forEachRemaining(id->{
+                    employeeWiseGameInterestService.addConsumedSlotCount(id,slotDetails.getGameTypeId());
+                });
             }else {
                 slotRequest.setStatus("On Hold");
             }
         }
-        gameSlotService.makeSlotUnavailable(slot);
+
         slotRequest = this.slotRequestRepository.save(slotRequest);
         SlotRequest finalSlotRequest = slotRequest;
 
-        otherPlayerIds.add(jwtInfo.getUserId());
+
         List<SlotRequestWiseEmployee> mappedEmployees = otherPlayerIds.stream().map(id->slotRequestWiseemployeeService.mapSlotsToEmployee(id,finalSlotRequest)).collect(Collectors.toUnmodifiableList());
-        otherPlayerIds.iterator().forEachRemaining(id->{
-//            return slotRequestWiseemployeeService.mapSlotsToEmployee(id,finalSlotRequest);
-            employeeWiseGameInterestService.addConsumedSlotCount(id,slotDetails.getGameTypeId());
-        });
 
         slotRequest.setSlotRequestWiseEmployee(mappedEmployees);
         return modelMapper.map(slotRequest, SlotRequsetResponseDto.class);
@@ -140,7 +143,7 @@ public class SlotRequestService {
     private boolean hasHighPriorityThen(Long employeeId1, Long employeeId2, Long gameTypeId){
         var emp1GameUsage = this.employeeWiseGameInterestService.getEmployyeGameUsage(employeeId1,gameTypeId);
         var emp2GameUsage = this.employeeWiseGameInterestService.getEmployyeGameUsage(employeeId2,gameTypeId);
-        return emp1GameUsage.getCurrentCyclesSlotConsumed() < emp2GameUsage.getCurrentCyclesSlotConsumed();
+        return (emp2GameUsage.getCurrentCyclesSlotConsumed() - emp1GameUsage.getCurrentCyclesSlotConsumed()) > 1 ;
     }
 
     private SlotRequest onHoldToConfirm(SlotRequest slotRequest){

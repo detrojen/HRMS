@@ -1,6 +1,7 @@
 package com.hrms.backend.utils;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,13 +22,14 @@ public class FileUtility {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return folderName + File.separator + file.getOriginalFilename();
+        return file.getOriginalFilename();
     }
 
     public static Resource Get(String folderName,String fileName) throws MalformedURLException {
         String absFilePath = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + folderName + File.separator + fileName;
         Path filePath = Paths.get( absFilePath);
-        Resource file = new UrlResource(filePath.toUri());
+//        Resource file = new UrlResource(filePath.toUri());
+        FileSystemResource file = new FileSystemResource(new File(filePath.toUri()));
         return file;
     }
 }

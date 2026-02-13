@@ -1,4 +1,4 @@
-export type TPageable<T> = {
+export type TPageableResponse<T> = {
      "content": T[],
     "pageable": {
       "pageNumber": number,

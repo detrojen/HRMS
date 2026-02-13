@@ -1,29 +1,37 @@
 package com.hrms.backend.services.EmployeeServices;
 
+import com.hrms.backend.dtos.responseDtos.EmployeeWithNameOnlyDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.repositories.EmployeeRepositories.EmployeeRepository;
+import com.hrms.backend.specs.EmployeeSpecs;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
-    private final EmployeeRepository _employeeRepository;
+    private final EmployeeRepository employeeRepository;
+    private final ModelMapper modelMapper;
     @Autowired
-    public EmployeeService(EmployeeRepository employeeRepository){
-        _employeeRepository = employeeRepository;
+    public EmployeeService(EmployeeRepository employeeRepository, ModelMapper modelMapper){
+        this.employeeRepository = employeeRepository;
+        this.modelMapper = modelMapper;
     }
 
     public Employee getEmployeeById(Long id){
-        return _employeeRepository.findById(id).orElseThrow(()-> new RuntimeException());
+        return employeeRepository.findById(id).orElseThrow(()-> new RuntimeException());
     }
 
     public Employee getReference(Long id){
-        return _employeeRepository.getReferenceById(id);
+        return employeeRepository.getReferenceById(id);
+    }
+    public List<EmployeeWithNameOnlyDto> getEmployeesByNameQuery(String nameQuery){
+        Specification<Employee> hasNameSpec = EmployeeSpecs.hasName(nameQuery);
+        return employeeRepository.findAll(hasNameSpec).stream().map(employee->modelMapper.map(employee,EmployeeWithNameOnlyDto.class)).collect(Collectors.toUnmodifiableList());
     }
 
-//    public Employee getEmployeeWithGameUsages(Long employeeId,Long gameTypeId){
-//        Specification<Employee> specs = InterestedGameSpecs.getGameInterestByEmployeeIdAndGameTypeID(employeeId,gameTypeId);
-//        var employees = _employeeRepository.findAll(specs);
-//        return employees.get(0);
-//    }
 }

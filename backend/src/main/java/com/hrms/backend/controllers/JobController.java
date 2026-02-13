@@ -2,11 +2,14 @@ package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.globalDtos.PageableDto;
 import com.hrms.backend.dtos.requestDto.CreateJobRequestDto;
+import com.hrms.backend.dtos.requestDto.ReferJobRequestDto;
 import com.hrms.backend.dtos.requestDto.ShareJobRequestDto;
 import com.hrms.backend.dtos.responseDtos.CreateJobResponseDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
+import com.hrms.backend.services.JobListingServices.JobApplicationService;
 import com.hrms.backend.services.JobListingServices.JobService;
 import com.hrms.backend.utils.FileUtility;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -14,13 +17,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
+
 @RestController
 public class JobController {
     private final JobService jobService;
-
+    private final JobApplicationService jobApplicationService;
     @Autowired
-    public JobController(JobService jobService){
+    public JobController(JobService jobService, JobApplicationService jobApplicationService){
         this.jobService = jobService;
+        this.jobApplicationService = jobApplicationService;
     }
 
     @PostMapping(value = "/jobs")
@@ -52,8 +58,18 @@ public class JobController {
         );
     }
 
+
+    @PostMapping("/jobs/{jobId}/refer")
+    public ResponseEntity<GlobalResponseDto<?>> referJob(@PathVariable Long jobId, @RequestPart ReferJobRequestDto applicantsDetail, @RequestPart MultipartFile cv) throws MalformedURLException, MessagingException {
+        String cvpath = FileUtility.Save(cv, "cvs");
+        jobApplicationService.referJobTo(jobId,applicantsDetail,cvpath);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(null, "Job refered successfull.",HttpStatus.OK));
+
+    }
     @PostMapping("/jobs/{jobId}/share")
-    public ResponseEntity<GlobalResponseDto<?>> shareJob(@PathVariable Long jobId, @RequestBody ShareJobRequestDto requestDto){
-        return ResponseEntity.ok().body(new GlobalResponseDto<>(null, "Job shared successfull.",HttpStatus.OK));
+    public ResponseEntity<GlobalResponseDto<?>> shareJob(@PathVariable Long jobId, @RequestBody ShareJobRequestDto requestDto) throws MessagingException, MalformedURLException {
+        jobService.shareJob(jobId,requestDto);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(null, "Job refered successfull.",HttpStatus.OK));
+
     }
 }

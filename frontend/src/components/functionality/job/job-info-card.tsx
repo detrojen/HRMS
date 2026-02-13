@@ -2,8 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemHeader, ItemSeparator } from "@/components/ui/item";
 import type { TJobResponse } from "@/types/apiResponseTypes/TJobResponse.type";
 import { Share } from "lucide-react";
-import JobShareBtn from "./job-share-button";
-import JobReferBtn from "./job-refer-button";
+import JobShare from "./job-share";
+import JobRefer from "./job-refer";
 import { Link } from "react-router-dom";
 
 const JobInfoCard = ({job}:{job:TJobResponse}) => {
@@ -18,13 +18,14 @@ const JobInfoCard = ({job}:{job:TJobResponse}) => {
             </ItemContent>
             <ItemFooter>
                 <ItemActions>
-                    <JobShareBtn />
-                    <JobReferBtn />
+                    <JobShare jobId={job.id}/>
+                    <JobRefer jobId={job.id}/>
                     <Link to={`/jobs/${job.id}`}>get more...</Link>
                 </ItemActions>
             </ItemFooter>
         </Item>
     )
 }
+
 
 export default JobInfoCard

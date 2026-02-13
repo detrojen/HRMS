@@ -5,19 +5,21 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
-//import java.util.Date;
+import java.util.Date;
 
 @Entity
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class GameSlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date slotDate;
+    private java.sql.Date slotDate;
     private LocalTime startsFrom;
     private LocalTime endsAt;
     private boolean isAvailable;
@@ -28,10 +30,9 @@ public class GameSlot {
     @CreatedDate
     private Date createdAt;
     @LastModifiedDate
-    private  Date updatedAt;
+    private Date updatedAt;
 
     @OneToMany(mappedBy = "gameSlot")
     @JsonIgnore
     private Collection<SlotRequest> slotRequests;
-
 }

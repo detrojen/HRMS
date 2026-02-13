@@ -9,9 +9,11 @@ import com.hrms.backend.emailTemplates.JobEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.Job;
 import com.hrms.backend.repositories.JobListingRepositories.JobRepository;
+import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import com.hrms.backend.specs.JobSpecs;
 import com.hrms.backend.utils.EmailUtility;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -30,12 +33,14 @@ public class JobService {
     private final ModelMapper modelMapper;
     private final EmployeeService employeeService;
     private final JobWiseCvReviewerService jobWiseCvReviewerService;
+    private final EmailService emailService;
     @Autowired
-    public JobService(JobRepository jobRepository, ModelMapper modelMapper, EmployeeService employeeService,JobWiseCvReviewerService jobWiseCvReviewerService){
+    public JobService(JobRepository jobRepository, ModelMapper modelMapper, EmployeeService employeeService,JobWiseCvReviewerService jobWiseCvReviewerService, EmailService emailService){
         this.jobRepository = jobRepository;
         this.modelMapper = modelMapper;
         this.employeeService = employeeService;
         this.jobWiseCvReviewerService = jobWiseCvReviewerService;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -61,14 +66,19 @@ public class JobService {
         return jobs.map(job->modelMapper.map(job,CreateJobResponseDto.class));
     }
 
+    public Job getRef(Long id){
+        return jobRepository.getReferenceById(id);
+    }
+
     public CreateJobResponseDto getJobById(Long id){
         Job job = jobRepository.findById(id).orElseThrow(()->new RuntimeException("job not found"));
         return modelMapper.map(job,CreateJobResponseDto.class);
     }
 
-    public void shareJob(Long jobId, ShareJobRequestDto requestDto){
+    public void shareJob(Long jobId, ShareJobRequestDto requestDto) throws MessagingException, MalformedURLException {
         Job job = jobRepository.findById(jobId).orElseThrow(()->new RuntimeException("job not found"));
         String emailBody = JobEmailTemplates.shareJob(job);
-        EmailUtility.send();
+        System.out.println(emailBody);
+        emailService.shareJob("Job opening",requestDto.getEmail(),emailBody, job.getJdPath());
     }
 }

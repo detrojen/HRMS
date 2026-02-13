@@ -4,6 +4,7 @@ import type { TCvReviewerWithNameOnly } from "./TCvReviewerWithNameOnly";
 
 export type TJobResponse = Omit<Omit<Omit<TCreateJobDetail,"hrOwnerId">,"reviewerIds">,"skills"> & {
     skills: string
+    status: string
     hrOwner: TEmployeeWithNameOnly
     reviewers: TCvReviewerWithNameOnly[]
 }

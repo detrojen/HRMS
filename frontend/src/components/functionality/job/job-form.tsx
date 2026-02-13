@@ -1,13 +1,19 @@
 import useCreateJobMutation from "@/api/mutations/create-job-mutation";
+import { useGetchEmployeesByNameLike } from "@/api/queries/employee.queries";
+import { getEmployeesByNameQuery } from "@/api/services/employee.service";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import TagsAdd from "@/components/ui/tags-add";
 import { Textarea } from "@/components/ui/textarea";
 import type { TCreateJobRequest } from "@/types/apiRequestTypes/TCreateJobRequest.type";
-import { useEffect, useRef } from "react";
+import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type";
+import { useEffect, useState } from "react";
+
 import { useForm, type ControllerRenderProps, type UseFormReturn } from "react-hook-form";
 
 const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
@@ -24,7 +30,6 @@ const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, a
                         </FormControl>
                     </FormItem>}
                 />
-
                 <FormField
                     name="jobDetail.vacancy"
                     control={form.control}
@@ -88,7 +93,7 @@ const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, a
                         </FormControl>
                     </FormItem>}
                 />
-                <FormField
+                {/* <FormField
                     name="jobDetail.reviewerIds"
                     control={form.control}
                     render={({ field }) => <FormItem className="w-1/1">
@@ -97,7 +102,7 @@ const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, a
                             <TagsAdd form={form} field={field} placeholder={"enter skill"} />
                         </FormControl>
                     </FormItem>}
-                />
+                /> */}
 
             </FieldGroup>
         </>
@@ -145,6 +150,40 @@ const JobDocumentUploadForm = ({ form }: { form: UseFormReturn<TCreateJobRequest
     )
 }
 
+const JobAddCvReviewrersForm = ({form}:{form: UseFormReturn<TCreateJobRequest,any,TCreateJobRequest>})=>{
+    const [nameQuery, setNameQuery] = useState("")
+    const {data} = useGetchEmployeesByNameLike(nameQuery);
+    const [reviewers, setReviewers] = useState<TEmployeeWithNameOnly[]>([])
+    useEffect(()=>{
+        form.setValue("jobDetail.reviewerIds",reviewers.map(reviewer=>reviewer.id))
+    },[reviewers])
+    return (
+        <>
+        <Field>
+          <FieldLabel >Add Reviewers</FieldLabel>
+          <Input
+            id="search-player"
+            type="text"
+            placeholder="search player"
+            onChange={(e) => { setNameQuery(e.target.value) }}
+          />
+        </Field>
+        {
+          data?.map(e => <h1 onClick={() => { setNameQuery(""); setReviewers(reviewers=>[...reviewers, e]); }}>{e.firstName}</h1>)
+        }
+        <Separator></Separator>
+        {
+          reviewers.map(employee => <div key={`reviewer-${employee.id}`} className="flex gap-5">
+            <h1>{employee.firstName} </h1>
+            <Button size={"xs"} onClick={() => {
+              setReviewers(reviewers.filter( reviewer=> reviewer.id != employee.id))
+            }}>remove</Button>
+          </div>
+          )
+        }
+        </>
+    )
+}
 
 const JobForm = () => {
     const form = useForm<TCreateJobRequest>({ defaultValues: { jobDetail: { hrOwnerId: 11, skills: [], reviewerIds: [] } } });
@@ -160,6 +199,7 @@ const JobForm = () => {
                 <div className="col-span-1"></div>
                 <div className="col-span-3" onSubmit={form.handleSubmit(onSubmit)}>
                     <JobBasicDetailForm form={form} />
+                    <JobAddCvReviewrersForm form={form} />
                     <JobDescriptionForm form={form} />
                     <JobDocumentUploadForm form={form} />
                     <button onClick={form.handleSubmit(onSubmit)} >Submit</button>

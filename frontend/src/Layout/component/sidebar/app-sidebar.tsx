@@ -72,6 +72,11 @@ const data = {
       title: "jobs",
       url: "/jobs",
       icon: Gamepad2,
+    },
+    {
+      title: "login",
+      url: "/login",
+      icon: Gamepad2,
     }
   ],
  

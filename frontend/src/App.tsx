@@ -4,10 +4,8 @@ import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import GameSchedulingPage from './pages/GameSchedulingPage'
 import GameUsageReport from './components/functionality/game-scheduling/game-usage-report'
-import GameSlotList from './components/functionality/game-scheduling/game-slot-list'
+
 import { Toaster } from 'sonner'
-import { Provider } from 'react-redux'
-import { store } from './store'
 import RequestedSlotDetail from './components/functionality/game-scheduling/requested-slot-detail-view'
 import GameTypeList from './components/functionality/game-scheduling/game-type-list'
 import GameTypeForm from './components/functionality/game-scheduling/game-type-form'
@@ -15,6 +13,7 @@ import GameTypeDetail from './components/functionality/game-scheduling/game-type
 import JobForm from './components/functionality/job/job-form'
 import JobListPage from './pages/JobListPage'
 import JobDetailPage from './pages/JobDetailPage'
+import GameSlotBook from './components/functionality/game-scheduling/game-slot-book'
 const routes : RouteObject[] = [
   {
     path:"/login",
@@ -50,7 +49,7 @@ const routes : RouteObject[] = [
           },
           {
             path: "slots/:gameTypeId",
-            element: <GameSlotList />
+            element: <GameSlotBook />
           },
           {
             path:"slots/requested/:requestedSlotId",
@@ -66,7 +65,7 @@ const routes : RouteObject[] = [
           },
           {
             path: "types/add",
-            element: <GameTypeForm gameType={null}/>
+            element: <GameTypeForm gameType={null} isEditable={false}/>
           }
         ]
       }
