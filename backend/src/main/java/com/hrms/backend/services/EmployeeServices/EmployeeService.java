@@ -1,5 +1,7 @@
 package com.hrms.backend.services.EmployeeServices;
 
+import com.hrms.backend.dtos.EmployeeWithManagerIdDto;
+import com.hrms.backend.dtos.responseDtos.EmployeeOneLevelReportResponseDto;
 import com.hrms.backend.dtos.responseDtos.EmployeeWithNameOnlyDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.repositories.EmployeeRepositories.EmployeeRepository;
@@ -32,6 +34,12 @@ public class EmployeeService {
     public List<EmployeeWithNameOnlyDto> getEmployeesByNameQuery(String nameQuery){
         Specification<Employee> hasNameSpec = EmployeeSpecs.hasName(nameQuery);
         return employeeRepository.findAll(hasNameSpec).stream().map(employee->modelMapper.map(employee,EmployeeWithNameOnlyDto.class)).collect(Collectors.toUnmodifiableList());
+    }
+
+    public EmployeeOneLevelReportResponseDto getOneLevelReport(Long employeeId){
+        List<EmployeeWithManagerIdDto> employees = employeeRepository.getOneLevelReport(employeeId);
+        EmployeeOneLevelReportResponseDto dto = new EmployeeOneLevelReportResponseDto(employees,employeeId);
+        return dto;
     }
 
 }

@@ -7,6 +7,7 @@ import com.hrms.backend.entities.GameSchedulingEntities.SlotRequestWiseEmployee;
 import com.hrms.backend.entities.JobListingEntities.Job;
 import com.hrms.backend.entities.JobListingEntities.JobApplication;
 import com.hrms.backend.entities.JobListingEntities.JobWiseCvReviewer;
+import com.hrms.backend.entities.Notification.Notification;
 import com.hrms.backend.entities.PostEntities.Post;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -70,33 +71,16 @@ public class Employee {
     @OneToMany(mappedBy = "reviewer")
     private Collection<JobWiseCvReviewer> jobsToReview;
 
-    public Collection<JobWiseCvReviewer> getJobsToReview() {
-        return jobsToReview;
-    }
-
-    public void setJobsToReview(Collection<JobWiseCvReviewer> jobsToReview) {
-        this.jobsToReview = jobsToReview;
-    }
-
     @OneToMany(mappedBy = "referedBy")
     private Collection<JobApplication> referedJobApplication;
 
-    public Collection<JobApplication> getReferedJobApplication() {
-        return referedJobApplication;
-    }
-
-    public void setReferedJobApplication(Collection<JobApplication> referedJobApplication) {
-        this.referedJobApplication = referedJobApplication;
-    }
 
     @OneToMany(mappedBy = "hrOwner")
     private Collection<Job> ownedJobs;
 
-    public Collection<Job> getOwnedJobs() {
-        return ownedJobs;
-    }
 
-    public void setOwnedJobs(Collection<Job> ownedJobs) {
-        this.ownedJobs = ownedJobs;
-    }
+    @OneToMany(mappedBy = "employee")
+    @JsonIgnore
+    private Collection<Notification> notifications;
+
 }
