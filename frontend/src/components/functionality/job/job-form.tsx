@@ -19,13 +19,14 @@ import { useForm, type ControllerRenderProps, type UseFormReturn } from "react-h
 const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
     return (
         <>
+        <Form {...form}>
             <FieldGroup className="w-full">
                 <FormField
                     name="jobDetail.title"
                     control={form.control}
                     render={({ field }) => <FormItem>
                         <FieldLabel>Title</FieldLabel>
-                        <FormControl>
+                        <FormControl >
                             <Input {...field} placeholder="title"></Input>
                         </FormControl>
                     </FormItem>}
@@ -105,12 +106,14 @@ const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, a
                 /> */}
 
             </FieldGroup>
+            </Form>
         </>
     )
 }
 
 const JobDescriptionForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
     return (
+        <Form {...form}>
         <FieldGroup className="w-full">
             <FormField
                 name="jobDetail.description"
@@ -123,6 +126,7 @@ const JobDescriptionForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, a
                 </FormItem>}
             />
         </FieldGroup>
+        </Form>
     )
 }
 
@@ -133,6 +137,7 @@ const JobDocumentUploadForm = ({ form }: { form: UseFormReturn<TCreateJobRequest
         }
     }
     return (
+        <Form {...form}>
         <FieldGroup className="w-full">
             <FormField
                 name="jdDocument"
@@ -147,6 +152,7 @@ const JobDocumentUploadForm = ({ form }: { form: UseFormReturn<TCreateJobRequest
                 </FormItem>}
             />
         </FieldGroup>
+        </Form>
     )
 }
 
@@ -159,6 +165,7 @@ const JobAddCvReviewrersForm = ({form}:{form: UseFormReturn<TCreateJobRequest,an
     },[reviewers])
     return (
         <>
+        <Form {...form}>
         <Field>
           <FieldLabel >Add Reviewers</FieldLabel>
           <Input
@@ -181,6 +188,7 @@ const JobAddCvReviewrersForm = ({form}:{form: UseFormReturn<TCreateJobRequest,an
           </div>
           )
         }
+        </Form>
         </>
     )
 }
@@ -195,16 +203,15 @@ const JobForm = () => {
     
     return (
         <Card className="w-1/1 max-h-full p-2 grid grid-cols-5 gap-2">
-            <Form {...form}>
+            
                 <div className="col-span-1"></div>
-                <div className="col-span-3" onSubmit={form.handleSubmit(onSubmit)}>
+                <form className="col-span-3">
                     <JobBasicDetailForm form={form} />
                     <JobAddCvReviewrersForm form={form} />
                     <JobDescriptionForm form={form} />
                     <JobDocumentUploadForm form={form} />
                     <button onClick={form.handleSubmit(onSubmit)} >Submit</button>
-                </div>
-            </Form>
+                </form>
         </Card>
     )
 }

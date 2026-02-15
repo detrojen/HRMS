@@ -1,9 +1,9 @@
 package com.hrms.backend.controllers;
 
-import com.hrms.backend.dtos.requestDto.CreatePostRequestDto;
-import com.hrms.backend.dtos.requestDto.deleteUnappropriatedPostRequestDto;
-import com.hrms.backend.dtos.responseDtos.DeletePostResponseDto;
-import com.hrms.backend.dtos.responseDtos.PostResponseDto;
+import com.hrms.backend.dtos.requestDto.post.CreatePostRequestDto;
+import com.hrms.backend.dtos.requestDto.post.deleteUnappropriatedPostRequestDto;
+import com.hrms.backend.dtos.responseDtos.post.DeletePostResponseDto;
+import com.hrms.backend.dtos.responseDtos.post.PostResponseDto;
 import com.hrms.backend.entities.PostEntities.Post;
 import com.hrms.backend.services.PostServices.PostService;
 import com.hrms.backend.utils.FileUtility;

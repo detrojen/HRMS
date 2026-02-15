@@ -1,8 +1,8 @@
 package com.hrms.backend.services.EmployeeServices;
 
-import com.hrms.backend.dtos.EmployeeWithManagerIdDto;
-import com.hrms.backend.dtos.responseDtos.EmployeeOneLevelReportResponseDto;
-import com.hrms.backend.dtos.responseDtos.EmployeeWithNameOnlyDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithManagerIdDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeOneLevelReportResponseDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.repositories.EmployeeRepositories.EmployeeRepository;
 import com.hrms.backend.specs.EmployeeSpecs;

@@ -1,6 +1,6 @@
 package com.hrms.backend.services.GameSchedulingServices;
 
-import com.hrms.backend.dtos.responseDtos.GameSlotResponseDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.GameSlotResponseDto;
 import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
 import com.hrms.backend.repositories.GameSchedulingRepositories.GameSlotRepository;
 import org.modelmapper.ModelMapper;

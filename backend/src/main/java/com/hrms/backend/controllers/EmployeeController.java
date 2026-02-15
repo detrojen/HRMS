@@ -1,8 +1,8 @@
 package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
-import com.hrms.backend.dtos.responseDtos.EmployeeOneLevelReportResponseDto;
-import com.hrms.backend.dtos.responseDtos.EmployeeWithNameOnlyDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeOneLevelReportResponseDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;

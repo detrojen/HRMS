@@ -3,7 +3,6 @@ import axios from "axios";
 import { toast } from "sonner";
 
 const axiosInstence = axios.create({
-  // baseURL: "http://localhost:8080",
   headers: {
     "Content-type": "application/json"
   }

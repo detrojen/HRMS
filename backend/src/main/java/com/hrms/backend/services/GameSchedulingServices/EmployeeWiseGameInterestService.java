@@ -1,9 +1,9 @@
 package com.hrms.backend.services.GameSchedulingServices;
 
-import com.hrms.backend.dtos.EmployeeWiseGameTypeUsageDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.EmployeeWiseGameTypeUsageDto;
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
-import com.hrms.backend.dtos.responseDtos.EmployeeWithNameOnlyDto;
-import com.hrms.backend.dtos.responseDtos.EmployeeWiseGameInterestResponseDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.EmployeeWiseGameInterestResponseDto;
 import com.hrms.backend.entities.GameSchedulingEntities.EmployeeWiseGameInterest;
 import com.hrms.backend.repositories.GameSchedulingRepositories.EmployeeWiseGameInterestRepository;
 import com.hrms.backend.specs.InterestedEmployeeSpec;

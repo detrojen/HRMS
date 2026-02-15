@@ -1,10 +1,10 @@
 package com.hrms.backend.services.JobListingServices;
 
-import com.hrms.backend.dtos.requestDto.CreateJobRequestDto;
+import com.hrms.backend.dtos.requestDto.job.CreateJobRequestDto;
 import com.hrms.backend.dtos.globalDtos.PageableDto;
-import com.hrms.backend.dtos.requestDto.ShareJobRequestDto;
-import com.hrms.backend.dtos.responseDtos.CreateJobResponseDto;
-import com.hrms.backend.dtos.responseDtos.CvReviewerWithNameOnlyDto;
+import com.hrms.backend.dtos.requestDto.job.ShareJobRequestDto;
+import com.hrms.backend.dtos.responseDtos.job.CreateJobResponseDto;
+import com.hrms.backend.dtos.responseDtos.job.CvReviewerWithNameOnlyDto;
 import com.hrms.backend.emailTemplates.JobEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.Job;
@@ -12,7 +12,6 @@ import com.hrms.backend.repositories.JobListingRepositories.JobRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import com.hrms.backend.specs.JobSpecs;
-import com.hrms.backend.utils.EmailUtility;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;

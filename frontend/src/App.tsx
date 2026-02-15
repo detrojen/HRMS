@@ -14,6 +14,7 @@ import JobForm from './components/functionality/job/job-form'
 import JobListPage from './pages/JobListPage'
 import JobDetailPage from './pages/JobDetailPage'
 import GameSlotBook from './components/functionality/game-scheduling/game-slot-book'
+import TravelForm from './pages/TravelForm'
 const routes : RouteObject[] = [
   {
     path:"/login",
@@ -38,6 +39,10 @@ const routes : RouteObject[] = [
       {
         path:"jobs/add",
         element:<JobForm />
+      },
+      {
+        path: "travels/add",
+        element:<TravelForm />
       },
       {
         path:"game",

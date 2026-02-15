@@ -1,7 +1,7 @@
 package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
-import com.hrms.backend.dtos.responseDtos.NotificationTemplateResponseDto;
+import com.hrms.backend.dtos.responseDtos.notification.NotificationTemplateResponseDto;
 import com.hrms.backend.services.NotificationServices.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

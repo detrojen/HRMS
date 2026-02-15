@@ -1,7 +1,7 @@
 package com.hrms.backend.services.JobListingServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
-import com.hrms.backend.dtos.requestDto.ReferJobRequestDto;
+import com.hrms.backend.dtos.requestDto.job.ReferJobRequestDto;
 import com.hrms.backend.emailTemplates.JobEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.Job;
@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Service

@@ -1,7 +1,7 @@
 package com.hrms.backend.services.GameSchedulingServices;
 
-import com.hrms.backend.dtos.requestDto.CreateUpdateGameTypeRequestDto;
-import com.hrms.backend.dtos.responseDtos.UpdateGameTypeResponseDto;
+import com.hrms.backend.dtos.requestDto.gameScheduling.CreateUpdateGameTypeRequestDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.UpdateGameTypeResponseDto;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
 import com.hrms.backend.repositories.GameSchedulingRepositories.GameTypeRepository;
 import org.modelmapper.ModelMapper;

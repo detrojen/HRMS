@@ -1,7 +1,7 @@
 package com.hrms.backend.services.NotificationServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
-import com.hrms.backend.dtos.responseDtos.NotificationTemplateResponseDto;
+import com.hrms.backend.dtos.responseDtos.notification.NotificationTemplateResponseDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.Notification.Notification;
 import com.hrms.backend.entities.Notification.NotificationTemplate;

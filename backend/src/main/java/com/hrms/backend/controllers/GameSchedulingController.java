@@ -1,9 +1,14 @@
 package com.hrms.backend.controllers;
 
-import com.hrms.backend.dtos.requestDto.BookSlotRequestDto;
-import com.hrms.backend.dtos.requestDto.CreateUpdateGameTypeRequestDto;
-import com.hrms.backend.dtos.requestDto.UpdateGameInterestRequestDto;
+import com.hrms.backend.dtos.requestDto.gameScheduling.BookSlotRequestDto;
+import com.hrms.backend.dtos.requestDto.gameScheduling.CreateUpdateGameTypeRequestDto;
+import com.hrms.backend.dtos.requestDto.gameScheduling.UpdateGameInterestRequestDto;
 import com.hrms.backend.dtos.responseDtos.*;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.EmployeeWiseGameInterestResponseDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.GameSlotResponseDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.SlotRequsetResponseDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.UpdateGameTypeResponseDto;
 import com.hrms.backend.services.GameSchedulingServices.EmployeeWiseGameInterestService;
 import com.hrms.backend.services.GameSchedulingServices.GameSlotService;
 import com.hrms.backend.services.GameSchedulingServices.GameTypeService;

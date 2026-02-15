@@ -1,7 +1,6 @@
 package com.hrms.backend.services.JobListingServices;
 
-import com.hrms.backend.dtos.responseDtos.CvReviewerWithNameOnlyDto;
-import com.hrms.backend.dtos.responseDtos.EmployeeWithNameOnlyDto;
+import com.hrms.backend.dtos.responseDtos.job.CvReviewerWithNameOnlyDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.Job;
 import com.hrms.backend.entities.JobListingEntities.JobWiseCvReviewer;

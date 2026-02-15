@@ -1,8 +1,8 @@
 package com.hrms.backend.services.GameSchedulingServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
-import com.hrms.backend.dtos.responseDtos.GameSlotResponseDto;
-import com.hrms.backend.dtos.responseDtos.SlotRequsetResponseDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.GameSlotResponseDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.SlotRequsetResponseDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;

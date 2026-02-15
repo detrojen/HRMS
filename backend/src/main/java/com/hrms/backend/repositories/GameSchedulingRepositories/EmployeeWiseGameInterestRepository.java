@@ -1,6 +1,6 @@
 package com.hrms.backend.repositories.GameSchedulingRepositories;
 
-import com.hrms.backend.dtos.EmployeeWiseGameTypeUsageDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.EmployeeWiseGameTypeUsageDto;
 import com.hrms.backend.entities.GameSchedulingEntities.EmployeeWiseGameInterest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

@@ -1,6 +1,10 @@
 package com.hrms.backend.config;
 
-import com.hrms.backend.dtos.responseDtos.*;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.EmployeeWiseGameInterestResponseDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.GameSlotResponseDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.UpdateGameTypeResponseDto;
+import com.hrms.backend.dtos.responseDtos.post.DeletePostResponseDto;
+import com.hrms.backend.dtos.responseDtos.post.PostResponseDto;
 import com.hrms.backend.entities.GameSchedulingEntities.EmployeeWiseGameInterest;
 import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
@@ -48,7 +52,7 @@ public class ModelMapperConfig {
     }
 
     public void addEmployeeWiseGameInterestResponseDto(ModelMapper modelMapper){
-        modelMapper.createTypeMap(EmployeeWiseGameInterest.class,EmployeeWiseGameInterestResponseDto.class).addMappings(
+        modelMapper.createTypeMap(EmployeeWiseGameInterest.class, EmployeeWiseGameInterestResponseDto.class).addMappings(
                 mapper->{
                     mapper.map(src->src.getGameType().getGame(),EmployeeWiseGameInterestResponseDto::setGameType);
                     mapper.map(src->src.getGameType().getId(),EmployeeWiseGameInterestResponseDto::setGameTypeId);

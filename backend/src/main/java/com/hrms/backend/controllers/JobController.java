@@ -1,10 +1,10 @@
 package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.globalDtos.PageableDto;
-import com.hrms.backend.dtos.requestDto.CreateJobRequestDto;
-import com.hrms.backend.dtos.requestDto.ReferJobRequestDto;
-import com.hrms.backend.dtos.requestDto.ShareJobRequestDto;
-import com.hrms.backend.dtos.responseDtos.CreateJobResponseDto;
+import com.hrms.backend.dtos.requestDto.job.CreateJobRequestDto;
+import com.hrms.backend.dtos.requestDto.job.ReferJobRequestDto;
+import com.hrms.backend.dtos.requestDto.job.ShareJobRequestDto;
+import com.hrms.backend.dtos.responseDtos.job.CreateJobResponseDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
 import com.hrms.backend.services.JobListingServices.JobApplicationService;
 import com.hrms.backend.services.JobListingServices.JobService;
