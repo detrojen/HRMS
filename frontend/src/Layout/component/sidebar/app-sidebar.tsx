@@ -74,6 +74,36 @@ const data = {
       icon: Gamepad2,
     },
     {
+      title: "Create Job Opening",
+      url: "/jobs/add",
+      icon: Gamepad2,
+    },
+    {
+      title: "Travel",
+      // url: "/travels/add",
+      icon: Gamepad2,
+      items: [
+        {
+          title: "Create travel",
+          url: "/travels/add",
+          role: "HR"
+        },
+        {
+          title: "Manage Travels",
+          url: "/travels/add",
+          role: "HR"
+        },
+        {
+          title: "Assigned Travels",
+          url: "/travels/assigned-travels",
+        },
+        {
+          title: "Team members Travels",
+          url: "/travels/team/assigned-travels",
+        },
+      ]
+    },
+    {
       title: "login",
       url: "/login",
       icon: Gamepad2,

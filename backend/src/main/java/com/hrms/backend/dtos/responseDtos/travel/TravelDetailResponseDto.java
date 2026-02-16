@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class TravelDetailResponseDto {
     private Long id;
+    private boolean isInEmployeeList;
     private String title;
     private String descripton;
     private int maxReimbursementAmountPerDay;
@@ -18,4 +19,11 @@ public class TravelDetailResponseDto {
     private List<EmployeeWithNameOnlyDto> employees;
     private EmployeeWithNameOnlyDto initiatedBy;
     private List<TravelDocumentResponseDto> travelDocuments;
+    private List<TravelDocumentResponseDto> employeeDocuments;
+    private List<TravelDocumentResponseDto> personalDocumnets;
+    private List<TravelExpenseResponseDto> expenses;
+    public void setEmployees(List<EmployeeWithNameOnlyDto> employees,Long employeeId){
+        this.employees = employees;
+        this.isInEmployeeList = employees.stream().anyMatch(employee->employee.getId() == employeeId);
+    }
 }

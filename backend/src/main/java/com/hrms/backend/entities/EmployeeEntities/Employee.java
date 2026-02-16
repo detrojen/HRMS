@@ -87,66 +87,20 @@ public class Employee {
     @OneToMany(mappedBy = "initiatedBy")
     private Collection<Travel> initatedTravels;
 
-    public Collection<Travel> getInitatedTravels() {
-        return initatedTravels;
-    }
-
-    public void setInitatedTravels(Collection<Travel> initatedTravels) {
-        this.initatedTravels = initatedTravels;
-    }
-
     @OneToMany(mappedBy = "employee")
     private Collection<TravelWiseEmployee> travelDetails;
 
-    public Collection<TravelWiseEmployee> getTravelDetails() {
-        return travelDetails;
-    }
-
-    public void setTravelDetails(Collection<TravelWiseEmployee> travelDetails) {
-        this.travelDetails = travelDetails;
-    }
-
-    @OneToMany(mappedBy = "aprrovedBy")
+    @OneToMany(mappedBy = "reviewedBy")
     private Collection<TravelWiseExpense> aprrovedExpenses;
 
-    public Collection<TravelWiseExpense> getAprrovedExpenses() {
-        return aprrovedExpenses;
-    }
-
-    public void setAprrovedExpenses(Collection<TravelWiseExpense> aprrovedExpenses) {
-        this.aprrovedExpenses = aprrovedExpenses;
-    }
 
     @OneToMany(mappedBy = "employee")
     private Collection<TravelWiseExpense> travelExpenses;
 
-    public Collection<TravelWiseExpense> getTravelExpenses() {
-        return travelExpenses;
-    }
-
-    public void setTravelExpenses(Collection<TravelWiseExpense> travelExpenses) {
-        this.travelExpenses = travelExpenses;
-    }
-
     @OneToMany(mappedBy = "uploadedBy")
     private Collection<TravelDocument> travelDocuments;
-
-    public Collection<TravelDocument> getTravelDocuments() {
-        return travelDocuments;
-    }
-
-    public void setTravelDocuments(Collection<TravelDocument> travelDocuments) {
-        this.travelDocuments = travelDocuments;
-    }
 
     @OneToMany(mappedBy = "uploadedBy")
     private Collection<TravelWiseEmployeeWiseDocument> travelWisePesonalDocuments;
 
-    public Collection<TravelWiseEmployeeWiseDocument> getTravelWisePesonalDocuments() {
-        return travelWisePesonalDocuments;
-    }
-
-    public void setTravelWisePesonalDocuments(Collection<TravelWiseEmployeeWiseDocument> travelWisePesonalDocuments) {
-        this.travelWisePesonalDocuments = travelWisePesonalDocuments;
-    }
 }

@@ -3,12 +3,17 @@ import { Button } from "@/components/ui/button"
 // import { AppSidebar } from "./AppSidebar"
 import { Outlet } from "react-router-dom"
 import { AppSidebar } from "@/Layout/component/sidebar/app-sidebar"
+import AuthContextProvider from "@/contexts/AuthContextProvider"
 
 const Layout = () => {
-    return<SidebarProvider>
-        <AppSidebar />
-        <Outlet />
-    </SidebarProvider>
+    return (
+        <AuthContextProvider>
+            <SidebarProvider>
+                <AppSidebar />
+                <Outlet />
+            </SidebarProvider>
+        </AuthContextProvider>
+    )
 }
 
 export default Layout

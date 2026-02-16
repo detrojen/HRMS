@@ -4,6 +4,7 @@ import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeOneLevelReportResponseDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
+import com.hrms.backend.dtos.responseDtos.employee.SelfDetailResponseDto;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,14 @@ public class EmployeeController {
         }else{
             responseDto = employeeService.getOneLevelReport(employeeId);
         }
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(responseDto)
+        );
+    }
+
+    @GetMapping("/employees/self")
+    public ResponseEntity<GlobalResponseDto<SelfDetailResponseDto>> getSelfDetails(){
+        SelfDetailResponseDto responseDto = employeeService.getSelfDetails();
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto)
         );

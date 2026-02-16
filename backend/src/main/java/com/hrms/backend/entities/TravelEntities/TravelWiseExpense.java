@@ -17,8 +17,9 @@ public class TravelWiseExpense {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
-    private String expenseType;
-    private int reimbursedAmout;
+    @ManyToOne
+    @JoinColumn()
+    private ExpenseCategory category;
     private int askedAmout;
     private int aprrovedAmout;
     private String remark;
@@ -29,7 +30,7 @@ public class TravelWiseExpense {
     private Employee employee;
     @ManyToOne
     @JoinColumn()
-    private Employee aprrovedBy;
+    private Employee reviewedBy;
     @ManyToOne
     @JoinColumn()
     private Travel travel;

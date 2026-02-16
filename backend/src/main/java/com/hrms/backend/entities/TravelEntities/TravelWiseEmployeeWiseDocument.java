@@ -22,6 +22,10 @@ public class TravelWiseEmployeeWiseDocument {
     @ManyToOne
     @JoinColumn()
     private Employee uploadedBy;
+
+    @ManyToOne
+    @JoinColumn()
+    private Travel travel;
     @CreatedDate
     private Date createdAt;
     @LastModifiedDate

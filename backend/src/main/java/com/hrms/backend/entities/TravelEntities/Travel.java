@@ -45,4 +45,7 @@ public class Travel {
 
     @OneToMany(mappedBy = "travel")
     private Collection<TravelWiseExpense> expenses;
+    @OneToMany(mappedBy = "travel")
+    private Collection<TravelWiseEmployeeWiseDocument> employeeDocuments;
+
 }

@@ -10,9 +10,8 @@ const useCreateJobMutation = () => {
         mutationFn: (payload: TCreateJobRequest) => createJobRequest(payload),
         onSuccess:(data,variable,context)=>{
             if(data.status == "OK"){
-                // navTo("/")
+                navTo("/")
             }
-            return data.data
         },
         
     }

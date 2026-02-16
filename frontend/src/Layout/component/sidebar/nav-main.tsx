@@ -16,6 +16,8 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { Link } from "react-router-dom"
+import { useContext } from "react"
+import { AuthContext } from "@/contexts/AuthContextProvider"
 
 export function NavMain({
   items,
@@ -25,51 +27,54 @@ export function NavMain({
     url: string
     icon?: LucideIcon
     isActive?: boolean
+    role?: string
     items?: {
       title: string
       url: string
+      role?: string
     }[]
   }[]
 }) {
+  const { user } = useContext(AuthContext)
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          item.items ? 
-          <Collapsible
-            key={item.title}
-            asChild
-            defaultOpen={item.isActive}
-            className="group/collapsible"
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <Link to={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible> :<> <SidebarMenuButton tooltip={item.title}>
-                   {item.icon && <item.icon />}
-                  <span><Link to={item.url}>{item.title}</Link></span>
-                </SidebarMenuButton> </>
-        ))}
+        {items.map((item) => item.role == undefined || item.role == user.role || items != undefined ? (
+          item.items ?
+            <Collapsible
+              key={item.title}
+              asChild
+              defaultOpen={item.isActive}
+              className="group/collapsible"
+            >
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton tooltip={item.title}>
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {item.items?.map((subItem) => subItem.role == undefined || subItem.role == user.role ? (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton asChild>
+                          <Link to={subItem.url}>
+                            <span>{subItem.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ) : <></>)}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible> : <> <SidebarMenuButton tooltip={item.title}>
+              {item.icon && <item.icon />}
+              <span><Link to={item.url}>{item.title}</Link></span>
+            </SidebarMenuButton> </>
+        ) : <></>)}
       </SidebarMenu>
     </SidebarGroup>
   )

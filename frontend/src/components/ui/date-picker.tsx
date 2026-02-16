@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/popover"
 import { format } from "date-fns"
 
-export function DatePicker({title,onSelect}:{title:string,onSelect:(date:Date)=>void}) {
-  const [date, setDate] = React.useState<Date>()
+export function DatePicker({title,onSelect,value}:{title:string,onSelect:(date:Date)=>void, value:Date}) {
+  const [date, setDate] = React.useState<Date>(value)
 
   return (
     <Field className="mx-auto w-44">
