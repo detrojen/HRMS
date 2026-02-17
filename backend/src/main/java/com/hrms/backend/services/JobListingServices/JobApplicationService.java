@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,7 @@ public class JobApplicationService {
         this.emailService = emailService;
     }
 
-    public JobApplication referJobTo(Long jobId,ReferJobRequestDto requestDto, String cvPath) throws MalformedURLException, MessagingException {
+    public JobApplication referJobTo(Long jobId,ReferJobRequestDto requestDto, String cvPath) throws MalformedURLException, MessagingException, FileNotFoundException {
         JobApplication jobApplication = modelMapper.map(requestDto,JobApplication.class);
         JwtInfoDto jwtinfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Job job = jobService.getRef(jobId);

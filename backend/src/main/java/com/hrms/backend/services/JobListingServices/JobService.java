@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -74,7 +75,7 @@ public class JobService {
         return modelMapper.map(job,CreateJobResponseDto.class);
     }
 
-    public void shareJob(Long jobId, ShareJobRequestDto requestDto) throws MessagingException, MalformedURLException {
+    public void shareJob(Long jobId, ShareJobRequestDto requestDto) throws MessagingException, MalformedURLException, FileNotFoundException {
         Job job = jobRepository.findById(jobId).orElseThrow(()->new RuntimeException("job not found"));
         String emailBody = JobEmailTemplates.shareJob(job);
         System.out.println(emailBody);

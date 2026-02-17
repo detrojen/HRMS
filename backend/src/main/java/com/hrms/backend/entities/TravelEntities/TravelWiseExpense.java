@@ -20,11 +20,13 @@ public class TravelWiseExpense {
     @ManyToOne
     @JoinColumn()
     private ExpenseCategory category;
-    private int askedAmout;
-    private int aprrovedAmout;
+    private String description;
+    private int askedAmount;
+    private int aprrovedAmount;
     private String remark;
     private String reciept;
     private LocalDate dateOfExpense;
+    private String status;
     @ManyToOne
     @JoinColumn()
     private Employee employee;

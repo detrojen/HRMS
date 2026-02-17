@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 
 @RestController
@@ -60,14 +61,14 @@ public class JobController {
 
 
     @PostMapping("/jobs/{jobId}/refer")
-    public ResponseEntity<GlobalResponseDto<?>> referJob(@PathVariable Long jobId, @RequestPart ReferJobRequestDto applicantsDetail, @RequestPart MultipartFile cv) throws MalformedURLException, MessagingException {
+    public ResponseEntity<GlobalResponseDto<?>> referJob(@PathVariable Long jobId, @RequestPart ReferJobRequestDto applicantsDetail, @RequestPart MultipartFile cv) throws MalformedURLException, MessagingException, FileNotFoundException {
         String cvpath = FileUtility.Save(cv, "cvs");
         jobApplicationService.referJobTo(jobId,applicantsDetail,cvpath);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(null, "Job refered successfull.",HttpStatus.OK));
 
     }
     @PostMapping("/jobs/{jobId}/share")
-    public ResponseEntity<GlobalResponseDto<?>> shareJob(@PathVariable Long jobId, @RequestBody ShareJobRequestDto requestDto) throws MessagingException, MalformedURLException {
+    public ResponseEntity<GlobalResponseDto<?>> shareJob(@PathVariable Long jobId, @RequestBody ShareJobRequestDto requestDto) throws MessagingException, MalformedURLException, FileNotFoundException {
         jobService.shareJob(jobId,requestDto);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(null, "Job refered successfull.",HttpStatus.OK));
 

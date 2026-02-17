@@ -4,6 +4,7 @@ import type { TTravelDoucmentResponse } from "./TTravelDocumnetResponse.type";
 import type { TTravelExpenseResponse } from "./TTravelExpenseResponse.type";
 
 export type TTravelDetails = {
+    id: number
     title: string
     descripton: string
     maxReimbursementAmountPerDay: number
@@ -16,5 +17,5 @@ export type TTravelDetails = {
     personalDocumnets:TTravelDoucmentResponse[];
     employeeDocuments: TTravelDoucmentResponse[]
     inEmployeeList:boolean
-    expenses: TTravelExpenseResponse[]
+    expensesMadeByMe: TTravelExpenseResponse[]
 }

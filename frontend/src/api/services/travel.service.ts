@@ -5,6 +5,9 @@ import type { TCreateTravelRequest } from "@/types/apiRequestTypes/TcreateTravel
 import type { TTravelDetails } from "@/types/apiResponseTypes/TTravelDetails.type";
 import type { TTypeMinDetails } from "@/types/apiResponseTypes/TTravelMinDetails.type";
 import type { TAddUpdateExpense } from "@/types/apiRequestTypes/TAddUpdateExpense.type";
+import type { TTravelExpenseResponse } from "@/types/apiResponseTypes/TTravelExpenseResponse.type";
+import type { TTravelExpenseQueryParams } from "@/types/apiRequestTypes/TTravelExpenseQueryParams.type";
+import type { TReviewExpenseRequest } from "@/types/apiRequestTypes/TReviewExpenesRequest.type";
 
 export const createTravel = (payload: TCreateTravelRequest) => {
     return api.post<TGlobalResponse<any>>("/api/travels", payload)
@@ -65,4 +68,13 @@ export const updateExpense = (payload: TAddUpdateExpense & { travelId: string | 
             "Content-Type": "multipart/form-data"
         }
     })
+}
+
+export const fetchExpenseAsHR = ({travelId,category,dateFrom,dateTo,employeeId}:TTravelExpenseQueryParams) => {
+    var queryString = "".concat(category?`category=${category}&`:"").concat(employeeId?`employeeId=${employeeId}&`:"").concat(dateFrom?`dateFrom=${dateFrom}&`:"").concat(dateTo?`dateTo=${dateTo}&`:"")
+    return api.get<TGlobalResponse<TTravelExpenseResponse[]>>(`/api/travels/${travelId}/expenses?${queryString}`)
+}
+
+export const reviewExpense = (payload:TReviewExpenseRequest) => {
+    return api.patch("/api/travels/expenses",payload)
 }

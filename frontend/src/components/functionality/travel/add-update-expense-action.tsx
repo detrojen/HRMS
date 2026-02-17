@@ -7,15 +7,18 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import type { TAddUpdateExpense } from "@/types/apiRequestTypes/TAddUpdateExpense.type";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
+import { Icon, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
 
 type TAddUpdateExpenseActionProps = {
+    title?: string
+    icon?: LucideIcon
     travelId: number | string,
     expense?:Pick<TAddUpdateExpense,"expenseDetails"> | undefined
     mutation: () => UseMutationResult<AxiosResponse<any, any, {}>, Error, TAddUpdateExpense & { travelId: number | string }, unknown>
 }
-const AddUpdateExpenseAction = ({ travelId, mutation, expense }: TAddUpdateExpenseActionProps) => {
+const AddUpdateExpenseAction = ({ travelId, mutation, expense ,icon,title}: TAddUpdateExpenseActionProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const uploadTravelDocumentMutation = mutation()
     const form = useForm<TAddUpdateExpense>({
@@ -37,15 +40,13 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense }: TAddUpdateExpen
     })
     return (
         <Dialog open={isOpen} onOpenChange={() => { setIsOpen(!isOpen) }}>
-            <DialogTrigger>Add Documnet</DialogTrigger>
+            <DialogTrigger>{title}</DialogTrigger>
 
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Upload travel documnet</DialogTitle>
                 </DialogHeader>
-                <p>
-                    {JSON.stringify(expense)}
-                </p>
+            
                 <Controller
                     control={form.control}
                     name="expenseDetails.dateOfExpense"
@@ -59,10 +60,10 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense }: TAddUpdateExpen
                 />
                 <Controller
                     control={form.control}
-                    name="expenseDetails.askedAmout"
+                    name="expenseDetails.askedAmount"
                     render={({ field, fieldstate }) => (
                         <Field>
-                            <FieldLabel>Type</FieldLabel>
+                            <FieldLabel>Expense Amount</FieldLabel>
                             <Input type="number" {...field} />
                         </Field>
                     )}
@@ -86,6 +87,18 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense }: TAddUpdateExpen
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
+                        </Field>
+                    )}
+                />
+                 <Controller
+                    control={form.control}
+                    name="expenseDetails.description"
+                    render={({ field, fieldstate }) => (
+                        <Field>
+                            <Field>
+                            <FieldLabel>Description</FieldLabel>
+                            <Input  {...field} />
+                        </Field>
                         </Field>
                     )}
                 />

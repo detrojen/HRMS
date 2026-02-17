@@ -26,7 +26,8 @@ public class SecurityConfig {
                 .csrf().disable() // disable CSRF for simplicity, enable in production if needed
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers("/auth/login").permitAll() // allow login endpoint
-                        .requestMatchers("/swagger-ui/**").permitAll() // allow Swagger UI
+                        .requestMatchers("/swagger-ui/**").permitAll()// allow Swagger UI
+                                .requestMatchers("/resource/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers(HttpMethod.POST,"/game-types").hasAuthority("HR")// allow OpenAPI.requestMatchers()
                                 .requestMatchers(HttpMethod.PUT,"/game-types").hasAuthority("HR")// allow OpenAPI.requestMatchers()

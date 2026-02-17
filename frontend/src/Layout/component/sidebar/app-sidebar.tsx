@@ -27,6 +27,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { AuthContext } from "@/contexts/AuthContextProvider"
 
 // This is sample data.
 const data = {
@@ -113,6 +114,7 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const {user} = React.useContext(AuthContext)
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -121,6 +123,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={{
+          name: user.firstName + " " +user.lastName,
+          email: "",
+          avatar: ""
+        }} />
+        
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

@@ -1,8 +1,9 @@
 export type TAddUpdateExpense = {
     expenseDetails:{
         id?:  number
+        description?:string
         categoryId?: string
-        askedAmout?: number
+        askedAmount?: number
         dateOfExpense?: Date
         reciept?:string
     },

@@ -29,7 +29,7 @@ public class TravelWiseEmployee {
     @JoinColumn()
     private Employee employee;
     @ColumnDefault("0")
-    private int reimbursedAmout;
+    private int reimbursedAmount;
     @CreatedDate
     private Date createdAt;
     @LastModifiedDate

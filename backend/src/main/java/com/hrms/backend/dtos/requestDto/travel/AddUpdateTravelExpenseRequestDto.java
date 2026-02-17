@@ -7,8 +7,9 @@ import java.time.LocalDate;
 @Data
 public class AddUpdateTravelExpenseRequestDto {
     private  Long id;
+    private String description;
     private Long categoryId;
-    private int askedAmout;
+    private int askedAmount;
     private String reciept;
     private LocalDate dateOfExpense;
 }

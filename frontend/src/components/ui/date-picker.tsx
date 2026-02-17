@@ -15,7 +15,7 @@ export function DatePicker({title,onSelect,value}:{title:string,onSelect:(date:D
   const [date, setDate] = React.useState<Date>(value)
 
   return (
-    <Field className="mx-auto w-44">
+    <>
       <FieldLabel htmlFor="date-picker-simple">{title}</FieldLabel>
       <Popover>
         <PopoverTrigger asChild>
@@ -39,6 +39,6 @@ export function DatePicker({title,onSelect,value}:{title:string,onSelect:(date:D
           />
         </PopoverContent>
       </Popover>
-    </Field>
+      </>
   )
 }

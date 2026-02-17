@@ -8,12 +8,14 @@ import java.time.LocalDate;
 @Data
 public class TravelExpenseResponseDto {
     private  Long id;
+    private String description;
     private ExpenseCategoryDto category;
-    private int askedAmout;
+    private int askedAmount;
     private String reciept;
     private LocalDate dateOfExpense;
     private EmployeeWithNameOnlyDto employee;
-    private  EmployeeWithNameOnlyDto reviedBy;
-    private int aprrovedAmout;
+    private  EmployeeWithNameOnlyDto reviewedBy;
+    private int aprrovedAmount;
     private String remark;
+    private String status;
 }

@@ -15,6 +15,7 @@ import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 
 @Service
@@ -26,7 +27,7 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    public void shareJob(String subject, String recieptants, String body, String jdPath) throws MessagingException, MalformedURLException {
+    public void shareJob(String subject, String recieptants, String body, String jdPath) throws MessagingException, MalformedURLException, FileNotFoundException {
         Parser parser = Parser.builder().build();
         Node document = parser.parse(body);
         String htmlContent = HtmlRenderer.builder().build().render(document);
@@ -39,7 +40,7 @@ public class EmailService {
         mimeMessageHelper.addAttachment(jdPath,file);
         mailSender.send(mailMessage);
     }
-    public void refferJob(String subject, String[] recieptants,String[] ccs ,String body, String cvPath) throws MessagingException, MalformedURLException {
+    public void refferJob(String subject, String[] recieptants,String[] ccs ,String body, String cvPath) throws MessagingException, MalformedURLException, FileNotFoundException {
         Parser parser = Parser.builder().build();
         Node document = parser.parse(body);
         String htmlContent = HtmlRenderer.builder().build().render(document);

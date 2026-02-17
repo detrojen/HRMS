@@ -7,6 +7,9 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem } from "../../ui/form";
 import useCreategameTypeMutation from "@/api/mutations/create-game-type.mutation";
 import useUpdategameTypeMutation from "@/api/mutations/update-game-type.mutation";
+import { useContext } from "react";
+import { AuthContext } from "@/contexts/AuthContextProvider";
+import { toast } from "sonner";
 
 const GameTypeForm = ({ gameType , isEditable=true}: { gameType: TGameType | null, isEditable:boolean }) => {
     const form = useForm<TGameType>({
@@ -14,18 +17,22 @@ const GameTypeForm = ({ gameType , isEditable=true}: { gameType: TGameType | nul
             
         }
     })
+    const {user} = useContext(AuthContext)
     const createGameTypeMutation = useCreategameTypeMutation()
     const updateGameTypeMutation = useUpdategameTypeMutation()
     
     const handleSubmit =  form.handleSubmit((values)=>{
-        
+        if(user.role != "HR"){
+            toast("You can not create or update game type")
+            return
+        }
         if(gameType){
             updateGameTypeMutation.mutate(values)
         }else{
             createGameTypeMutation.mutate(values)
         }
     })
-
+    
     return (
         <Form {...form} >
             <form onSubmit={handleSubmit}>

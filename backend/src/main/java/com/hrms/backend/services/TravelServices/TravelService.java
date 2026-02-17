@@ -93,7 +93,7 @@ public class TravelService {
         responseDto.setPersonalDocumnets(personalDocumnets);
         responseDto.setEmployeeDocuments(employeeDocuments);
         if(responseDto.isInEmployeeList()){
-            responseDto.setExpenses(travelWiseExpenseService.getExpenses(travelId));
+            responseDto.setExpensesMadeByMe(travelWiseExpenseService.getExpenses(travelId));
         }
         return responseDto;
     }
