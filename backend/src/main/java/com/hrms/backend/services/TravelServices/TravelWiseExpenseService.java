@@ -4,15 +4,20 @@ import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.requestDto.ReviewTravelExpenseRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelExpenseRequestDto;
 import com.hrms.backend.dtos.requestParamDtos.TravelExpenseParamsDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import com.hrms.backend.dtos.responseDtos.travel.TravelExpenseResponseDto;
+import com.hrms.backend.emailTemplates.TravelAndExpenseEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.ExpenseCategory;
 import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.entities.TravelEntities.TravelWiseExpense;
 import com.hrms.backend.repositories.TravelRepositories.ExpenseCategoryRepository;
 import com.hrms.backend.repositories.TravelRepositories.TravelWiseExpenseRepository;
+import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
+import com.hrms.backend.services.NotificationServices.NotificationService;
 import com.hrms.backend.specs.TravelExpenseSpecs;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,22 +26,30 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class TravelWiseExpenseService {
     private final TravelWiseExpenseRepository travelWiseExpenseRepository;
     private final ExpenseCategoryRepository expenseCategoryRepository;
     private final ModelMapper modelMapper;
     private final EmployeeService employeeService;
+    private final EmailService emailService;
+    private final NotificationService notificationService;
 
     public TravelWiseExpenseService(
             TravelWiseExpenseRepository travelWiseExpenseRepository
             ,ExpenseCategoryRepository expenseCategoryRepository
-            ,ModelMapper modelMapper,
-            EmployeeService employeeService){
+            ,ModelMapper modelMapper
+            ,EmployeeService employeeService
+            ,NotificationService notificationService
+            ,EmailService emailService
+    ){
         this.expenseCategoryRepository = expenseCategoryRepository;
         this.travelWiseExpenseRepository = travelWiseExpenseRepository;
         this.modelMapper = modelMapper;
         this.employeeService = employeeService;
+        this.notificationService = notificationService;
+        this.emailService = emailService;
     }
 
     public TravelExpenseResponseDto createTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String recieptPath){
@@ -95,6 +108,7 @@ public class TravelWiseExpenseService {
     public TravelExpenseResponseDto reviewExpense(ReviewTravelExpenseRequestDto requestDto){
         TravelWiseExpense expense = travelWiseExpenseRepository.findById(requestDto.getId()).orElseThrow(()->new RuntimeException("not found expense"));
         if(requestDto.getAprrovedAmount() > expense.getAskedAmount()){
+            log.error("Invalid action: can to aprrove greater then asked");
             throw new RuntimeException("Invalid action: can to aprrove greater then asked");
         }
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -104,6 +118,15 @@ public class TravelWiseExpenseService {
         expense.setReviewedBy(employee);
         expense.setStatus(expense.getAprrovedAmount() == 0?"rejected":"reviewed");
         expense = travelWiseExpenseRepository.save(expense);
+
+        List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
+        emailService.sendMail(
+                "Reviewed Expense"
+                ,TravelAndExpenseEmailTemplates.forReviewExpense(expense)
+                ,new String[]{expense.getEmployee().getEmail()}
+                ,hrs.stream().map(hr->hr.getEmail()).collect(Collectors.toUnmodifiableList()).toArray(new String[]{})
+        );
+        notificationService.notify("Expense reviewed ","Expense",new Long[]{expense.getEmployee().getId()});
         return modelMapper.map(expense, TravelExpenseResponseDto.class);
     }
 

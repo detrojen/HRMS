@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchAssignedTravels, fetchExpenseAsHR, fetchTravelById } from "../services/travel.service";
+import { fetchAssignedTravels, fetchAssignedTravelsOfEmployee, fetchExpenseAsHR, fetchTravelById } from "../services/travel.service";
 import type { TTypeMinDetails } from "@/types/apiResponseTypes/TTravelMinDetails.type";
 import type { TTravelExpenseQueryParams } from "@/types/apiRequestTypes/TTravelExpenseQueryParams.type";
 
@@ -9,6 +9,14 @@ export const useFetchAssignedTravels = () => useQuery(
         queryFn: ()=>fetchAssignedTravels()
     }
 )
+
+export const useFetchAssignedTravelsOfEmployee = () => useQuery(
+    {
+        queryKey:["assigned-travels-as-manager"],
+        queryFn: ()=>fetchAssignedTravelsOfEmployee()
+    }
+)
+
 
 export const useFetchTravelById = (travelId:string) => useQuery(
     {

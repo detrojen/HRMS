@@ -1,7 +1,7 @@
 package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.requestDto.ReviewTravelExpenseRequestDto;
-import com.hrms.backend.dtos.requestDto.travel.AddTravelDocumentRequestDto;
+import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelDocumentRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelExpenseRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.CreateTravelRequestDto;
 import com.hrms.backend.dtos.requestParamDtos.TravelExpenseParamsDto;
@@ -42,17 +42,30 @@ public class TravelController {
     }
 
     @PostMapping("/travels/{travelId}/documents")
-    public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> addTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") MultipartFile file){
+    public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> addTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") MultipartFile file){
         String filePath = FileUtility.Save(file,"travel-documents");
         TravelDocumentResponseDto responseDto = travelService.addDocument(travelId,documentDetails,filePath);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto)
         );
     }
+
+//    updateEmployeeDocument
     @PostMapping("/travels/{travelId}/employee-documents")
-    public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> addEmployeeTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") MultipartFile file){
+    public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> addEmployeeTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") MultipartFile file){
         String filePath = FileUtility.Save(file,"travel-documents");
         TravelDocumentResponseDto responseDto = travelService.addEmployeeDocument(travelId,documentDetails,filePath);
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(responseDto)
+        );
+    }
+    @PutMapping("/travels/{travelId}/employee-documents")
+    public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> updateEmployeeTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") Optional<MultipartFile> file){
+        if(file.isPresent()){
+            String filePath = FileUtility.Save(file.get(),"travel-documents");
+            documentDetails.setDocumentPath(filePath);
+        }
+        TravelDocumentResponseDto responseDto = travelService.updateEmployeeDocument(travelId,documentDetails);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto)
         );
@@ -98,6 +111,14 @@ public class TravelController {
                 new GlobalResponseDto<>(travels)
         );
     }
+    @GetMapping("/travels/as-a-manager")
+    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getTravelsAsManager(){
+        List<TravelMinDetailResponseDto> travels = travelService.getTravelsAsManager();
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(travels)
+        );
+    }
+
     @PatchMapping("/travels/expenses")
     public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> reviewExpense(@RequestBody ReviewTravelExpenseRequestDto requestDto){
         TravelExpenseResponseDto expense = expenseService.reviewExpense(requestDto);

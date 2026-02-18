@@ -1,10 +1,7 @@
 package com.hrms.backend.services.EmployeeServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
-import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithManagerIdDto;
-import com.hrms.backend.dtos.responseDtos.employee.EmployeeOneLevelReportResponseDto;
-import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
-import com.hrms.backend.dtos.responseDtos.employee.SelfDetailResponseDto;
+import com.hrms.backend.dtos.responseDtos.employee.*;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.repositories.EmployeeRepositories.EmployeeRepository;
 import com.hrms.backend.specs.EmployeeSpecs;
@@ -51,6 +48,10 @@ public class EmployeeService {
         SelfDetailResponseDto responseDto = modelMapper.map(employee,SelfDetailResponseDto.class);
         responseDto.setRole(employee.getRole().getRoleTitle());
         return responseDto;
+    }
+
+    public List<EmployeeMinDetailsDto> getEmployeeWhoHr(){
+        return employeeRepository.getEmployeeWhoHr();
     }
 
 }

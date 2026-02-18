@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import type { TAddUpdateExpense } from "@/types/apiRequestTypes/TAddUpdateExpense.type";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
-import { Icon, type LucideIcon } from "lucide-react";
+import { Icon, PlusCircle, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
 
@@ -40,7 +40,7 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense ,icon,title}: TAdd
     })
     return (
         <Dialog open={isOpen} onOpenChange={() => { setIsOpen(!isOpen) }}>
-            <DialogTrigger>{title}</DialogTrigger>
+            <DialogTrigger  className="flex gap-0.5"><PlusCircle/></DialogTrigger>
 
             <DialogContent>
                 <DialogHeader>

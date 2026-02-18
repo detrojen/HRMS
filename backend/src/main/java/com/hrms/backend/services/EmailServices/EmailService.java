@@ -3,6 +3,7 @@ package com.hrms.backend.services.EmailServices;
 import com.hrms.backend.utils.FileUtility;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -15,9 +16,11 @@ import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 
+@Slf4j
 @Service
 public class EmailService {
     private final JavaMailSender mailSender;
@@ -53,5 +56,40 @@ public class EmailService {
         Resource file = FileUtility.Get("cvs",cvPath);
         mimeMessageHelper.addAttachment(cvPath,file);
         mailSender.send(mailMessage);
+    }
+
+    public void sendMail(String subject,String body, String[] recieptants,String[] ccs){
+        try{
+            MimeMessage mailMessage = mailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mailMessage,true);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(body,true);
+            mimeMessageHelper.setTo(recieptants);
+            mimeMessageHelper.setCc(ccs);
+//            Resource file = FileUtility.Get("cvs",cvPath);
+//            mimeMessageHelper.addAttachment(cvPath,file);
+            mailSender.send(mailMessage);
+        }catch (MessagingException e){
+            log.error("at mail service :- "+ e.getMessage());
+        }
+
+    }
+    public void sendMail(String subject,String body, String[] recieptants,String[] ccs, String attachmentFolderName,String attachementFileName) {
+        try {
+            MimeMessage mailMessage = mailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mailMessage, true);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(body, true);
+            mimeMessageHelper.setTo(recieptants);
+            mimeMessageHelper.setCc(ccs);
+            Resource file = FileUtility.Get(attachmentFolderName, attachementFileName);
+            mimeMessageHelper.addAttachment(attachementFileName, file);
+            mailSender.send(mailMessage);
+        } catch (MessagingException e) {
+            log.error("at mail service :- " + e.getMessage());
+        } catch (MalformedURLException e) {
+            log.error("at mail service while get file resource for " + attachmentFolderName + File.separator + attachementFileName);
+            log.error(e.getMessage());
+        }
     }
 }

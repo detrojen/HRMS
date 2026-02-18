@@ -1,7 +1,9 @@
 package com.hrms.backend.filters;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
+import com.hrms.backend.exceptions.JwtTokenRequired;
 import com.hrms.backend.services.AuthServices.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +34,10 @@ public class JwtAuthfilter extends OncePerRequestFilter{
         String token = null;
         String email = null;
         JwtInfoDto jwtInfo = null;
-
+        StringBuffer url = request.getRequestURL();
+        if(authHeader == null && url.indexOf("login")==-1 && url.indexOf("resource") == -1 && url.indexOf("swagger") == -1 && url.indexOf("/v3/api-docs") == -1 ){
+            throw new JwtTokenRequired();
+        }
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             email = _jwtService.extractEmail(token);

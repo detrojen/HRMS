@@ -3,7 +3,8 @@ export type TUploadTravelDocumnetRequest = {
         id: number
         type: string
         description: string
+        documentPath?: string
     },
     travelId: number
-    file: File
+    file?: File
 }

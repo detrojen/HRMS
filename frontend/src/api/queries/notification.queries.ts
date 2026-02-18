@@ -6,6 +6,6 @@ export const useNotifications = () => useQuery(
         queryKey: ["notification"],
         queryFn:()=> fetchNotifications(),
         staleTime:0,
-        refetchInterval: 60 * 1000 * 5,
+        refetchInterval: 60* 1000 * 5,
     }
 )

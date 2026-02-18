@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import AddTravelDocumnetAction from "./add-travel-documnet-action";
+import AddUpdateTravelDocumnetAction from "./add-update-travel-documnet-action";
 import TravelDocumentTable from "./travel-document-table";
 import { AuthContext } from "@/contexts/AuthContextProvider";
 import { useContext } from "react";
@@ -13,7 +13,7 @@ const TravelDocumnetDetails = () => {
         <Card className="w-1/1">
             <CardContent>
                 {user.role == "HR" ? <div className="w-1/1 flex justify-end ">
-                    <AddTravelDocumnetAction travelId={travelId} mutation={useUploadTravelDocumentMutation} />
+                    <AddUpdateTravelDocumnetAction travelId={travelId} mutation={useUploadTravelDocumentMutation} />
                 </div> : <></>}
                 <TravelDocumentTable documents={documents} canUpdate={user.role == "HR"} />
             </CardContent>

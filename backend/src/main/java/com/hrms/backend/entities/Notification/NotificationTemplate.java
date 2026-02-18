@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -28,6 +29,6 @@ public class NotificationTemplate {
     private  Date updatedAt;
     @OneToMany(mappedBy = "template")
     @JsonIgnore
-    private Collection<Notification> notifications;
+    private List<Notification> notifications;
 
 }

@@ -48,7 +48,11 @@ const routes : RouteObject[] = [
       },
       {
         path: "travels/assigned-travels",
-        element:<TravelList />
+        element:<TravelList asManager={false}/>
+      },
+      {
+        path: "travels/team/assigned-travels",
+        element:<TravelList asManager={true}/>
       },
       {
         path: "travels/:travelId",

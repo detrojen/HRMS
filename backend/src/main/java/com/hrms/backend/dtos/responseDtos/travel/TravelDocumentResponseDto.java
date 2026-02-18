@@ -10,4 +10,5 @@ public class TravelDocumentResponseDto {
     private String documentPath;
     private String description;
     private EmployeeWithNameOnlyDto uploadedBy;
+//    private TravelMinDetailResponseDto travel;
 }

@@ -1,5 +1,6 @@
 package com.hrms.backend.entities.JobListingEntities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -35,13 +37,6 @@ public class Job {
     @LastModifiedDate
     private  Date updatedAt;
     @OneToMany(mappedBy = "job")
-    private Collection<JobApplication> jobApplications;
-
-    public Collection<JobApplication> getJobApplications() {
-        return jobApplications;
-    }
-
-    public void setJobApplications(Collection<JobApplication> jobApplications) {
-        this.jobApplications = jobApplications;
-    }
+    @JsonIgnore
+    private List<JobApplication> jobApplications;
 }

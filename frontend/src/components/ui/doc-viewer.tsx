@@ -1,4 +1,4 @@
-import { View } from "lucide-react"
+import { Eye, View } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./dialog"
 import { useEffect, useState } from "react"
 
@@ -22,7 +22,7 @@ const DocRenderer = ({ url }: { url: string }) => {
 const DocViewer = ({ url }: { url: string }) => {
     return (
         <Dialog >
-            <DialogTrigger><View /></DialogTrigger>
+            <DialogTrigger><Eye /></DialogTrigger>
 
             <DialogContent>
                 <DialogHeader>

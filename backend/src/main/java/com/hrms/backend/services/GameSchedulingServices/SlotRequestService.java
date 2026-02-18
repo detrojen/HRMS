@@ -3,6 +3,7 @@ package com.hrms.backend.services.GameSchedulingServices;
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.GameSlotResponseDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.SlotRequsetResponseDto;
+import com.hrms.backend.emailTemplates.GameSchedulingEmailTemplate;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
@@ -10,7 +11,9 @@ import com.hrms.backend.entities.GameSchedulingEntities.SlotRequest;
 import com.hrms.backend.entities.GameSchedulingEntities.SlotRequestWiseEmployee;
 import com.hrms.backend.exceptions.SlotCanNotBeBookedException;
 import com.hrms.backend.repositories.GameSchedulingRepositories.SlotRequestRepository;
+import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
+import com.hrms.backend.services.NotificationServices.NotificationService;
 import com.hrms.backend.specs.SlotRequestSpecs;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -31,9 +34,21 @@ public class SlotRequestService {
     private final EmployeeWiseGameInterestService employeeWiseGameInterestService;
     private final GameTypeService gameTypeService;
     private final ModelMapper modelMapper;
+    private final EmailService emailService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public SlotRequestService(SlotRequestRepository slotRequestRepository, GameSlotService gameSlotService, EmployeeService employeeService, SlotRequestWiseemployeeService slotRequestWiseemployeeService, EmployeeWiseGameInterestService employeeWiseGameInterestService, GameTypeService gameTypeService ,ModelMapper modelMapper){
+    public SlotRequestService(
+            SlotRequestRepository slotRequestRepository
+            , GameSlotService gameSlotService
+            , EmployeeService employeeService
+            , SlotRequestWiseemployeeService slotRequestWiseemployeeService
+            , EmployeeWiseGameInterestService employeeWiseGameInterestService
+            , GameTypeService gameTypeService
+            , ModelMapper modelMapper
+            , EmailService emailService
+            ,NotificationService notificationService
+    ){
         this.slotRequestRepository = slotRequestRepository;
         this.gameSlotService = gameSlotService;
         this.employeeService = employeeService;
@@ -41,6 +56,8 @@ public class SlotRequestService {
         this.employeeWiseGameInterestService = employeeWiseGameInterestService;
         this.gameTypeService = gameTypeService;
         this.modelMapper = modelMapper;
+        this.emailService = emailService;
+        this.notificationService = notificationService;
     }
 
     public int getActiveRequestCount(Long employeeId, Long gameTypeId){
@@ -113,6 +130,7 @@ public class SlotRequestService {
         List<SlotRequestWiseEmployee> mappedEmployees = otherPlayerIds.stream().map(id->slotRequestWiseemployeeService.mapSlotsToEmployee(id,finalSlotRequest)).collect(Collectors.toUnmodifiableList());
 
         slotRequest.setSlotRequestWiseEmployee(mappedEmployees);
+        notifyAndShareEmail(slotRequest);
         return modelMapper.map(slotRequest, SlotRequsetResponseDto.class);
 
     }
@@ -150,6 +168,7 @@ public class SlotRequestService {
         slotRequest.setStatus("Confirm");
         var employees = slotRequest.getSlotRequestWiseEmployee();
         employees.stream().iterator().forEachRemaining(e-> employeeWiseGameInterestService.addConsumedSlotCount(e.getEmployee().getId(),slotRequest.getGameSlot().getGameType().getId()));
+        notifyAndShareEmail(slotRequest);
         return slotRequestRepository.save(slotRequest);
     }
 
@@ -157,12 +176,28 @@ public class SlotRequestService {
         slotRequest.setStatus(status);
         var employees = slotRequest.getSlotRequestWiseEmployee();
         employees.stream().iterator().forEachRemaining(e-> employeeWiseGameInterestService.deductConsumedSlotCount(e.getEmployee().getId(), slotRequest.getGameSlot().getGameType().getId()));
+        notifyAndShareEmail(slotRequest);
         return slotRequestRepository.save(slotRequest);
     }
 
     private SlotRequest onHoldToCancel(SlotRequest slotRequest){
-        slotRequest.setStatus("Canceled");
+        slotRequest.setStatus("Cancel");
+        notifyAndShareEmail(slotRequest);
         return slotRequestRepository.save(slotRequest);
+    }
+
+    private void notifyAndShareEmail(SlotRequest slotRequest){
+        emailService.sendMail(
+                "Slot request ackwolwdgement"
+                , GameSchedulingEmailTemplate.forSlotRequest(slotRequest)
+                ,slotRequest.getSlotRequestWiseEmployee().stream().map(e->e.getEmployee().getEmail()).toList().toArray(new String[]{})
+                ,new String[]{}
+        );
+        notificationService.notify(
+                "Slot reuqested for " + slotRequest.getGameSlot().getGameType().getGame() + " on " + slotRequest.getGameSlot().getSlotDate() + " from "  + slotRequest.getGameSlot().getStartsFrom() + " to "  +slotRequest.getGameSlot().getEndsAt()
+            ,"Game"
+                ,slotRequest.getSlotRequestWiseEmployee().stream().map(e->e.getEmployee().getId()).toList().toArray(new Long[]{})
+        );
     }
 
 }

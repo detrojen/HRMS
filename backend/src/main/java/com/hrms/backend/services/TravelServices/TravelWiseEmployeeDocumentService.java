@@ -1,11 +1,10 @@
 package com.hrms.backend.services.TravelServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
-import com.hrms.backend.dtos.requestDto.travel.AddTravelDocumentRequestDto;
+import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelDocumentRequestDto;
 import com.hrms.backend.dtos.responseDtos.travel.TravelDocumentResponseDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.Travel;
-import com.hrms.backend.entities.TravelEntities.TravelDocument;
 import com.hrms.backend.entities.TravelEntities.TravelWiseEmployeeWiseDocument;
 import com.hrms.backend.repositories.TravelRepositories.TravelWiseEmployeeWiseDocumentRepository;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
@@ -59,13 +58,25 @@ public class TravelWiseEmployeeDocumentService {
 
     }
 
-    public TravelDocumentResponseDto addDocument(Travel travel, AddTravelDocumentRequestDto documentRequestDto, String filePath){
+    public TravelDocumentResponseDto addDocument(Travel travel, AddUpdateTravelDocumentRequestDto documentRequestDto, String filePath){
         TravelWiseEmployeeWiseDocument travelDocument = modelMapper.map(documentRequestDto,TravelWiseEmployeeWiseDocument.class);
         travelDocument.setDocumentPath(filePath);
         travelDocument.setTravel(travel);
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Employee uploadedBy = employeeService.getEmployeeById(jwtInfoDto.getUserId());
         travelDocument.setUploadedBy(uploadedBy);
+        travelDocument = repository.save(travelDocument);
+        return modelMapper.map(travelDocument,TravelDocumentResponseDto.class);
+    }
+    public TravelDocumentResponseDto updateDocument(Travel travel, AddUpdateTravelDocumentRequestDto documentRequestDto){
+        TravelWiseEmployeeWiseDocument travelDocument = repository.findById(documentRequestDto.getId()).orElseThrow(()->new RuntimeException("document details not found"));
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(travelDocument.getUploadedBy().getId() != jwtInfoDto.getUserId()){
+            throw new RuntimeException("Invalid action");
+        }
+        travelDocument.setDocumentPath(documentRequestDto.getDocumentPath());
+        travelDocument.setDescription(documentRequestDto.getDescription());
+        travelDocument.setType(documentRequestDto.getType());
         travelDocument = repository.save(travelDocument);
         return modelMapper.map(travelDocument,TravelDocumentResponseDto.class);
     }

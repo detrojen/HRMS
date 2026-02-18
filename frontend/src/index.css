@@ -173,19 +173,10 @@
   }
 }
 
+
 @layer components {
   
-  .expense-approved {
-    @apply bg-green-600
-  }
-
-  .expense-pending {
-    @apply bg-amber-600
-  }
-
-  .expense-rejected {
-    @apply bg-red-600
-  }
+  
   .available-slot {
     @apply bg-green-300 border border-green-500 rounded
   }
@@ -202,4 +193,18 @@
     @apply bg-yellow-300 border border-yellow-500 rounded
   }
 
+}
+
+@layer utilities{
+.expense-approved {
+    @apply bg-green-400
+  }
+
+  .expense-pending {
+    @apply bg-amber-400
+  }
+
+  .expense-rejected {
+    @apply bg-red-400
+  }
 }

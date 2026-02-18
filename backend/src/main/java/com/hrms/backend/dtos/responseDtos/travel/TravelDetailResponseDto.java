@@ -19,6 +19,7 @@ public class TravelDetailResponseDto {
     private List<EmployeeWithNameOnlyDto> employees;
     private EmployeeWithNameOnlyDto initiatedBy;
     private List<TravelDocumentResponseDto> travelDocuments;
+
     private List<TravelDocumentResponseDto> employeeDocuments;
     private List<TravelDocumentResponseDto> personalDocumnets;
     private List<TravelExpenseResponseDto> expensesMadeByMe;

@@ -6,15 +6,22 @@ import { Input } from "@/components/ui/input";
 import type { TUploadTravelDocumnetRequest } from "@/types/apiRequestTypes/TUploadTravelDocumentRequest.type";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
+import type { LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
 
-const AddTravelDocumnetAction = ({ travelId, mutation }: { travelId: number, mutation:()=> UseMutationResult<AxiosResponse<any, any, {}>, Error, TUploadTravelDocumnetRequest, unknown> }) => {
+const AddUpdateTravelDocumnetAction = ({ travelId, mutation, defaultValues, Actionicon }: {defaultValues?:TUploadTravelDocumnetRequest, travelId: number, mutation:()=> UseMutationResult<AxiosResponse<any, any, {}>, Error, TUploadTravelDocumnetRequest, unknown>, Actionicon:LucideIcon }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const uploadTravelDocumentMutation = mutation()
-    const form = useForm<TUploadTravelDocumnetRequest>({
+    const form = useForm<Omit<TUploadTravelDocumnetRequest,"travelId">>({
         defaultValues: {
-            travelId
+            documentDetails: {
+                description: defaultValues?.documentDetails.description,
+                type:defaultValues?.documentDetails.type,
+                documentPath:defaultValues?.documentDetails.documentPath,
+                id:defaultValues?.documentDetails.id
+            },
+           
         }
     })
 
@@ -28,16 +35,17 @@ const AddTravelDocumnetAction = ({ travelId, mutation }: { travelId: number, mut
     }
 
     const handleSubmit = form.handleSubmit((values)=>{
-        uploadTravelDocumentMutation.mutate(values)
+        uploadTravelDocumentMutation.mutate({...values,travelId})
     })
     return (
         <Dialog open={isOpen} onOpenChange={() => { setIsOpen(!isOpen) }}>
-            <DialogTrigger>Add Documnet</DialogTrigger>
+            <DialogTrigger><Actionicon/></DialogTrigger>
 
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Upload travel documnet</DialogTitle>
                 </DialogHeader>
+                {JSON.stringify(defaultValues)}
                 <Controller
                     control={form.control}
                     name="documentDetails.description"
@@ -78,4 +86,4 @@ const AddTravelDocumnetAction = ({ travelId, mutation }: { travelId: number, mut
 
 }
 
-export default AddTravelDocumnetAction
+export default AddUpdateTravelDocumnetAction

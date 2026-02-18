@@ -1,5 +1,6 @@
 package com.hrms.backend.entities.TravelEntities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -24,8 +25,9 @@ public class TravelDocument {
     @JoinColumn()
     private Employee uploadedBy;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn()
+    @JsonIgnore
     private Travel travel;
     @CreatedDate
     private Date createdAt;

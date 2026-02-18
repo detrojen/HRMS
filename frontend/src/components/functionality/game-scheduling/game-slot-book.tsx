@@ -8,6 +8,7 @@ import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type"
 import { Button } from "../../ui/button"
 import useRequestSlotMutation from "@/api/mutations/request-slot.mutation"
 import { Separator } from "@/components/ui/separator"
+import { Slot } from "radix-ui"
 function getSlotAppearnceClass(slotStatus: boolean) {
   return slotStatus ? "available-slot" : "unavailable-slot"
 }
@@ -25,8 +26,8 @@ const GameSlotBook = () => {
     <>
 
       <Card className="p-1 h-full">
-        <div className="grid grid-cols-15 gap-1">
-          {data && data.map(item => <div key={item.id} className={`aspect-square ${selectedSlot == item.id ? "selected-slot" : getSlotAppearnceClass(item.available)}`} onClick={() => { setSelectedSlot(item.id) }}></div>)}
+        <div className="flex flex-row gap-2 flex-wrap">
+          {data && data.map(item => <div key={item.id} className={`w-fit p-2 ${selectedSlot == item.id ? "selected-slot" : getSlotAppearnceClass(item.available)}`} onClick={() => { setSelectedSlot(item.id) }}>{item.startsFrom}</div>)}
         </div>
         <Field>
           <FieldLabel >Add player</FieldLabel>

@@ -22,6 +22,12 @@ public class GlobalExceptionHandler {
                 .body(new GlobalResponseDto<>(null,"please login!",HttpStatus.UNAUTHORIZED));
 
     }
+    @ExceptionHandler(JwtTokenRequired.class)
+    public ResponseEntity<?> handleJwtRequired(JwtTokenRequired e){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new GlobalResponseDto<>(null,"please login!",HttpStatus.UNAUTHORIZED));
+
+    }
 
     @ExceptionHandler(SlotCanNotBeBookedException.class)
     public ResponseEntity<?> handleSlotCanNotBeBookedException(SlotCanNotBeBookedException e){

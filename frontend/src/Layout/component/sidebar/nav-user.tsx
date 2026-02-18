@@ -28,6 +28,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import Notification from "./notification"
+import { useNavigate } from "react-router-dom"
 
 export function NavUser({
   user,
@@ -38,8 +39,12 @@ export function NavUser({
     avatar: string
   }
 }) {
+  const navTo = useNavigate()
   const { isMobile } = useSidebar()
-
+  const logout = () => {
+    localStorage.removeItem("HRMS_AUTH_TOKEN")
+    navTo("/login")
+  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -85,7 +90,7 @@ export function NavUser({
               {/* </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={logout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -38,14 +39,14 @@ public class Travel {
     @LastModifiedDate
     private Date updatedAt;
     @OneToMany(mappedBy = "travel")
-    private Collection<TravelDocument> travelDocuments;
+    private List<TravelDocument> travelDocuments;
 
     @OneToMany(mappedBy = "travel")
-    private Collection<TravelWiseEmployee> travelWiseEmployees;
+    private List<TravelWiseEmployee> travelWiseEmployees;
 
     @OneToMany(mappedBy = "travel")
-    private Collection<TravelWiseExpense> expenses;
+    private List<TravelWiseExpense> expenses;
     @OneToMany(mappedBy = "travel")
-    private Collection<TravelWiseEmployeeWiseDocument> employeeDocuments;
+    private List<TravelWiseEmployeeWiseDocument> employeeDocuments;
 
 }

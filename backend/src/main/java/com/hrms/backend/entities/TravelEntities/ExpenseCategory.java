@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
@@ -13,6 +14,6 @@ public class ExpenseCategory {
     private  Long id;
     private String category;
     @OneToMany(mappedBy = "category")
-    private Collection<TravelWiseExpense> expenses;
+    private List<TravelWiseExpense> expenses;
 
 }

@@ -16,5 +16,12 @@ public class TravelSpecs {
         );
     }
 
+    public static Specification<Travel> hasManger(Long managerId){
+        return ((root, query, criteriaBuilder) -> {
+            Join<Travel,Employee> managerJoin = root.join("travelWiseEmployees").join("employee").join("manager");
+            return criteriaBuilder.equal(managerJoin.get("id"),managerId);
+        });
+    }
+
 
 }
