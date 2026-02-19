@@ -10,6 +10,7 @@ import {
   GalleryVerticalEnd,
   Gamepad2,
   HomeIcon,
+  Image,
   Map,
   PieChart,
   Settings2,
@@ -91,7 +92,7 @@ const data = {
         },
         {
           title: "Manage Travels",
-          url: "/travels/add",
+          url: "/travels/manage",
           role: "HR"
         },
         {
@@ -105,9 +106,14 @@ const data = {
       ]
     },
     {
-      title: "login",
-      url: "/login",
-      icon: Gamepad2,
+      title: "post",
+      url: "/posts",
+      icon: Image,
+    },
+    {
+      title: "create post",
+      url: "/posts/create",
+      icon: Image,
     }
   ],
  

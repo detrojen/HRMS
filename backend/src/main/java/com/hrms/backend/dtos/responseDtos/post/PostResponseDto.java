@@ -10,5 +10,7 @@ public class PostResponseDto {
     private String attachmentPath;
     private String tags;
     private String createdBy;
+    private int commentCount;
+    private int likeCount;
 
 }

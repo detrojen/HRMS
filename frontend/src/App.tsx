@@ -17,6 +17,8 @@ import GameSlotBook from './components/functionality/game-scheduling/game-slot-b
 import TravelForm from './pages/TravelForm'
 import TravelList from './pages/TravelListPage'
 import TravelDetailPage from './pages/TravelDetailPage'
+import CreatePostPage from './pages/CreatePostPage'
+import PostListPage from './pages/PostListPage'
 const routes : RouteObject[] = [
   {
     path:"/login",
@@ -47,17 +49,30 @@ const routes : RouteObject[] = [
         element:<TravelForm />
       },
       {
+        path:"travels/manage",
+        element:<TravelList getAsa='hr' />
+      },
+      {
         path: "travels/assigned-travels",
-        element:<TravelList asManager={false}/>
+        element:<TravelList getAsa='assigned'/>
       },
       {
         path: "travels/team/assigned-travels",
-        element:<TravelList asManager={true}/>
+        element:<TravelList getAsa='as-a-manager'/>
       },
       {
         path: "travels/:travelId",
         element:<TravelDetailPage />
       },
+      {
+        path:"posts",
+        element: <PostListPage />
+      },
+      {
+        path:"posts/create",
+        element: <CreatePostPage />
+      },
+      
       // 
       {
         path:"game",

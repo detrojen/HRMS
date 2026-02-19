@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/popover"
 import { format } from "date-fns"
 
-export function DatePicker({title,onSelect,value}:{title:string,onSelect:(date:Date)=>void, value:Date}) {
-  const [date, setDate] = React.useState<Date>(value)
+export function DatePicker({title,onSelect,value}:{title:string,onSelect:(date:Date)=>void, value?:Date|null}) {
+  const [date, setDate] = React.useState<Date|undefined | null>(value)
 
   return (
     <>
@@ -30,12 +30,12 @@ export function DatePicker({title,onSelect,value}:{title:string,onSelect:(date:D
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="single"
-            selected={date}
+            selected={date??undefined}
             onSelect={(value)=>{
                 setDate(value)
                 onSelect(value!)
             }}
-            defaultMonth={date}
+            defaultMonth={date??undefined}
           />
         </PopoverContent>
       </Popover>

@@ -10,6 +10,7 @@ import type { TReviewExpenseRequest } from "@/types/apiRequestTypes/TReviewExpen
 import type { TUploadTravelDocumnetRequest } from "@/types/apiRequestTypes/TUploadTravelDocumentRequest.type";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
+import { FileSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
 
@@ -39,7 +40,7 @@ const ReviewExpenseAction = (props:TReviewExpenseActionProps) => {
     })
     return (
         <Dialog open={isOpen} onOpenChange={() => { setIsOpen(!isOpen) }}>
-            <DialogTrigger>Review Expense</DialogTrigger>
+            <DialogTrigger> <FileSearch/> </DialogTrigger>
 
             <DialogContent>
                 <DialogHeader>

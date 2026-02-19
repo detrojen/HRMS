@@ -33,4 +33,14 @@ public class TravelDocumentService {
         travelDocument = travelDocumentRepository.save(travelDocument);
         return modelMapper.map(travelDocument,TravelDocumentResponseDto.class);
     }
+
+    public TravelDocumentResponseDto updateDocument(Travel travel, AddUpdateTravelDocumentRequestDto documentRequestDto){
+        TravelDocument travelDocument = modelMapper.map(documentRequestDto,TravelDocument.class);
+        travelDocument.setDocumentPath(documentRequestDto.getDocumentPath());
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Employee uploadedBy = employeeService.getEmployeeById(jwtInfoDto.getUserId());
+        travelDocument.setUploadedBy(uploadedBy);
+        travelDocument = travelDocumentRepository.save(travelDocument);
+        return modelMapper.map(travelDocument,TravelDocumentResponseDto.class);
+    }
 }

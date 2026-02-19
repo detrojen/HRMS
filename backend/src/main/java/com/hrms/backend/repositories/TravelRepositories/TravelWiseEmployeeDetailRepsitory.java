@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TravelWiseEmployeeDetailRepsitory extends JpaRepository<TravelWiseEmployee, Long> {
+    TravelWiseEmployee findByTravel_IdAndEmployee_Id(Long travelId, Long employeeId);
 }

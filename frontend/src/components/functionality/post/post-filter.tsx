@@ -1,0 +1,48 @@
+import { DatePicker } from "@/components/ui/date-picker"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { useRef } from "react"
+import { useSearchParams } from "react-router-dom"
+
+const PostFilter = () => {
+    const [serachParams, setSearchparams] = useSearchParams()
+    const debouceRef = useRef<number | null>(null)
+
+    const handleFilterChange = (key: string, value: string) => {
+        if (value === "all") {
+            serachParams.delete(key)
+        } else {
+            serachParams.set(key, value)
+        }
+         if(debouceRef != null){
+            clearTimeout(debouceRef.current!)
+        }
+        debouceRef.current = setTimeout(()=>{
+            setSearchparams(serachParams)
+        },500)
+        
+    }
+    return (
+        <div className="flex gap-1 p-1">
+            <Field>
+                <FieldLabel>
+                    Author
+                </FieldLabel>
+                <Input onChange={(e) => { handleFilterChange("author", e.target.value) }} />
+            </Field>
+            <Field>
+                <FieldLabel>
+                    Text
+                </FieldLabel>
+                <Input onChange={(e) => { handleFilterChange("query", e.target.value) }} />
+            </Field>
+            <Field>
+                <DatePicker title={"post from"} onSelect={(value) => { handleFilterChange("postFrom", `${value.getFullYear()}-${(value.getMonth() + 1).toString().padStart(2, "0")}-${(value.getDate()).toString().padStart(2, "0")}`) }} value={serachParams.get("postFrom") ? new Date(serachParams.get("postFrom")!) : undefined} />
+            </Field>
+            <Field>
+                <DatePicker title={"post to"} onSelect={(value) => { handleFilterChange("postTo", `${value.getFullYear()}-${(value.getMonth() + 1).toString().padStart(2, "0")}-${(value.getDate()).toString().padStart(2, "0")}`) }} value={serachParams.get("postTo") ? new Date(serachParams.get("postTo")!) : undefined} />
+            </Field>
+        </div>
+    )
+}
+export default PostFilter

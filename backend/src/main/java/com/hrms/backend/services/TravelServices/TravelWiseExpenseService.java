@@ -35,6 +35,7 @@ public class TravelWiseExpenseService {
     private final EmployeeService employeeService;
     private final EmailService emailService;
     private final NotificationService notificationService;
+    private final TravelWiseEmployeeDetailService travelWiseEmployeeDetailService;
 
     public TravelWiseExpenseService(
             TravelWiseExpenseRepository travelWiseExpenseRepository
@@ -43,6 +44,7 @@ public class TravelWiseExpenseService {
             ,EmployeeService employeeService
             ,NotificationService notificationService
             ,EmailService emailService
+            ,TravelWiseEmployeeDetailService travelWiseEmployeeDetailService
     ){
         this.expenseCategoryRepository = expenseCategoryRepository;
         this.travelWiseExpenseRepository = travelWiseExpenseRepository;
@@ -50,6 +52,7 @@ public class TravelWiseExpenseService {
         this.employeeService = employeeService;
         this.notificationService = notificationService;
         this.emailService = emailService;
+        this.travelWiseEmployeeDetailService = travelWiseEmployeeDetailService;
     }
 
     public TravelExpenseResponseDto createTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String recieptPath){
@@ -63,6 +66,8 @@ public class TravelWiseExpenseService {
         ExpenseCategory category = expenseCategoryRepository.getReferenceById(requestDto.getCategoryId());
         travelWiseExpense.setCategory(category);
         travelWiseExpense = travelWiseExpenseRepository.save(travelWiseExpense);
+        travelWiseEmployeeDetailService.addAskedAmount(travel.getId(), requestDto.getAskedAmount());
+
         return modelMapper.map(travelWiseExpense, TravelExpenseResponseDto.class);
     }
 
@@ -71,6 +76,7 @@ public class TravelWiseExpenseService {
         if(travelWiseExpense.getStatus().equals("approved") || travelWiseExpense.getStatus().equals("rejected")){
             throw new RuntimeException("you can not update expense once it reviewed");
         }
+        int oldAskedAmount = travelWiseExpense.getAskedAmount();
         ExpenseCategory category = expenseCategoryRepository.getReferenceById(requestDto.getCategoryId());
         travelWiseExpense.setCategory(category);
         travelWiseExpense.setReciept(recieptPath);
@@ -78,6 +84,7 @@ public class TravelWiseExpenseService {
         travelWiseExpense.setDateOfExpense(requestDto.getDateOfExpense());
         travelWiseExpense.setDescription(requestDto.getDescription());
         travelWiseExpense = travelWiseExpenseRepository.save(travelWiseExpense);
+        travelWiseEmployeeDetailService.updateAskedAmount(travel.getId(),oldAskedAmount, requestDto.getAskedAmount());
         return modelMapper.map(travelWiseExpense, TravelExpenseResponseDto.class);
     }
 
@@ -111,6 +118,7 @@ public class TravelWiseExpenseService {
             log.error("Invalid action: can to aprrove greater then asked");
             throw new RuntimeException("Invalid action: can to aprrove greater then asked");
         }
+        int oldAmount = expense.getAprrovedAmount();
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Employee employee = employeeService.getReference(jwtInfoDto.getUserId());
         expense.setAprrovedAmount(requestDto.getAprrovedAmount());
@@ -118,7 +126,7 @@ public class TravelWiseExpenseService {
         expense.setReviewedBy(employee);
         expense.setStatus(expense.getAprrovedAmount() == 0?"rejected":"reviewed");
         expense = travelWiseExpenseRepository.save(expense);
-
+        travelWiseEmployeeDetailService.updateReimbursedAmount(expense.getTravel().getId(),expense.getEmployee().getId(),oldAmount,expense.getAprrovedAmount());
         List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
         emailService.sendMail(
                 "Reviewed Expense"

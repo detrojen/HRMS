@@ -6,10 +6,10 @@ import { Badge } from "./badge"
 const TagsAdd = ({ field, form, placeholder }: {
     field: ControllerRenderProps<any, string>
     form: UseFormReturn<any, any, any>
-    placeholder: string
+    placeholder?: string
 }) => {
     const skillRef = useRef<HTMLInputElement>(null)
-
+    const tags = field.value??[]
     return (
         <div>
             <Input
@@ -18,17 +18,16 @@ const TagsAdd = ({ field, form, placeholder }: {
                 onKeyUp={(e) => {
                    
                     if (e.key === "Enter" && skillRef.current != null) {
-                         console.log("adding tags")
-                        form.setValue(field.name, [...field.value, skillRef.current?.value])
+                        
+                        form.setValue(field.name, [ ...tags,skillRef.current?.value ])
                         skillRef.current.value = ""
-                        console.log(field.value)
                     }
 
                 }}
                 placeholder={placeholder}></Input>
             <div className="flex gap-2 my-2">
                 {
-                    field.value.map(
+                  field.value &&  field.value.map(
                         item => <Badge className="text-sm px-5" onClick={()=>{
                             console.log(field.value.filter(tag => tag != item))
                             form.setValue(field.name, field.value.filter(tag => tag != item))

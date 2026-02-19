@@ -45,7 +45,6 @@ const AddUpdateTravelDocumnetAction = ({ travelId, mutation, defaultValues, Acti
                 <DialogHeader>
                     <DialogTitle>Upload travel documnet</DialogTitle>
                 </DialogHeader>
-                {JSON.stringify(defaultValues)}
                 <Controller
                     control={form.control}
                     name="documentDetails.description"

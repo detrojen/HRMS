@@ -6,5 +6,5 @@ import lombok.Data;
 public class CreatePostRequestDto {
     private String title;
     private String body;
-    private String tags;
+    private String[] tags;
 }

@@ -49,6 +49,17 @@ public class TravelController {
                 new GlobalResponseDto<>(responseDto)
         );
     }
+    @PutMapping("/travels/{travelId}/documents")
+    public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> updateTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") Optional<MultipartFile> file){
+        if(file.isPresent()){
+            String filePath = FileUtility.Save(file.get(),"travel-documents");
+            documentDetails.setDocumentPath(filePath);
+        }
+        TravelDocumentResponseDto responseDto = travelService.updateDocument(travelId,documentDetails);
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(responseDto)
+        );
+    }
 
 //    updateEmployeeDocument
     @PostMapping("/travels/{travelId}/employee-documents")
@@ -104,20 +115,37 @@ public class TravelController {
                 new GlobalResponseDto<>(expenses)
         );
     }
-    @GetMapping("/travels/assigned-travels")
-    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getAssignedTravels(){
-        List<TravelMinDetailResponseDto> travels = travelService.getAssignedTravels();
+
+    @GetMapping("/travels/list/{getAsa}")
+    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getTravelsAsManager(@PathVariable String getAsa){
+        List<TravelMinDetailResponseDto> travels = travelService.getTravels(getAsa);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(travels)
         );
     }
-    @GetMapping("/travels/as-a-manager")
-    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getTravelsAsManager(){
-        List<TravelMinDetailResponseDto> travels = travelService.getTravelsAsManager();
-        return ResponseEntity.ok().body(
-                new GlobalResponseDto<>(travels)
-        );
-    }
+
+//    @GetMapping("/travels/as-a-manager")
+//    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getTravelsAsManager(){
+//        List<TravelMinDetailResponseDto> travels = travelService.getTravelsAsManager();
+//        return ResponseEntity.ok().body(
+//                new GlobalResponseDto<>(travels)
+//        );
+//    }
+//
+//    @GetMapping("/travels/assigned-travels")
+//    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getAssignedTravels(){
+//        List<TravelMinDetailResponseDto> travels = travelService.getAssignedTravels();
+//        return ResponseEntity.ok().body(
+//                new GlobalResponseDto<>(travels)
+//        );
+//    }
+//    @GetMapping("/travels/as-a-hr")
+//    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getTravelsAsHr(){
+//        List<TravelMinDetailResponseDto> travels = travelService.getTravelsAsHR();
+//        return ResponseEntity.ok().body(
+//                new GlobalResponseDto<>(travels)
+//        );
+//    }
 
     @PatchMapping("/travels/expenses")
     public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> reviewExpense(@RequestBody ReviewTravelExpenseRequestDto requestDto){

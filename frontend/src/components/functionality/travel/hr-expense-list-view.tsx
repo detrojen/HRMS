@@ -57,7 +57,7 @@ const HrExpenseListView = () => {
                                         "-"}
                                     </TableCell>
                                     <TableCell className="text-center">{expense.remark}</TableCell>
-                                    <TableCell>
+                                    <TableCell className="text-center">
                                         <DocViewer url={`/api/resource/expenses/${expense.reciept}`} />
                                         <ReviewExpenseAction {...expense} />
 

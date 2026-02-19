@@ -1,16 +1,15 @@
-import { useFetchAssignedTravels, useFetchAssignedTravelsOfEmployee } from "@/api/queries/travel.queries"
+import { useFetchTravels } from "@/api/queries/travel.queries"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Link } from "react-router-dom";
 
-const TravelList = ({asManager}:{asManager:boolean}) => {
-    const { data,isLoading } = asManager?useFetchAssignedTravelsOfEmployee():useFetchAssignedTravels();
+const TravelList = ({getAsa}:{getAsa:string}) => {
+    const { data,isLoading } = useFetchTravels(getAsa);
     const travels = data?.data
     if(isLoading){
         return "loading data"
     }
     return (
         <>
-            {asManager?"manager":"employee"}
             <Table className="">
                 <TableHeader className="">
                     <TableRow>

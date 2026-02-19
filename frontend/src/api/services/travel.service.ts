@@ -12,13 +12,15 @@ import type { TReviewExpenseRequest } from "@/types/apiRequestTypes/TReviewExpen
 export const createTravel = (payload: TCreateTravelRequest) => {
     return api.post<TGlobalResponse<any>>("/api/travels", payload)
 }
-
-export const fetchAssignedTravels = () => {
-    return api.get<TGlobalResponse<TTypeMinDetails>>("/api/travels/assigned-travels")
+export const fetchTravels = (getAsa: string) => {
+     return api.get<TGlobalResponse<TTypeMinDetails>>(`/api/travels/list/${getAsa}`)
 }
-export const fetchAssignedTravelsOfEmployee = () => {
-    return api.get<TGlobalResponse<TTypeMinDetails>>("/api/travels/as-a-manager")
-}
+// export const fetchAssignedTravels = () => {
+//     return api.get<TGlobalResponse<TTypeMinDetails>>("/api/travels/assigned-travels")
+// }
+// export const fetchAssignedTravelsOfEmployee = () => {
+//     return api.get<TGlobalResponse<TTypeMinDetails>>("/api/travels/as-a-manager")
+// }
 
 
 export const fetchTravelById = (travelId: string) => {
@@ -28,9 +30,23 @@ export const fetchTravelById = (travelId: string) => {
 export const uploadTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
     const formData = new FormData()
     formData.append("documentDetails", new Blob([JSON.stringify(payload.documentDetails)], { type: "application/json" }))
-    formData.append("file", payload.file)
+    formData.append("file", payload.file!)
 
     return api.post(`/api/travels/${payload.travelId}/documents`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    })
+}
+
+export const updateTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
+    const formData = new FormData()
+    formData.append("documentDetails", new Blob([JSON.stringify(payload.documentDetails)], { type: "application/json" }))
+     if(payload.file){
+        formData.append("file", payload.file)
+    }
+
+    return api.put(`/api/travels/${payload.travelId}/documents`, formData, {
         headers: {
             "Content-Type": "multipart/form-data"
         }

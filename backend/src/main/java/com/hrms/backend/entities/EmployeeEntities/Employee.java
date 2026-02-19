@@ -9,6 +9,8 @@ import com.hrms.backend.entities.JobListingEntities.JobApplication;
 import com.hrms.backend.entities.JobListingEntities.JobWiseCvReviewer;
 import com.hrms.backend.entities.Notification.Notification;
 import com.hrms.backend.entities.PostEntities.Post;
+import com.hrms.backend.entities.PostEntities.PostComment;
+import com.hrms.backend.entities.PostEntities.PostLike;
 import com.hrms.backend.entities.TravelEntities.*;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -85,22 +87,45 @@ public class Employee {
     private Collection<Notification> notifications;
 
     @OneToMany(mappedBy = "initiatedBy")
+    @JsonIgnore
     private Collection<Travel> initatedTravels;
 
     @OneToMany(mappedBy = "employee")
+    @JsonIgnore
     private Collection<TravelWiseEmployee> travelDetails;
 
     @OneToMany(mappedBy = "reviewedBy")
+    @JsonIgnore
     private Collection<TravelWiseExpense> aprrovedExpenses;
 
 
     @OneToMany(mappedBy = "employee")
+    @JsonIgnore
     private Collection<TravelWiseExpense> travelExpenses;
 
     @OneToMany(mappedBy = "uploadedBy")
+    @JsonIgnore
     private Collection<TravelDocument> travelDocuments;
 
     @OneToMany(mappedBy = "uploadedBy")
+    @JsonIgnore
     private Collection<TravelWiseEmployeeWiseDocument> travelWisePesonalDocuments;
 
+    @OneToMany(mappedBy = "likedBy")
+    @JsonIgnore
+    private Collection<PostLike> likedPosts;
+
+    @OneToMany(mappedBy = "commentedBy")
+    private Collection<PostComment> comments;
+
+    @OneToMany(mappedBy = "DeletedBy")
+    private Collection<PostComment> deletedComments;
+
+    public Collection<PostComment> getDeletedComments() {
+        return deletedComments;
+    }
+
+    public void setDeletedComments(Collection<PostComment> deletedComments) {
+        this.deletedComments = deletedComments;
+    }
 }
