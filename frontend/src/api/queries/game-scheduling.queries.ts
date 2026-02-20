@@ -12,7 +12,7 @@ import type { TGameType } from "@/types/apiResponseTypes/TGameType.type"
 export const useQueryGameSlots = (data:TQueryGameSlots)=>{
 
     return useQuery<TGlobalResponse<any>>({
-        queryKey: ["game-slots",`game-slot-id-${data.gameTypeId}`],
+        queryKey: ["game-slots",`game-slot-id-${data.gameTypeId}-${data.date}`],
         queryFn: ()=> getGameSlotByGameTypeIdOfDate(data),
         staleTime:0
     })

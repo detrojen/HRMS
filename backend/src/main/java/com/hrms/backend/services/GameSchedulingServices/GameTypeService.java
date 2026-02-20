@@ -3,6 +3,7 @@ package com.hrms.backend.services.GameSchedulingServices;
 import com.hrms.backend.dtos.requestDto.gameScheduling.CreateUpdateGameTypeRequestDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.UpdateGameTypeResponseDto;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.GameSchedulingRepositories.GameTypeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class GameTypeService {
     }
 
     public GameType getById(Long id){
-        return this.gameTypeRepository.findById(id).orElseThrow(()->new RuntimeException("Game type with this id not found"));
+        return this.gameTypeRepository.findById(id).orElseThrow(()->new ItemNotFoundExpection("Game type with this id not found"));
     }
 
     public UpdateGameTypeResponseDto createGameType(CreateUpdateGameTypeRequestDto requestDto){
@@ -48,7 +49,7 @@ public class GameTypeService {
     }
 
     public UpdateGameTypeResponseDto getGameTypeById(Long id){
-        GameType gameType = gameTypeRepository.findById(id).orElseThrow(()->new RuntimeException("Game type with this id not found"));
+        GameType gameType = gameTypeRepository.findById(id).orElseThrow(()->new ItemNotFoundExpection("Game type with this id not found"));
         int count = gameType.getEmployeeWiseGameInterests().stream().filter(e->e.isInterested()).collect(Collectors.toUnmodifiableList()).size();
         UpdateGameTypeResponseDto dto = modelMapper.map(gameType, UpdateGameTypeResponseDto.class);
         dto.setNoOfInteretedEmployees(count);

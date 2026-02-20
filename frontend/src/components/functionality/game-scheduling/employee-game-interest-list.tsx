@@ -23,7 +23,7 @@ const  EmployeeWiseGameInterestList = () => {
                 <div className="flex w-full max-w-md flex-col gap-2">
                     {data.map(item=><Item variant="outline">
                         <ItemContent>
-                            <ItemTitle><Link to={`slots/${item.gameTypeId}`}>{item.gameType}</Link></ItemTitle>
+                            <ItemTitle><Link to={`book-slot?game-id=${item.gameTypeId}`}>{item.gameType}</Link></ItemTitle>
                         </ItemContent>
                         <ItemActions>
                             <Checkbox id="terms-checkbox" name="terms-checkbox" defaultChecked={item.interested} onCheckedChange={(value:boolean)=>{

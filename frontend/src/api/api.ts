@@ -22,8 +22,8 @@ axiosInstence.interceptors.response.use((response)=>{
     }
     return response.data;
   },(error)=>{
-    
-    errorHandler(error.response);
+    debugger
+    errorHandler(error.response.data);
     return error.response
   }
 )

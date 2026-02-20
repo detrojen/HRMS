@@ -27,15 +27,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers("/auth/login").permitAll() // allow login endpoint
                         .requestMatchers("/swagger-ui/**").permitAll()// allow Swagger UI
-                                .requestMatchers("/resource/**").permitAll()
+                        .requestMatchers("/resource/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/game-types").hasAuthority("HR")// allow OpenAPI.requestMatchers()
-                                .requestMatchers(HttpMethod.PUT,"/game-types").hasAuthority("HR")// allow OpenAPI.requestMatchers()
+                        .requestMatchers(HttpMethod.POST,"/game-types").hasAuthority("HR")
+                        .requestMatchers(HttpMethod.PUT,"/game-types").hasAuthority("HR")
                         .requestMatchers( "/hr/posts/delete-unappropriate").hasAuthority("HR")
-//                        .requestMatchers("/employee/**").hasAuthority("Employee")
                         .anyRequest().authenticated()
                 )
-                // secure all other endpoints
+
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(exceptionFilter,UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

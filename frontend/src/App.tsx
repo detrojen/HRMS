@@ -79,11 +79,11 @@ const routes : RouteObject[] = [
         element: <GameSchedulingPage />,
         children:[
           {
-            index: true,
+            path: "game/usage",
             element: <GameUsageReport /> 
           },
           {
-            path: "slots/:gameTypeId",
+            path: "book-slot",
             element: <GameSlotBook />
           },
           {
@@ -91,7 +91,7 @@ const routes : RouteObject[] = [
             element: <RequestedSlotDetail />
           },
           {
-            path:"types",
+            index:true,
             element: <GameTypeList />
           },
           {
@@ -100,7 +100,7 @@ const routes : RouteObject[] = [
           },
           {
             path: "types/add",
-            element: <GameTypeForm gameType={null} isEditable={false}/>
+            element: <GameTypeForm gameType={null} isEditable={true}/>
           }
         ]
       }
@@ -114,7 +114,7 @@ function App() {
     <>
       
       <RouterProvider router={router}/>
-      <Toaster />
+      <Toaster visibleToasts={10}/>
    
     </>
   )

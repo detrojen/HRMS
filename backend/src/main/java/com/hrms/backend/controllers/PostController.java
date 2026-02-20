@@ -13,6 +13,8 @@ import com.hrms.backend.dtos.responseDtos.post.PostWithCommentsAndLikesDto;
 import com.hrms.backend.entities.PostEntities.Post;
 import com.hrms.backend.services.PostServices.PostService;
 import com.hrms.backend.utils.FileUtility;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ public class PostController {
         _postService = postService;
     }
     @PostMapping("/posts")
-    public ResponseEntity<PostResponseDto> createPost(@RequestPart() CreatePostRequestDto postDetails, @RequestPart MultipartFile attachment){
+    public ResponseEntity<PostResponseDto> createPost(@RequestPart() @Valid CreatePostRequestDto postDetails, @RequestPart @NotNull(message = "attchemnet must be requried") MultipartFile attachment){
         String attachmentPath = FileUtility.Save(attachment,"posts");
         PostResponseDto post = _postService.createPost(postDetails, attachmentPath);
         return  ResponseEntity.ok().body(post);
@@ -52,12 +54,12 @@ public class PostController {
     }
 
     @PostMapping("/posts/{id}/comment")
-    public ResponseEntity<CommentResponseDto> deletePost(@PathVariable Long id,@RequestBody PostCommentRequestDto requestDto){
+    public ResponseEntity<CommentResponseDto> deletePost(@PathVariable Long id,@RequestBody @Valid PostCommentRequestDto requestDto){
         return ResponseEntity.ok().body(_postService.comment(id,requestDto));
     }
 
     @PutMapping("/posts/delete-unappropriate")
-    public ResponseEntity<GlobalResponseDto<Boolean>> deleteUnappropriatedPost(@RequestBody DeleteUnappropriatedContentRequestDto requestDto){
+    public ResponseEntity<GlobalResponseDto<Boolean>> deleteUnappropriatedPost(@RequestBody @Valid DeleteUnappropriatedContentRequestDto requestDto){
         _postService.deleteUnappropriatedPost(requestDto);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(true));
     }

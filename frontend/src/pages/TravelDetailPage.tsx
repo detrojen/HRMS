@@ -5,28 +5,34 @@ import TravelBasicDetail from "@/components/functionality/travel/travel-basic-de
 import TravelDocumnetDetails from "@/components/functionality/travel/travel-document-detail"
 import TravelEmployeeDocumnetDetails from "@/components/functionality/travel/travel-employee-document-detail"
 import TravelPersonalDocumnetDetails from "@/components/functionality/travel/travel-personal-documnet-detail"
+import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AuthContext } from "@/contexts/AuthContextProvider"
 import { TravelDetailContext } from "@/contexts/TravelDetailContext"
 
 import { useContext } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useSearchParams } from "react-router-dom"
 
 const TravelDetailPage = () => {
     const { user } = useContext(AuthContext)
     const { travelId } = useParams()
-    const { data } = useFetchTravelById(travelId!)
+    const [searchParams,setSearchParams] = useSearchParams()
+    const { data, isLoading } = useFetchTravelById(travelId!)
     const travelDetail = data?.data
+    const handleTabUpdate = (tabName:string) =>{
+        searchParams.set("tab" ,tabName)
+        setSearchParams(searchParams)
+    }
     return <>
-        <TravelDetailContext.Provider value={travelDetail}>
-            <Tabs defaultValue="overview" className="w-1/1 p-3">
-                <TabsList defaultValue={"basic-details"}>
-                    <TabsTrigger value="basic-details">Basic Details</TabsTrigger>
-                    <TabsTrigger value="travel-documnets">Travel Documnet</TabsTrigger>
-                    {travelDetail?.inEmployeeList ? <TabsTrigger value="personal-documnets">Personal Documnet</TabsTrigger> : <></>}
-                    {user.role != "Employee" ? <TabsTrigger value="employee-documnets">Employee Document</TabsTrigger> : <></>}
-                    {travelDetail?.inEmployeeList ? <TabsTrigger value="employee-expense">Expense</TabsTrigger> : <></>}
-                    {user.role === "HR" ? <TabsTrigger value="hr-expense">Expense</TabsTrigger> : <></>}
+        {isLoading?"Loading":<TravelDetailContext.Provider value={travelDetail}>
+            <Tabs defaultValue={`${searchParams.get("tab")??"basic-details"}`} className="w-1/1 p-3">
+                <TabsList >
+                    <TabsTrigger value="basic-details" onClick={()=>handleTabUpdate("basic-details")}>Basic Details</TabsTrigger>
+                    <TabsTrigger value="travel-documnets" onClick={()=>handleTabUpdate("travel-documnets")}>Travel Documnet</TabsTrigger>
+                    {travelDetail?.inEmployeeList ? <TabsTrigger value="personal-documnets" onClick={()=>handleTabUpdate("personal-documnets")}>Personal Documnet</TabsTrigger> : <></>}
+                    {user.role != "Employee" ? <TabsTrigger value="employee-documnets" onClick={()=>handleTabUpdate("employee-documnets")}>Employee Document</TabsTrigger> : <></>}
+                    {travelDetail?.inEmployeeList ? <TabsTrigger value="employee-expense" onClick={()=>handleTabUpdate("employee-expense")}>Expense</TabsTrigger> : <></>}
+                    {user.role === "HR" ? <TabsTrigger value="hr-expense" onClick={()=>handleTabUpdate("hr-expense")}>Expense</TabsTrigger> : <></>}
                 </TabsList>
                 <TabsContent value="basic-details">
                     <TravelBasicDetail />
@@ -35,19 +41,19 @@ const TravelDetailPage = () => {
                     <TravelDocumnetDetails />
                 </TabsContent>
                 <TabsContent value="personal-documnets">
-                    <TravelPersonalDocumnetDetails />
+                    {travelDetail?.inEmployeeList ? <TravelPersonalDocumnetDetails />: <Card  className="p-3">OOps..! you have not assigned this travel</Card>}
                 </TabsContent>
                 <TabsContent value="employee-documnets">
-                    <TravelEmployeeDocumnetDetails />
+                    {user.role != "Employee" ?<TravelEmployeeDocumnetDetails />: <Card className="p-3">You have not access to this data</Card>}
                 </TabsContent>
                 <TabsContent value="employee-expense">
-                    <ExpenseTab />
+                    {travelDetail?.inEmployeeList ? <ExpenseTab />: <Card  className="p-3">OOps..! you have not assigned this travel</Card>}
                 </TabsContent>
                 <TabsContent value="hr-expense">
                     <HrExpenseListView />
                 </TabsContent>
             </Tabs>
-        </TravelDetailContext.Provider>
+        </TravelDetailContext.Provider>}
 
     </>
 }

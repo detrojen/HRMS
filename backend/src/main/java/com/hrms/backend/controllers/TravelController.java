@@ -1,5 +1,6 @@
 package com.hrms.backend.controllers;
 
+import com.hrms.backend.dtos.markers.OnUpdate;
 import com.hrms.backend.dtos.requestDto.ReviewTravelExpenseRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelDocumentRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelExpenseRequestDto;
@@ -13,8 +14,11 @@ import com.hrms.backend.dtos.responseDtos.travel.TravelMinDetailResponseDto;
 import com.hrms.backend.services.TravelServices.TravelService;
 import com.hrms.backend.services.TravelServices.TravelWiseExpenseService;
 import com.hrms.backend.utils.FileUtility;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -83,15 +87,16 @@ public class TravelController {
     }
 
     @PostMapping("/travels/{travelId}/expenses")
-    public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> addExpense(@PathVariable Long travelId, @RequestPart(value = "expenseDetails") AddUpdateTravelExpenseRequestDto expenseDetails, @RequestPart(value = "file") MultipartFile file){
+    public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> addExpense(@PathVariable Long travelId, @RequestPart(value = "expenseDetails") @Valid AddUpdateTravelExpenseRequestDto expenseDetails, @RequestPart(value = "file") @NotNull(message = "Proof must be required") MultipartFile file){
         String filePath = FileUtility.Save(file,"expenses");
         TravelExpenseResponseDto responseDto = travelService.addExpense(travelId,expenseDetails,filePath);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto)
         );
     }
+
     @PutMapping("/travels/{travelId}/expenses")
-    public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> updateExpense(@PathVariable Long travelId, @RequestPart(value = "expenseDetails") AddUpdateTravelExpenseRequestDto expenseDetails, @RequestPart(value = "file") Optional<MultipartFile> file){
+    public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> updateExpense(@PathVariable Long travelId, @RequestPart(value = "expenseDetails") @Validated(OnUpdate.class) AddUpdateTravelExpenseRequestDto expenseDetails, @RequestPart(value = "file") Optional<MultipartFile> file){
         String filePath = expenseDetails.getReciept();
         if(file.isPresent()){
             filePath = FileUtility.Save( file.get(),"expenses");
@@ -101,6 +106,7 @@ public class TravelController {
                 new GlobalResponseDto<>(responseDto)
         );
     }
+
     @GetMapping("/travels/{travelId}")
     public ResponseEntity<GlobalResponseDto<TravelDetailResponseDto>> getTravelDetail(@PathVariable Long travelId){
         TravelDetailResponseDto travelDetail = travelService.getTravelDetail(travelId);
@@ -124,31 +130,8 @@ public class TravelController {
         );
     }
 
-//    @GetMapping("/travels/as-a-manager")
-//    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getTravelsAsManager(){
-//        List<TravelMinDetailResponseDto> travels = travelService.getTravelsAsManager();
-//        return ResponseEntity.ok().body(
-//                new GlobalResponseDto<>(travels)
-//        );
-//    }
-//
-//    @GetMapping("/travels/assigned-travels")
-//    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getAssignedTravels(){
-//        List<TravelMinDetailResponseDto> travels = travelService.getAssignedTravels();
-//        return ResponseEntity.ok().body(
-//                new GlobalResponseDto<>(travels)
-//        );
-//    }
-//    @GetMapping("/travels/as-a-hr")
-//    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getTravelsAsHr(){
-//        List<TravelMinDetailResponseDto> travels = travelService.getTravelsAsHR();
-//        return ResponseEntity.ok().body(
-//                new GlobalResponseDto<>(travels)
-//        );
-//    }
-
     @PatchMapping("/travels/expenses")
-    public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> reviewExpense(@RequestBody ReviewTravelExpenseRequestDto requestDto){
+    public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> reviewExpense(@RequestBody @Valid ReviewTravelExpenseRequestDto requestDto){
         TravelExpenseResponseDto expense = expenseService.reviewExpense(requestDto);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(expense)

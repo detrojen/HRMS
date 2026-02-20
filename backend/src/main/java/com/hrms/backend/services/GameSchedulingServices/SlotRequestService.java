@@ -9,22 +9,36 @@ import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
 import com.hrms.backend.entities.GameSchedulingEntities.SlotRequest;
 import com.hrms.backend.entities.GameSchedulingEntities.SlotRequestWiseEmployee;
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.exceptions.SlotCanNotBeBookedException;
 import com.hrms.backend.repositories.GameSchedulingRepositories.SlotRequestRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import com.hrms.backend.services.NotificationServices.NotificationService;
 import com.hrms.backend.specs.SlotRequestSpecs;
+import com.hrms.backend.tasks.SlotRequestEvaluteTask;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.config.CronTask;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class SlotRequestService {
     private final SlotRequestRepository slotRequestRepository;
@@ -36,7 +50,7 @@ public class SlotRequestService {
     private final ModelMapper modelMapper;
     private final EmailService emailService;
     private final NotificationService notificationService;
-
+    private final TaskScheduler  scheduler;
     @Autowired
     public SlotRequestService(
             SlotRequestRepository slotRequestRepository
@@ -47,7 +61,8 @@ public class SlotRequestService {
             , GameTypeService gameTypeService
             , ModelMapper modelMapper
             , EmailService emailService
-            ,NotificationService notificationService
+            , NotificationService notificationService
+            , TaskScheduler scheduler
     ){
         this.slotRequestRepository = slotRequestRepository;
         this.gameSlotService = gameSlotService;
@@ -58,10 +73,11 @@ public class SlotRequestService {
         this.modelMapper = modelMapper;
         this.emailService = emailService;
         this.notificationService = notificationService;
+        this.scheduler = scheduler;
     }
 
-    public int getActiveRequestCount(Long employeeId, Long gameTypeId){
-        return slotRequestRepository.getActiveRequestCount(employeeId,gameTypeId);
+    public int getActiveRequestCount(Long employeeId, Long gameTypeId, LocalDate reqDate){
+        return slotRequestRepository.getActiveRequestCount(employeeId,gameTypeId, reqDate);
     }
 
     public List<SlotRequsetResponseDto> getActiveSlotRequests(){
@@ -72,7 +88,7 @@ public class SlotRequestService {
     }
 
     public SlotRequsetResponseDto getSlotRequestDetail(Long id){
-        SlotRequest slotRequest = slotRequestRepository.findById(id).orElseThrow(()->new RuntimeException("slot request not found"));
+        SlotRequest slotRequest = slotRequestRepository.findById(id).orElseThrow(()->new ItemNotFoundExpection("slot request not found"));
         return modelMapper.map(slotRequest,SlotRequsetResponseDto.class);
     }
 
@@ -80,30 +96,58 @@ public class SlotRequestService {
         return slotRequestRepository.findByGameSlot_IdAndStatus(slotId, "Confirm");
     }
 
+    public void validateSlotRequest( GameType gameTypeDetails,GameSlot slot,List<Long> otherPlayerIds){
+        JwtInfoDto jwtInfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        int activeSlots = slotRequestRepository.getActiveRequestCount(jwtInfo.getUserId(), slot.getGameType().getId(),slot.getSlotDate());
+        int toDaysSlotsCount = slotRequestRepository.getTodaysConsumedSlotCount(jwtInfo.getUserId(), slot.getGameType().getId(),slot.getSlotDate());
+        if(activeSlots >= gameTypeDetails.getMaxActiveSlotPerDay()){
+            throw new SlotCanNotBeBookedException("used active request limit");
+        }
+        if(toDaysSlotsCount >= gameTypeDetails.getMaxSlotPerDay()) {
+            throw new SlotCanNotBeBookedException("You reached todays limit");
+        }
+        if(otherPlayerIds.size()>=gameTypeDetails.getMaxNoOfPlayers()){
+            throw new SlotCanNotBeBookedException("No players are greater then allowed.Only "+ gameTypeDetails.getMaxNoOfPlayers() + " are allowed.");
+        }
+        if( LocalDate.now().isAfter(slot.getSlotDate()) || LocalDate.now().isEqual(slot.getSlotDate()) && (LocalTime.now().isAfter(slot.getStartsFrom()))){
+            throw new SlotCanNotBeBookedException("booking slot in past not allowed");
+        }
+        if(otherPlayerIds.stream().map(id->employeeWiseGameInterestService.getEmployyeGameUsage(id,gameTypeDetails.getId()).isInterested()).toList().stream().anyMatch(flag->flag==false)){
+            throw new SlotCanNotBeBookedException("One of the player is not interested in this game.");
+        }
+    }
+
     @Transactional
     public SlotRequsetResponseDto bookSlot(Long slotId, List<Long> otherPlayerIds){
         GameSlotResponseDto slotDetails = this.gameSlotService.getSlotById(slotId);
 
         JwtInfoDto jwtInfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        otherPlayerIds.add(jwtInfo.getUserId());
         GameSlot slot = this.gameSlotService.getReference(slotId);
 
-        Employee requestedBy = this.employeeService.getReference(jwtInfo.getUserId());
+
 
         GameType gameTypeDetails = gameTypeService.getById(slot.getGameType().getId());
 
+        validateSlotRequest(gameTypeDetails,slot,otherPlayerIds);
+        Employee requestedBy = this.employeeService.getReference(jwtInfo.getUserId());
         SlotRequest slotRequest = new SlotRequest();
-
-        int activeSlots = slotRequestRepository.getActiveRequestCount(jwtInfo.getUserId(), slot.getGameType().getId());
-        int toDaysSlotsCount = slotRequestRepository.getTodaysConsumedSlotCount(jwtInfo.getUserId(), slot.getGameType().getId());
-        if(activeSlots >= gameTypeDetails.getMaxActiveSlotPerDay()){
-            throw new SlotCanNotBeBookedException("used active request limit");
-        }else if(toDaysSlotsCount >= gameTypeDetails.getMaxSlotPerDay()) {
-
-            throw new SlotCanNotBeBookedException("You reached todays limit");
-        }
+////        ScheduledTaskRegistrar registrar = new ScheduledTaskRegistrar();
+////        CronTask cronTasktask = new CronTask( ()->{
+////            log.info("cron task executed");
+////        },"* * * * * *");
+////
+////        registrar.scheduleCronTask(cronTasktask);
+//        CronTrigger trigger = new CronTrigger("* * * * * *");
+////        scheduler.schedule(()->{
+////            log.info("Logging cron job");
+////        },trigger);
+//        scheduler.schedule(()->{
+//            log.info("loging slot request task for once");
+//        }, Instant.now().plus(Duration.ofSeconds(30)));
         slotRequest.setGameSlot(slot);
         slotRequest.setRequestedBy(requestedBy);
-        otherPlayerIds.add(jwtInfo.getUserId());
+
         if(slotDetails.isAvailable()){
             gameSlotService.makeSlotUnavailable(slot);
             slotRequest.setStatus("Confirm");
@@ -136,7 +180,7 @@ public class SlotRequestService {
     }
 
     public SlotRequsetResponseDto cancelConfirmRequest(SlotRequest slotRequest){
-//        SlotRequest slotRequest = slotRequestRepository.findById(requestId).orElseThrow(()->new RuntimeException("slot request with this id does not exist"));
+//        SlotRequest slotRequest = slotRequestRepository.findById(requestId).orElseThrow(()->new ItemNotFoundExpection("slot request with this id does not exist"));
         SlotRequest topCandidate = slotRequestRepository.getTopCandidate(slotRequest.getGameSlot().getId(),slotRequest.getGameSlot().getGameType().getId());
         confirmToCancelOrOnHold(slotRequest,"Cancel");
         if(topCandidate == null){
@@ -149,7 +193,7 @@ public class SlotRequestService {
     }
 
     public SlotRequsetResponseDto cancelRequest(Long requestId){
-        SlotRequest slotRequest = slotRequestRepository.findById(requestId).orElseThrow(()->new RuntimeException("slot request with this id does not exist"));
+        SlotRequest slotRequest = slotRequestRepository.findById(requestId).orElseThrow(()->new ItemNotFoundExpection("slot request with this id does not exist"));
         if(slotRequest.getStatus().equals("Confirm")){
             return cancelConfirmRequest(slotRequest);
         }

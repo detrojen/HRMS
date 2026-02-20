@@ -8,6 +8,7 @@ import com.hrms.backend.dtos.responseDtos.job.CvReviewerWithNameOnlyDto;
 import com.hrms.backend.emailTemplates.JobEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.Job;
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.JobListingRepositories.JobRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
@@ -71,12 +72,12 @@ public class JobService {
     }
 
     public CreateJobResponseDto getJobById(Long id){
-        Job job = jobRepository.findById(id).orElseThrow(()->new RuntimeException("job not found"));
+        Job job = jobRepository.findById(id).orElseThrow(()->new ItemNotFoundExpection("job not found"));
         return modelMapper.map(job,CreateJobResponseDto.class);
     }
 
     public void shareJob(Long jobId, ShareJobRequestDto requestDto) throws MessagingException, MalformedURLException, FileNotFoundException {
-        Job job = jobRepository.findById(jobId).orElseThrow(()->new RuntimeException("job not found"));
+        Job job = jobRepository.findById(jobId).orElseThrow(()->new ItemNotFoundExpection("job not found"));
         String emailBody = JobEmailTemplates.shareJob(job);
         System.out.println(emailBody);
         emailService.shareJob("Job opening",requestDto.getEmail(),emailBody, job.getJdPath());

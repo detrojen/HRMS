@@ -1,7 +1,7 @@
 export  type TGlobalResponse<T> = {
      data : T,
-     status : string,
+     status : number | string,
      message : string,
      authToken : string,
-     errors : any
+     errors : {message:string}[]
 }

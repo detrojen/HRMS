@@ -1,5 +1,6 @@
 package com.hrms.backend.controllers;
 
+import com.hrms.backend.dtos.markers.OnUpdate;
 import com.hrms.backend.dtos.requestDto.gameScheduling.BookSlotRequestDto;
 import com.hrms.backend.dtos.requestDto.gameScheduling.CreateUpdateGameTypeRequestDto;
 import com.hrms.backend.dtos.requestDto.gameScheduling.UpdateGameInterestRequestDto;
@@ -13,11 +14,14 @@ import com.hrms.backend.services.GameSchedulingServices.EmployeeWiseGameInterest
 import com.hrms.backend.services.GameSchedulingServices.GameSlotService;
 import com.hrms.backend.services.GameSchedulingServices.GameTypeService;
 import com.hrms.backend.services.GameSchedulingServices.SlotRequestService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -41,13 +45,13 @@ public class GameSchedulingController {
     }
 
     @GetMapping("/game-slots/{gameTypeId}")
-    public ResponseEntity<GlobalResponseDto<List<GameSlotResponseDto>>> getGameSlotsByDate(@PathVariable Long gameTypeId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date slotDate){
+    public ResponseEntity<GlobalResponseDto<List<GameSlotResponseDto>>> getGameSlotsByDate(@PathVariable Long gameTypeId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate slotDate){
         List<GameSlotResponseDto> slots = this.gameSlotService.getGameSlotsByDate(gameTypeId,slotDate);
         return ResponseEntity.ok().body(new GlobalResponseDto<List<GameSlotResponseDto>>(slots));
     }
 
     @PostMapping("/game-slot/book")
-    public ResponseEntity<GlobalResponseDto<SlotRequsetResponseDto>> bookSlot(@RequestBody BookSlotRequestDto requestDto){
+    public ResponseEntity<GlobalResponseDto<SlotRequsetResponseDto>> bookSlot(@Valid @RequestBody BookSlotRequestDto requestDto){
         SlotRequsetResponseDto bookedSlot = this.slotRequestService.bookSlot(requestDto.getSlotId(), requestDto.getOtherPlayersId());
         return ResponseEntity.ok().body(new GlobalResponseDto<>(bookedSlot,"Your slot is requested",null));
     }
@@ -110,14 +114,14 @@ public class GameSchedulingController {
     }
 
     @PostMapping("/game-types")
-    public ResponseEntity<GlobalResponseDto<UpdateGameTypeResponseDto>> createGameType(@RequestBody CreateUpdateGameTypeRequestDto requestDto){
+    public ResponseEntity<GlobalResponseDto<UpdateGameTypeResponseDto>> createGameType( @RequestBody @Valid CreateUpdateGameTypeRequestDto requestDto){
         UpdateGameTypeResponseDto gameTypeResponseDto = gameTypeService.createGameType(requestDto);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(gameTypeResponseDto)
         );
     }
     @PutMapping("/game-types")
-    public ResponseEntity<GlobalResponseDto<UpdateGameTypeResponseDto>> updateGameType(@RequestBody CreateUpdateGameTypeRequestDto requestDto){
+    public ResponseEntity<GlobalResponseDto<UpdateGameTypeResponseDto>> updateGameType(@RequestBody @Validated(OnUpdate.class) CreateUpdateGameTypeRequestDto requestDto){
         UpdateGameTypeResponseDto gameTypeResponseDto = gameTypeService.createGameType(requestDto);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(gameTypeResponseDto)

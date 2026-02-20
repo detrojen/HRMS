@@ -6,6 +6,7 @@ import {
   BookOpen,
   Bot,
   Command,
+  Computer,
   Frame,
   GalleryVerticalEnd,
   Gamepad2,
@@ -13,6 +14,7 @@ import {
   Image,
   Map,
   PieChart,
+  Plane,
   Settings2,
   SquareTerminal,
 } from "lucide-react"
@@ -57,33 +59,51 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url:"/",
+      url: "/",
       icon: HomeIcon,
     },
     {
       title: "Games",
       url: "/game",
       icon: Gamepad2,
-    },
-    {
-      title: "Game Types",
-      url: "/game/types",
-      icon: Gamepad2,
+      items: [
+        {
+          title: "Games",
+          url: "/game",
+
+        },
+        {
+          title: "Add game",
+          url: "/game/types/add",
+          role:"HR"
+        },
+        {
+          title: "Book slot",
+          url: "/game/book-slot",
+        }
+      ]
     },
     {
       title: "jobs",
       url: "/jobs",
-      icon: Gamepad2,
-    },
-    {
-      title: "Create Job Opening",
-      url: "/jobs/add",
-      icon: Gamepad2,
+      icon: Computer,
+      items: [
+        {
+          title: "jobs",
+          url: "/jobs",
+          icon: Gamepad2,
+        },
+        {
+          title: "Create Job Opening",
+          url: "/jobs/add",
+          icon: Gamepad2,
+        },
+      ]
     },
     {
       title: "Travel",
       // url: "/travels/add",
-      icon: Gamepad2,
+      icon: Plane,
       items: [
         {
           title: "Create travel",
@@ -109,18 +129,25 @@ const data = {
       title: "post",
       url: "/posts",
       icon: Image,
+      items: [
+        {
+          title: "post",
+          url: "/posts",
+          icon: Image,
+        },
+        {
+          title: "create post",
+          url: "/posts/create",
+          icon: Image,
+        }
+      ]
     },
-    {
-      title: "create post",
-      url: "/posts/create",
-      icon: Image,
-    }
   ],
- 
+
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const {user} = React.useContext(AuthContext)
+  const { user } = React.useContext(AuthContext)
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -131,11 +158,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={{
-          name: user.firstName + " " +user.lastName,
+          name: user.firstName + " " + user.lastName,
           email: "",
           avatar: ""
         }} />
-        
+
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

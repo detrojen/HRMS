@@ -3,6 +3,7 @@ package com.hrms.backend.services.EmployeeServices;
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.responseDtos.employee.*;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.EmployeeRepositories.EmployeeRepository;
 import com.hrms.backend.specs.EmployeeSpecs;
 import org.modelmapper.ModelMapper;
@@ -25,7 +26,7 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeById(Long id){
-        return employeeRepository.findById(id).orElseThrow(()-> new RuntimeException());
+        return employeeRepository.findById(id).orElseThrow(()-> new ItemNotFoundExpection("employee not found."));
     }
 
     public Employee getReference(Long id){
@@ -44,7 +45,7 @@ public class EmployeeService {
 
     public SelfDetailResponseDto getSelfDetails(){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Employee employee = employeeRepository.findById(jwtInfoDto.getUserId()).orElseThrow(()->new RuntimeException("user not found"));
+        Employee employee = employeeRepository.findById(jwtInfoDto.getUserId()).orElseThrow(()->new ItemNotFoundExpection("user not found"));
         SelfDetailResponseDto responseDto = modelMapper.map(employee,SelfDetailResponseDto.class);
         responseDto.setRole(employee.getRole().getRoleTitle());
         return responseDto;

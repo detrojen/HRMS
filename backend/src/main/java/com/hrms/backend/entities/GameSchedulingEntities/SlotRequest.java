@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
 @Data
 @NamedStoredProcedureQuery(name ="getActiveRequestCount", procedureName = "sp_activeRequestCount",parameters = {
         @StoredProcedureParameter(name = "employeeId", type = Long.class),
-        @StoredProcedureParameter(name = "gameTypeId", type = Long.class)
+        @StoredProcedureParameter(name = "gameTypeId", type = Long.class),
+        @StoredProcedureParameter(name = "reqDate", type = LocalDate.class)
 })
 @EntityListeners(AuditingEntityListener.class)
 public class SlotRequest {

@@ -19,7 +19,7 @@ public class GameSlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private java.sql.Date slotDate;
+    private LocalDate slotDate;
     private LocalTime startsFrom;
     private LocalTime endsAt;
     private boolean isAvailable;
