@@ -17,7 +17,7 @@ export const createPost = (payload:TCreatePostRequest) => {
     })
 }
 
-export const fetchPosts = ({page,limit,query}:{page?:number,limit?:number,query?:string}) => {
+export const fetchPosts = ({page,limit,query}:{page?:string,limit?:string,query?:string}) => {
     var queryString = "".concat(page?`page=${page}&`:"").concat(limit?`limit=${limit}&`:"").concat(query?`query=${query}&`:"")
     return api.get<TGlobalResponse<TPageableProps<TPostWisthCommentsAndLikeResponse>>>("/api/posts?"+queryString)
 }
@@ -30,4 +30,20 @@ export const commentOn = (payload:TComment & {postId:string|number}) => {
 
 export const deleteUnAprropriatePost = (payload:TDeleteUnappropriateContent) => {
     return api.put("/api/posts/delete-unappropriate",payload)
+}
+
+export const deleteUnAprropriatePostComment = (payload:TDeleteUnappropriateContent ) => {
+    return api.put("/api/posts/comment/delete-unappropriate",payload)
+
+}
+
+export const likeUnlikePost = (postId:number|string)=>{
+    return api.post(`/api/posts/${postId}/like-unlike`)
+}
+
+export const deletePost = (postId: string | number) => {
+    return api.delete(`/api/posts/${postId}`)
+}
+export const deletePostComment = (commentId: string | number) => {
+    return api.delete(`/api/posts/comment/${commentId}`)
 }

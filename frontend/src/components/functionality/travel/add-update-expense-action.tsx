@@ -35,7 +35,6 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense ,icon,title}: TAdd
         }
     }
     const handleSubmit = form.handleSubmit((values) => {
-        debugger
         uploadTravelDocumentMutation.mutate({ ...values, travelId })
     })
     return (

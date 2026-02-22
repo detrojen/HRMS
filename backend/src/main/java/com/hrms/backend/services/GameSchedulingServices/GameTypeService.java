@@ -65,4 +65,8 @@ public class GameTypeService {
             return dto;
         }).collect(Collectors.toUnmodifiableList());
     }
+
+    public void sp_resetCurrentCycleOfGameType(){
+        gameTypeRepository.sp_resetCurrentCycleOfGameType();
+    }
 }

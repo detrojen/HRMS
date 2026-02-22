@@ -25,8 +25,6 @@ public class CreateUpdateGameTypeRequestDto {
     @Positive(message = "max No Of Players should be positive")
     @NotNull
     private int maxNoOfPlayers;
-    @Positive(message = "slot booking time contraint should be positive")
-    @NotNull
     private Long slotCanBeBookedBefore;
     private boolean isInMaintenance;
     @Positive(message = "max slot per day should be positive")

@@ -11,6 +11,7 @@ import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.ExpenseCategory;
 import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.entities.TravelEntities.TravelWiseExpense;
+import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.repositories.TravelRepositories.ExpenseCategoryRepository;
 import com.hrms.backend.repositories.TravelRepositories.TravelWiseExpenseRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
@@ -23,6 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +58,15 @@ public class TravelWiseExpenseService {
     }
 
     public TravelExpenseResponseDto createTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String recieptPath){
+        if(travel.getLastDateToSubmitExpense().isBefore(LocalDate.now())){
+            throw new InvalidActionException("you can not submit new expenses");
+        }
+        if(travel.getEndDate().isBefore(requestDto.getDateOfExpense())){
+            throw  new InvalidActionException("You can not submit expense with expense date after trip end date");
+        }
+        if(travel.getStartDate().isAfter(requestDto.getDateOfExpense())){
+            throw  new InvalidActionException("You can not submit expense with expense date before trip start date");
+        }
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Employee employee = employeeService.getReference(jwtInfoDto.getUserId());
         TravelWiseExpense travelWiseExpense = modelMapper.map(requestDto,TravelWiseExpense.class);
@@ -74,7 +85,7 @@ public class TravelWiseExpenseService {
     public TravelExpenseResponseDto updateTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String recieptPath){
         TravelWiseExpense travelWiseExpense = travelWiseExpenseRepository.findById(requestDto.getId()).orElseThrow(()->new RuntimeException("expense not found"));
         if(travelWiseExpense.getStatus().equals("approved") || travelWiseExpense.getStatus().equals("rejected")){
-            throw new RuntimeException("you can not update expense once it reviewed");
+            throw new InvalidActionException("you can not update expense once it reviewed");
         }
         int oldAskedAmount = travelWiseExpense.getAskedAmount();
         ExpenseCategory category = expenseCategoryRepository.getReferenceById(requestDto.getCategoryId());

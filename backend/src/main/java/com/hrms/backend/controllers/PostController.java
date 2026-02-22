@@ -11,6 +11,7 @@ import com.hrms.backend.dtos.responseDtos.post.DeletePostResponseDto;
 import com.hrms.backend.dtos.responseDtos.post.PostResponseDto;
 import com.hrms.backend.dtos.responseDtos.post.PostWithCommentsAndLikesDto;
 import com.hrms.backend.entities.PostEntities.Post;
+import com.hrms.backend.services.PostServices.PostCommentService;
 import com.hrms.backend.services.PostServices.PostService;
 import com.hrms.backend.utils.FileUtility;
 import jakarta.validation.Valid;
@@ -26,10 +27,11 @@ import java.util.List;
 @RestController
 public class PostController {
     private final PostService _postService;
-
+    private final PostCommentService postCommentService;
     @Autowired
-    public PostController(PostService postService){
+    public PostController(PostService postService, PostCommentService postCommentService){
         _postService = postService;
+        this.postCommentService = postCommentService;
     }
     @PostMapping("/posts")
     public ResponseEntity<PostResponseDto> createPost(@RequestPart() @Valid CreatePostRequestDto postDetails, @RequestPart @NotNull(message = "attchemnet must be requried") MultipartFile attachment){
@@ -49,8 +51,13 @@ public class PostController {
     }
 
     @DeleteMapping("/posts/{id}")
-    public ResponseEntity<DeletePostResponseDto> deletePost(@PathVariable Long id){
-        return ResponseEntity.ok().body(_postService.deletePost(id));
+    public ResponseEntity<GlobalResponseDto<DeletePostResponseDto>> deletePost(@PathVariable Long id){
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(_postService.deletePost(id)));
+    }
+
+    @DeleteMapping("/posts/comment/{commentId}")
+    public ResponseEntity<GlobalResponseDto<Boolean>> deletePostComment(@PathVariable Long commentId){
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(_postService.deletePostComment(commentId)));
     }
 
     @PostMapping("/posts/{id}/comment")
@@ -62,5 +69,16 @@ public class PostController {
     public ResponseEntity<GlobalResponseDto<Boolean>> deleteUnappropriatedPost(@RequestBody @Valid DeleteUnappropriatedContentRequestDto requestDto){
         _postService.deleteUnappropriatedPost(requestDto);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(true));
+    }
+    @PutMapping("/posts/comment/delete-unappropriate")
+    public ResponseEntity<GlobalResponseDto<Boolean>> deleteUnappropriatedPostComment(@RequestBody @Valid DeleteUnappropriatedContentRequestDto requestDto){
+        postCommentService.deleteUnappropriatedPostComment(requestDto);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(true));
+    }
+
+    @PostMapping("/posts/{id}/like-unlike")
+    public ResponseEntity<GlobalResponseDto<Boolean>> likeUnlike(@PathVariable Long id){
+        Boolean flag = _postService.likeUnlike(id);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(flag));
     }
 }

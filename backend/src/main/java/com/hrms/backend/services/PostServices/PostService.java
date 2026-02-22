@@ -16,6 +16,7 @@ import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.exceptions.InvalidDeleteAction;
 import com.hrms.backend.exceptions.PostNotFound;
 import com.hrms.backend.repositories.PostRepositories.PostRepository;
+import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import jakarta.persistence.criteria.Join;
 import jakarta.transaction.Transactional;
@@ -41,24 +42,29 @@ public class PostService {
     private final EmployeeService _employeeService;
     private final ModelMapper _modelMapper;
     private final PostCommentService postCommentService;
+    private final PostLikeService postLikeService;
+    private final EmailService emailService;
     @Autowired
-    public PostService(PostRepository postRepository,PostCommentService postCommentService,EmployeeService employeeService,ModelMapper modelMapper){
+    public PostService(PostRepository postRepository,PostCommentService postCommentService,EmployeeService employeeService,ModelMapper modelMapper, PostLikeService postLikeService, EmailService emailService){
         _postRepository = postRepository;
         _employeeService = employeeService;
         _modelMapper = modelMapper;
         this.postCommentService = postCommentService;
+        this.postLikeService = postLikeService;
+        this.emailService = emailService;
     }
 
     public Page<PostWithCommentsAndLikesDto> getPosts(PostQueryParamsDto params){
         Specification<Post> specs = ((root, query, criteriaBuilder) -> {
             return criteriaBuilder.and(criteriaBuilder.isFalse(root.get("isDeleted")),criteriaBuilder.isFalse(root.get("isDeletedByHr")),criteriaBuilder.like(root.get("tags"),"%"+params.getQuery()+"%"));
         });
-        Pageable pageable = PageRequest.of(params.getPageNumber(),params.getLimit());
+        Pageable pageable = PageRequest.of(params.getPageNumber(),params.getLimit(), Sort.by("createdAt").descending());
 
         Page<Post> posts = _postRepository.findAll(specs,pageable);
         Page<PostWithCommentsAndLikesDto> response= posts.map(post->{
             PostWithCommentsAndLikesDto dto = _modelMapper.map(post,PostWithCommentsAndLikesDto.class);
             dto.setRecentComments(postCommentService.getRecentComments(post.getId()));
+            dto.setRecentLikedBy(postLikeService.getRecentLikes(post.getId()));
             return dto;
         });
         return response;
@@ -99,6 +105,12 @@ public class PostService {
         post.setDeleted(true);
         post.setDeletedByHr(true);
         post = _postRepository.save(post);
+        this.emailService.sendMail(
+                "Warning: unapropriate post",
+                "post conent\n"+post.getBody() + "\n\nremark for delete: \n"+requestDto.getRemark()
+                ,new String[]{post.getCreatedBy().getEmail()}
+                ,new String[]{}
+        );
         return true;
     }
     @Transactional
@@ -108,6 +120,28 @@ public class PostService {
         post.setCommentCount(post.getCommentCount()+1);
         _postRepository.save(post);
         return comment;
+    }
+
+    public boolean likeUnlike(Long postId){
+        Post post = _postRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+        boolean flag =  postLikeService.likeUnlike(post);
+        if(flag){
+            post.setLikeCount(post.getLikeCount() + 1);
+        }else{
+            post.setLikeCount(post.getLikeCount() - 1);
+        }
+        _postRepository.save(post);
+        return flag;
+    }
+
+    public boolean deletePostComment(Long commentId){
+        Post post = postCommentService.deletePostComment(commentId);
+        post.setCommentCount(post.getCommentCount() - 1);
+        _postRepository.save(post);
+        return true;
+    }
+    public void genrateBirthdayAndWorkAniversaryPost(){
+        _postRepository.sp_birthdayAndOrkAniversary();
     }
 
 }

@@ -14,6 +14,7 @@ import java.util.List;
 public interface GameSlotRepository extends JpaRepository<GameSlot,Long>, JpaSpecificationExecutor<GameSlot> {
 
     List<GameSlot> findAllByGameType_IdAndSlotDateIs(Long gameTypeId, LocalDate slotDate);
-    @Query(value = "execute sp_createSlotsOfAllGameType",nativeQuery = true)
-    void createGameSlots();
+    @Query(value = "execute sp_createSlotsOfAllGameType @days= :days",nativeQuery = true)
+    int createGameSlots(int days);
+
 }

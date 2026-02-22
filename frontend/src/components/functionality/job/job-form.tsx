@@ -94,16 +94,7 @@ const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, a
                         </FormControl>
                     </FormItem>}
                 />
-                {/* <FormField
-                    name="jobDetail.reviewerIds"
-                    control={form.control}
-                    render={({ field }) => <FormItem className="w-1/1">
-                        <FieldLabel>Reviewer</FieldLabel>
-                        <FormControl>
-                            <TagsAdd form={form} field={field} placeholder={"enter skill"} />
-                        </FormControl>
-                    </FormItem>}
-                /> */}
+
 
             </FieldGroup>
             </Form>
@@ -119,7 +110,7 @@ const JobDescriptionForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, a
                 name="jobDetail.description"
                 control={form.control}
                 render={({ field }) => <FormItem>
-                    <FieldLabel>Title</FieldLabel>
+                    <FieldLabel>Description</FieldLabel>
                     <FormControl>
                         <Textarea {...field} placeholder="title"></Textarea>
                     </FormControl>
@@ -143,7 +134,7 @@ const JobDocumentUploadForm = ({ form }: { form: UseFormReturn<TCreateJobRequest
                 name="jdDocument"
                 control={form.control}
                 render={({ field }) => <FormItem>
-                    <FieldLabel>Title</FieldLabel>
+                    <FieldLabel>JD</FieldLabel>
                     <FormControl>
                         <Input type="file" onChange={(e) => {
                             handleFileChange(e, field)

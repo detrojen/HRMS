@@ -27,7 +27,7 @@ public class SlotRequestSpecs {
                             criteriaBuilder.equal(root.get("status"), "Confirm"),
                             criteriaBuilder.equal(root.get("status"),"On hold")
                     ),
-                    criteriaBuilder.equal(gameSlotJoin.get("slotDate"), java.sql.Date.valueOf(LocalDate.now())),
+                    criteriaBuilder.greaterThanOrEqualTo(gameSlotJoin.get("slotDate"), java.sql.Date.valueOf(LocalDate.now())),
 //                    criteriaBuilder.greaterThan(gameSlotJoin.get("startsFrom"),LocalTime.parse(DateFormatter.timeFormate.format(new Date()))),
                     criteriaBuilder.equal(slotRequestSlotRequestWiseEmployeeJoin.get("id"),employeeId)
 

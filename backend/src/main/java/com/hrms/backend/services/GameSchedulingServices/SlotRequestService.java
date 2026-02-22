@@ -9,6 +9,7 @@ import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
 import com.hrms.backend.entities.GameSchedulingEntities.SlotRequest;
 import com.hrms.backend.entities.GameSchedulingEntities.SlotRequestWiseEmployee;
+import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.exceptions.SlotCanNotBeBookedException;
 import com.hrms.backend.repositories.GameSchedulingRepositories.SlotRequestRepository;
@@ -50,7 +51,6 @@ public class SlotRequestService {
     private final ModelMapper modelMapper;
     private final EmailService emailService;
     private final NotificationService notificationService;
-    private final TaskScheduler  scheduler;
     @Autowired
     public SlotRequestService(
             SlotRequestRepository slotRequestRepository
@@ -62,7 +62,6 @@ public class SlotRequestService {
             , ModelMapper modelMapper
             , EmailService emailService
             , NotificationService notificationService
-            , TaskScheduler scheduler
     ){
         this.slotRequestRepository = slotRequestRepository;
         this.gameSlotService = gameSlotService;
@@ -73,7 +72,6 @@ public class SlotRequestService {
         this.modelMapper = modelMapper;
         this.emailService = emailService;
         this.notificationService = notificationService;
-        this.scheduler = scheduler;
     }
 
     public int getActiveRequestCount(Long employeeId, Long gameTypeId, LocalDate reqDate){
@@ -106,7 +104,7 @@ public class SlotRequestService {
         if(toDaysSlotsCount >= gameTypeDetails.getMaxSlotPerDay()) {
             throw new SlotCanNotBeBookedException("You reached todays limit");
         }
-        if(otherPlayerIds.size()>=gameTypeDetails.getMaxNoOfPlayers()){
+        if(otherPlayerIds.size()>gameTypeDetails.getMaxNoOfPlayers()){
             throw new SlotCanNotBeBookedException("No players are greater then allowed.Only "+ gameTypeDetails.getMaxNoOfPlayers() + " are allowed.");
         }
         if( LocalDate.now().isAfter(slot.getSlotDate()) || LocalDate.now().isEqual(slot.getSlotDate()) && (LocalTime.now().isAfter(slot.getStartsFrom()))){
@@ -132,19 +130,7 @@ public class SlotRequestService {
         validateSlotRequest(gameTypeDetails,slot,otherPlayerIds);
         Employee requestedBy = this.employeeService.getReference(jwtInfo.getUserId());
         SlotRequest slotRequest = new SlotRequest();
-////        ScheduledTaskRegistrar registrar = new ScheduledTaskRegistrar();
-////        CronTask cronTasktask = new CronTask( ()->{
-////            log.info("cron task executed");
-////        },"* * * * * *");
-////
-////        registrar.scheduleCronTask(cronTasktask);
-//        CronTrigger trigger = new CronTrigger("* * * * * *");
-////        scheduler.schedule(()->{
-////            log.info("Logging cron job");
-////        },trigger);
-//        scheduler.schedule(()->{
-//            log.info("loging slot request task for once");
-//        }, Instant.now().plus(Duration.ofSeconds(30)));
+
         slotRequest.setGameSlot(slot);
         slotRequest.setRequestedBy(requestedBy);
 
@@ -194,6 +180,10 @@ public class SlotRequestService {
 
     public SlotRequsetResponseDto cancelRequest(Long requestId){
         SlotRequest slotRequest = slotRequestRepository.findById(requestId).orElseThrow(()->new ItemNotFoundExpection("slot request with this id does not exist"));
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(jwtInfoDto.getUserId() != slotRequest.getRequestedBy().getId()){
+            throw new InvalidActionException("slot only can be cancelled by who has reqyested");
+        }
         if(slotRequest.getStatus().equals("Confirm")){
             return cancelConfirmRequest(slotRequest);
         }

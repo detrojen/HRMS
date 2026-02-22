@@ -1,4 +1,5 @@
 alter PROCEDURE sp_createSlotsOfAllGameType
+	@days int
 AS BEGIN
 	SET NOCOUNT ON
 	DECLARE @TOTAL_ROWS INT;
@@ -20,11 +21,12 @@ AS BEGIN
 			@DURATION = slotDuration
 		FROM #TEMP
 
-		EXECUTE sp_createSlotsByGameConfig @OPENING_HOURS,@CLOSING_HOURS, @GAME_TYPE_ID, @DURATION 
+		EXECUTE sp_createSlotsByGameConfig @OPENING_HOURS,@CLOSING_HOURS, @GAME_TYPE_ID, @DURATION ,@days
 
 		DELETE  FROM #TEMP WHERE id = @GAME_TYPE_ID
 		SET @TOTAL_ROWS -= 1
 	END
 
 	DROP TABLE #TEMP
+	select 1
 END

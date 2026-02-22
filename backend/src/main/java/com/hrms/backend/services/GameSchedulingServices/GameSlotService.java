@@ -47,8 +47,8 @@ public class GameSlotService {
         gameSlotRepository.save(slot);
     }
 
-    public void createSlots(){
-        gameSlotRepository.createGameSlots();
+    public void createSlots(int days){
+        gameSlotRepository.createGameSlots(days);
     }
 
 }

@@ -24,6 +24,22 @@ public class GlobalExceptionHandler {
                 .body(new GlobalResponseDto<>(errors,"Invalid credential",HttpStatus.BAD_REQUEST));
 
     }
+    @ExceptionHandler(InvalidActionException.class)
+    public ResponseEntity<GlobalResponseDto<?>> handleInvalidActionException(InvalidActionException e){
+        List<Map<String,String>> errors= new ArrayList<>(){};
+        errors.add(Map.of( "message", e.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new GlobalResponseDto<>(errors,"Invalid credential",HttpStatus.BAD_REQUEST));
+
+    }
+    @ExceptionHandler(InvalidDeleteAction.class)
+    public ResponseEntity<GlobalResponseDto<?>> handleInvalidDeleteAction(InvalidDeleteAction e){
+        List<Map<String,String>> errors= new ArrayList<>(){};
+        errors.add(Map.of( "message", e.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new GlobalResponseDto<>(errors,"Invalid credential",HttpStatus.BAD_REQUEST));
+
+    }
 
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<GlobalResponseDto<?>> handleJwtExpiration(ExpiredJwtException e){

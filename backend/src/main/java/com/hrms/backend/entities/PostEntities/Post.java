@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -29,9 +30,13 @@ public class Post {
     private String remarkForDelete;
     @ManyToOne()
     private Employee deletedBy;
+    @ColumnDefault("0")
     private boolean isDeleted;
+    @ColumnDefault("0")
     private boolean isDeletedByHr;
+    @ColumnDefault("0")
     private int likeCount;
+    @ColumnDefault("0")
     private int commentCount;
     @CreatedDate
     private Date createdAt;

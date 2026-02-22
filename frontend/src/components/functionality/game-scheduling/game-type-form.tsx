@@ -70,7 +70,7 @@ const GameTypeForm = ({ gameType , isEditable=true}: { gameType: TGameType | nul
                          disabled={!isEditable}
                         render={({ field }) =>
                             <FormItem>
-                                <FieldLabel>Game name</FieldLabel>
+                                <FieldLabel>Max no of players</FieldLabel>
                                 <FormControl>
                                 <Input {...field} placeholder="enter max No Of Players"></Input>
                                 </FormControl>
