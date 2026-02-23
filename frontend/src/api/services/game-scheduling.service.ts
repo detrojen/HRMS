@@ -49,7 +49,7 @@ export const getGameTypeById = (gameTypeId:string) => {
 
 export const createGameType = (payload:Omit<TGameType,"id">) => {
     
-    return api.post<TGameType>("/api/game-types", payload).then(res=>res.data)
+    return api.post("/api/game-types", payload).then(res=>res.data)
 }
 
 export const updateGameType =  (payload:any) => {

@@ -31,7 +31,12 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/game-types").hasAuthority("HR")
                         .requestMatchers(HttpMethod.PUT,"/game-types").hasAuthority("HR")
-                        .requestMatchers( "/hr/posts/delete-unappropriate").hasAuthority("HR")
+                                .requestMatchers( "/posts/delete-unappropriate").hasAuthority("HR")
+                                .requestMatchers( " /posts/comment/delete-unappropriate").hasAuthority("HR")
+                        .requestMatchers(HttpMethod.PATCH,"/travels/expenses").hasAuthority("HR")
+                        .requestMatchers(HttpMethod.POST,"/travels/{travelId}/documents").hasAuthority("HR")
+                        .requestMatchers(HttpMethod.PUT,"/travels/{travelId}/documents").hasAuthority("HR")
+                        .requestMatchers(HttpMethod.POST,"/jobs").hasAuthority("HR")
                         .anyRequest().authenticated()
                 )
 

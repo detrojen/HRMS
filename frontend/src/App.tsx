@@ -19,6 +19,7 @@ import TravelList from './pages/TravelListPage'
 import TravelDetailPage from './pages/TravelDetailPage'
 import CreatePostPage from './pages/CreatePostPage'
 import PostListPage from './pages/PostListPage'
+import OrgChartPage from './pages/OrgChartPage'
 const routes : RouteObject[] = [
   {
     path:"/login",
@@ -71,6 +72,10 @@ const routes : RouteObject[] = [
       {
         path:"posts/create",
         element: <CreatePostPage />
+      },
+      {
+        path:"org-chart",
+        element: <OrgChartPage />
       },
       
       // 

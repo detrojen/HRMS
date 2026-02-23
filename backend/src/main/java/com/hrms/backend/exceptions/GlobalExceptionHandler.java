@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -92,5 +93,12 @@ public class GlobalExceptionHandler {
                 .toList();
         return ResponseEntity.badRequest().body(new GlobalResponseDto<>(errors,"validation failed",HttpStatus.BAD_REQUEST));
     }
+    @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
+    public ResponseEntity<GlobalResponseDto<List< Map<String, String>>>> handleUnauthorised(HttpClientErrorException.Unauthorized e) {
+        List<Map<String,String>> errors= new ArrayList<>(){};
+        errors.add(Map.of( "message", e.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new GlobalResponseDto<>(errors,"item not found",HttpStatus.BAD_REQUEST));
 
+    }
 }

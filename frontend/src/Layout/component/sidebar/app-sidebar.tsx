@@ -5,6 +5,7 @@ import {
   AudioWaveform,
   BookOpen,
   Bot,
+  ChartBar,
   Command,
   Computer,
   Frame,
@@ -61,6 +62,10 @@ const data = {
       title: "Home",
       url: "/",
       icon: HomeIcon,
+    },{
+      title:"Org chart",
+      url: "/org-chart",
+      icon: ChartBar
     },
     {
       title: "Games",
