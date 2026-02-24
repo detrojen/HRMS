@@ -23,103 +23,129 @@ import OrgChartPage from './pages/OrgChartPage'
 import { fetchPosts } from './api/services/post.service'
 import { useFetchPosts, usePostUploadedBySelf } from './api/queries/post.queries'
 import JobApplicationListPage from './pages/JobApplicationListPage'
-const routes : RouteObject[] = [
+import GameHomePage from './pages/GameHomePage'
+import ReferedJobApplicationListPage from './pages/ReferedJobApllicationPage'
+import RoleCheck from './components/functionality/role-check'
+const routes: RouteObject[] = [
   {
-    path:"/login",
-    element:<LoginPage />
+    path: "/login",
+    element: <LoginPage />
   },
   {
     path: "",
-    element:<Layout />,
+    element: <Layout />,
     children: [
       {
         index: true,
         element: <HomePage />
       },
       {
-        path:"jobs",
-        element: <JobListPage />
+        path: "jobs"
+        , children: [
+          {
+            path: "",
+            element: <JobListPage />
+          },
+          {
+            path: ":jobId",
+            element: <JobDetailPage />
+          },
+          {
+            path: "add",
+            element: <RoleCheck roles={["HR"]}><JobForm /></RoleCheck>
+          }, {
+            path: "job-applications",
+            element: <JobApplicationListPage />
+          }, {
+            path: "refered-job-applications",
+            element: <ReferedJobApplicationListPage />
+          },
+        ]
+      },
+
+      {
+        path: "travels"
+        , children: [
+          {
+            path: "add",
+            element: <RoleCheck roles={["HR"]}><TravelForm /></RoleCheck>
+          },
+          {
+            path: "manage",
+            element: <TravelList getAsa='hr' />
+          },
+          {
+            path: "assigned-travels",
+            element: <TravelList getAsa='assigned' />
+          },
+          {
+            path: "team/assigned-travels",
+            element: <TravelList getAsa='as-a-manager' />
+          },
+          {
+            path: ":travelId",
+            element: <TravelDetailPage />
+          },
+        ]
       },
       {
-        path:"jobs/:jobId",
-        element:<JobDetailPage />
+        path: "posts",
+        children: [
+          {
+            path: "",
+            element: <PostListPage query={useFetchPosts} />
+          },
+          {
+            path: "self-uploded",
+            element: <PostListPage query={usePostUploadedBySelf} />
+          },
+          {
+            path: "create",
+            element: <CreatePostPage />
+          },
+          {
+            path: "update/:postId",
+            element: <CreatePostPage />
+          },
+
+        ]
       },
+
       {
-        path:"jobs/add",
-        element:<JobForm />
-      },{
-        path: "jobs/job-applications",
-        element:<JobApplicationListPage/>
-      },
-      {
-        path: "travels/add",
-        element:<TravelForm />
-      },
-      {
-        path:"travels/manage",
-        element:<TravelList getAsa='hr' />
-      },
-      {
-        path: "travels/assigned-travels",
-        element:<TravelList getAsa='assigned'/>
-      },
-      {
-        path: "travels/team/assigned-travels",
-        element:<TravelList getAsa='as-a-manager'/>
-      },
-      {
-        path: "travels/:travelId",
-        element:<TravelDetailPage />
-      },
-      {
-        path:"posts",
-        element: <PostListPage query={useFetchPosts} />
-      },
-      {
-        path:"posts/self-uploded",
-        element: <PostListPage query={usePostUploadedBySelf} />
-      },
-      {
-        path:"posts/create",
-        element: <CreatePostPage />
-      },
-      {
-        path:"posts/update/:postId",
-        element: <CreatePostPage />
-      },
-      {
-        path:"org-chart",
+        path: "org-chart",
         element: <OrgChartPage />
       },
-      
-      // 
       {
-        path:"game",
+        path: "game",
         element: <GameSchedulingPage />,
-        children:[
+        children: [
+          {
+            index: true,
+            element: <GameHomePage />
+          },
           {
             path: "game/usage",
-            element: <GameUsageReport /> 
+            element: <GameUsageReport />
           },
           {
             path: "book-slot",
             element: <GameSlotBook />
           },
           {
-            path:"slots/requested/:requestedSlotId",
+            path: "slots/requested/:requestedSlotId",
             element: <RequestedSlotDetail />
           },
           {
-            index:true,
+            path: "types",
             element: <GameTypeList />
           },
           {
-            path:"types/:gameTypeId",
+            path: "types/:gameTypeId",
             element: <GameTypeDetail />
           },
           {
             path: "types/add",
-            element: <GameTypeForm gameType={null} isEditable={true}/>
+            element: <RoleCheck roles={["HR"]}><GameTypeForm gameType={null} isEditable={true} /></RoleCheck>
           }
         ]
       }
@@ -131,10 +157,10 @@ function App() {
 
   return (
     <>
-      
-      <RouterProvider router={router}/>
-      <Toaster visibleToasts={10}/>
-   
+
+      <RouterProvider router={router} />
+      <Toaster visibleToasts={10} />
+
     </>
   )
 }

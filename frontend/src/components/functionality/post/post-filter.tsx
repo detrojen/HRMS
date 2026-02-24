@@ -31,10 +31,10 @@ const PostFilter = () => {
                 <Input onChange={(e) => { handleFilterChange("query", e.target.value) }} />
             </Field>
             <Field>
-                <DatePicker title={"post from"} onSelect={(value) => { handleFilterChange("postFrom", `${value.getFullYear()}-${(value.getMonth() + 1).toString().padStart(2, "0")}-${(value.getDate()).toString().padStart(2, "0")}`) }} value={serachParams.get("postFrom") ? new Date(serachParams.get("postFrom")!) : undefined} />
+                <DatePicker title={"post from"} onSelect={(value) => { handleFilterChange("postFrom", `${value.toDateString()}`) }} value={serachParams.get("postFrom") ? new Date(serachParams.get("postFrom")!) : undefined} />
             </Field>
             <Field>
-                <DatePicker title={"post to"} onSelect={(value) => { handleFilterChange("postTo", `${value.getFullYear()}-${(value.getMonth() + 1).toString().padStart(2, "0")}-${(value.getDate()).toString().padStart(2, "0")}`) }} value={serachParams.get("postTo") ? new Date(serachParams.get("postTo")!) : undefined} />
+                <DatePicker title={"post to"} onSelect={(value) => { handleFilterChange("postTo", `${value.toDateString()}`) }} value={serachParams.get("postTo") ? new Date(serachParams.get("postTo")!) : undefined} />
             </Field>
         </div>
     )

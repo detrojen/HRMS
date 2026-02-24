@@ -1,6 +1,8 @@
 package com.hrms.backend.services.GameSchedulingServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.CurrentGameStatusResponse;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.GameSlotResponseDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.SlotRequsetResponseDto;
 import com.hrms.backend.emailTemplates.GameSchedulingEmailTemplate;
@@ -35,6 +37,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -232,6 +235,27 @@ public class SlotRequestService {
             ,"Game"
                 ,slotRequest.getSlotRequestWiseEmployee().stream().map(e->e.getEmployee().getId()).toList().toArray(new Long[]{})
         );
+    }
+
+    private List<EmployeeMinDetailsDto> getPlayers(Long slotId){
+        SlotRequest slotRequest = slotRequestRepository.findByGameSlot_IdAndStatus(slotId,"Confirm");
+        return slotRequest.getSlotRequestWiseEmployee().stream().map(slotWiseEmp->modelMapper.map(slotWiseEmp.getEmployee(),EmployeeMinDetailsDto.class)).collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<CurrentGameStatusResponse> getCurrentGameStatus(){
+        List<GameSlotResponseDto> slots = gameSlotService.getCurrentGameSlots();
+        List<CurrentGameStatusResponse> games = new ArrayList<>();
+        slots.forEach(slot->{
+            CurrentGameStatusResponse game = new CurrentGameStatusResponse();
+            game.setGameSlot(slot);
+            if(!slot.isAvailable()){
+                game.setPlayers(getPlayers(slot.getId()));
+            }else{
+                game.setPlayers(new ArrayList<>());
+            }
+            games.add(game);
+        });
+        return games;
     }
 
 }

@@ -56,3 +56,12 @@ export const jobApplications = (page?:number|null,limit?:number|null) =>{
     }
     return api.get<TGlobalResponse<TPageableResponse<TJobApplicationResponse>>>("/api/jobs/job-applications"+searchParams)
 }
+export const referedJobApplication = (page?:number|null,limit?:number|null) =>{
+    let searchParams = "?"
+    if(page) {
+        searchParams+=`page=${page}&`
+    }if(limit){
+        searchParams+=`limit=${limit}&`
+    }
+    return api.get<TGlobalResponse<TPageableResponse<TJobApplicationResponse>>>("/api/jobs/refered-job-applications"+searchParams)
+}

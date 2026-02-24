@@ -4,6 +4,7 @@ import com.hrms.backend.dtos.responseDtos.gameSheduling.GameSlotResponseDto;
 import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.GameSchedulingRepositories.GameSlotRepository;
+import com.hrms.backend.specs.GameSlotSpecs;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GameSlotService {
@@ -49,6 +51,11 @@ public class GameSlotService {
 
     public void createSlots(int days){
         gameSlotRepository.createGameSlots(days);
+    }
+
+    public List<GameSlotResponseDto> getCurrentGameSlots(){
+        List<GameSlot> slots = gameSlotRepository.findAll(GameSlotSpecs.currentSlot());
+        return slots.stream().map(slot->modelMapper.map(slot,GameSlotResponseDto.class)).collect(Collectors.toUnmodifiableList());
     }
 
 }

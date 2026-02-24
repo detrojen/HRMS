@@ -146,7 +146,7 @@ const TravelForm = () => {
         <>
         <Card className="w-1/1 p-4">
             <FieldGroup>
-                {JSON.stringify(form.formState.errors)}
+                
                 <TravelBasicDetailFields form={form}/>
                 <TravelDescriptionField form={form} />
                 <Button onClick={()=>{handleSubmit()}}>Submit</Button>

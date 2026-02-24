@@ -18,6 +18,7 @@ import com.hrms.backend.exceptions.PostNotFound;
 import com.hrms.backend.repositories.PostRepositories.PostRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
+import com.hrms.backend.specs.PostSpecs;
 import jakarta.persistence.criteria.Join;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,16 @@ public class PostService {
         Specification<Post> specs = ((root, query, criteriaBuilder) -> {
             return criteriaBuilder.and(criteriaBuilder.isFalse(root.get("isDeleted")),criteriaBuilder.isFalse(root.get("isDeletedByHr")),criteriaBuilder.like(root.get("tags"),"%"+params.getQuery()+"%"));
         });
+        if(params.getPostTo() != null){
+            specs = specs.and(
+                    PostSpecs.postedBefore(params.getPostTo())
+            );
+        }
+        if(params.getPostFrom() != null){
+            specs = specs.and(
+                    PostSpecs.postedAfter(params.getPostFrom())
+            );
+        }
         Pageable pageable = PageRequest.of(params.getPageNumber(),params.getLimit(), Sort.by("createdAt").descending());
 
         Page<Post> posts = _postRepository.findAll(specs,pageable);

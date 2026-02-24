@@ -1,17 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchPostById, fetchPosts, fetchPostUploadedBySelf } from "../services/post.service";
 
-export const useFetchPosts = ({page,limit,query}:{page?:string,limit?:string,query?:string}) => useQuery(
+export const useFetchPosts = ({page,limit,query,postTo,postFrom}:{page?:string,limit?:string,query?:string,postTo?:string,postFrom?:string}) => useQuery(
     {
-        queryKey:["posts",{page,limit,query}],
-        queryFn: ()=>fetchPosts({page,limit,query})
+        queryKey:["posts",{page,limit,query,postTo,postFrom}],
+        queryFn: ()=>fetchPosts({page,limit,query,postTo,postFrom})
     }
 )
 
-export const usePostUploadedBySelf = ({page,limit,query}:{page?:string,limit?:string,query?:string}) => useQuery(
+export const usePostUploadedBySelf = ({page,limit,query,postTo,postFrom}:{page?:string,limit?:string,query?:string,postTo?:string,postFrom?:string}) => useQuery(
     {
-        queryKey:["posts",{page,limit,query},"post-uploaded-by-self"],
-        queryFn: ()=>fetchPostUploadedBySelf({page,limit,query})
+        queryKey:["posts",{page,limit,query,postTo,postFrom},"post-uploaded-by-self"],
+        queryFn: ()=>fetchPostUploadedBySelf({page,limit,query,postTo,postFrom})
     }
 )
 

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getActiveSlots, getAllGameTypes, getGameInterests, getGameSlotByGameTypeIdOfDate, getGameTypeById, getIntrestedEmployeeByNameLike, getRequestedSlotDetail } from "../services/game-scheduling.service"
+import { getActiveSlots, getAllGameTypes, getCurrentGameStatus, getGameInterests, getGameSlotByGameTypeIdOfDate, getGameTypeById, getIntrestedEmployeeByNameLike, getRequestedSlotDetail } from "../services/game-scheduling.service"
 import type { TQueryGameSlots } from "@/types/apiRequestTypes/TQueryGameSlots.type"
 import type { TGlobalResponse } from "@/types/TGlobalResponse.type"
 import type { TQueryInterestedEmployeeByNameLike } from "@/types/apiRequestTypes/TQueryInterestedEmployeeByNameLike.type"
@@ -45,7 +45,7 @@ export const useFetchGameInterests = ()=> useSyncDataStore<TGlobalResponse<TGame
 )
 
 export const useFetctRequestedSlotDetail = (requestId:string) => {
-    return useQuery<TRequestedSlotDetail>(
+    return useQuery<TGlobalResponse<TRequestedSlotDetail>>(
         {
             queryKey:["requested-slot-detail", `requested-slot-detial-${requestId}`],
             queryFn:()=>getRequestedSlotDetail(requestId)
@@ -66,4 +66,11 @@ export const useFetchGameTypeById = (gameTypeId:string) => {
     })
 }
 
+
+export const useFetchCurrentGameStatus = () => {
+    return useQuery({
+        queryKey:["current-game-status"],
+        queryFn: () => getCurrentGameStatus()
+    })
+}
 

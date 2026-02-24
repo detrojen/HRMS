@@ -1,18 +1,11 @@
 import type { TEmployeeWithNameOnly } from "../TEmployeeWithNameOnly.type"
+import type { TGameSlotResponse } from "./TGameSlotResponse.type"
 
 export type TRequestedSlotDetail =
     {
       id: number,
       status: string,
-      gameSlot: {
-        id: number,
-        slotDate: Date,
-        startsFrom: string,
-        endsAt: string,
-        gameTypeId: number,
-        gameType: string,
-        available: boolean
-      },
+      gameSlot: TGameSlotResponse,
       requestedBy: TEmployeeWithNameOnly,
       slotRequestWiseEmployee: {employee:TEmployeeWithNameOnly}[]
     }

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchJobById, fetchJobs, jobApplications } from "../services/job-service";
+import { fetchJobById, fetchJobs, jobApplications, referedJobApplication } from "../services/job-service";
 
 export const useFetchJobs = (page:number|null,limit:number|null) => useQuery({
     queryKey: ["jobs",`job-page-${page??0}`,`job-limit-${limit??5}`],
@@ -13,4 +13,8 @@ export const useFetchJobById = (jobId:number) => useQuery({
 export const useFetchJobApplications = (page?:number|null,limit?:number|null) => useQuery({
     queryKey: ["job-applications",page,limit],
     queryFn: () => jobApplications(page,limit)
+})
+export const useFetchReferedJobApplications = (page?:number|null,limit?:number|null) => useQuery({
+    queryKey: ["refered-job-application",page,limit],
+    queryFn: () => referedJobApplication(page,limit)
 })

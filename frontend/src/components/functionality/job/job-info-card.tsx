@@ -14,7 +14,7 @@ const JobInfoCard = ({job}:{job:TJobResponse}) => {
             <ItemHeader><p>{job.title}</p><Badge>{job.status}</Badge></ItemHeader>
             <ItemContent>
                 <ItemDescription>
-                    <p>{job.description}</p>
+                    {job.description}
                 </ItemDescription>
                 <p>vacancy : - {job.vacancy}</p>
                 <div className="flex flex-wrap gap-1">

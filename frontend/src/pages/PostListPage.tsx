@@ -16,6 +16,8 @@ type TPostListPageProps = {
     page?: string | undefined;
     limit?: string | undefined;
     query?: string | undefined;
+    postTo?:string | undefined;
+    postFrom?: string | undefined;
 }) => UseQueryResult<Promise<AxiosResponse<TGlobalResponse<TPageableProps<TPostWisthCommentsAndLikeResponse>>, any, {}>>>
 }
 const PostListPage = ({ query }: TPostListPageProps) => {
@@ -24,7 +26,8 @@ const PostListPage = ({ query }: TPostListPageProps) => {
         page: searchParams.get("page") ?? undefined,
         limit: searchParams.get("limit") ?? undefined,
         query: searchParams.get("query") ?? undefined,
-
+        postTo: searchParams.get("postTo") ?? undefined,
+        postFrom: searchParams.get("postFrom") ?? undefined,
     })
     useEffect(() => {
         console.log(data, isLoading)

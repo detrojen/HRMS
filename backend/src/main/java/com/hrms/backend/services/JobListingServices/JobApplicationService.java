@@ -11,6 +11,7 @@ import com.hrms.backend.entities.JobListingEntities.JobApplication;
 import com.hrms.backend.repositories.JobListingRepositories.JobApplicationRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
+import com.hrms.backend.specs.JobApplicationSpecs;
 import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -61,8 +63,26 @@ public class JobApplicationService {
     }
 
     public Page<JobApplicationResponseDto> getJobApplications(PageableDto pageParams){
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pageable pageable = PageRequest.of(pageParams.getPageNumber(),pageParams.getLimit(), Sort.by("createdAt").descending());
-        Page<JobApplication> jobApplications = jobApplicationRepository.findAll(pageable);
+        Page<JobApplication> jobApplications;
+        if(jwtInfoDto.getRoleTitle().equals("HR")){
+            jobApplications = jobApplicationRepository.findAll(pageable);
+        }else{
+            Specification<JobApplication> specs = JobApplicationSpecs.hasAssignedToReview(jwtInfoDto.getUserId());
+            jobApplications = jobApplicationRepository.findAll(specs,pageable);
+
+        }
+        return jobApplications.map(application->modelMapper.map(application, JobApplicationResponseDto.class));
+    }
+
+    public Page<JobApplicationResponseDto> getReferedJobApplications(PageableDto pageParams){
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Pageable pageable = PageRequest.of(pageParams.getPageNumber(),pageParams.getLimit(), Sort.by("createdAt").descending());
+
+        Specification<JobApplication> specs = JobApplicationSpecs.hasRefered(jwtInfoDto.getUserId());
+        Page<JobApplication> jobApplications = jobApplicationRepository.findAll(specs,pageable);
+
         return jobApplications.map(application->modelMapper.map(application, JobApplicationResponseDto.class));
     }
 }

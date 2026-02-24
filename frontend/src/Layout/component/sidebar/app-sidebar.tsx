@@ -75,7 +75,10 @@ const data = {
         {
           title: "Games",
           url: "/game",
-
+        },
+        {
+          title: "Game Types",
+          url: "/game/types",
         },
         {
           title: "Add game",
@@ -102,11 +105,17 @@ const data = {
           title: "Create Job Opening",
           url: "/jobs/add",
           icon: Gamepad2,
+          role: "HR"
         },
         {
           title: "Job applications",
           url: "/jobs/job-applications",
-          role: "HR"
+          // role: "HR"
+        },
+        {
+          title: "Your referels",
+          url: "/jobs/refered-job-applications",
+          // role: "HR"
         },
       ]
     },

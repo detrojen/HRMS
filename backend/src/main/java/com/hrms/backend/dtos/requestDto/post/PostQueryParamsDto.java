@@ -6,19 +6,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 @Data
 @NoArgsConstructor
 public class PostQueryParamsDto extends PageableDto {
     private String query = "";
-    private LocalDate postFrom ;
-    private LocalDate postTo;
-    public PostQueryParamsDto(String query,int page,int limit,LocalDate postFrom,LocalDate postTo){
+    private Date postFrom ;
+    private Date postTo;
+    public PostQueryParamsDto(String query,int page,int limit,Date postFrom,Date postTo){
         super(page,limit);
         this.query = query;
-        this.postFrom = postFrom;
-        this.postTo = postTo;
+        if(postFrom != null){
+            this.postFrom = postFrom;
+
+        }
+        if(postTo != null){
+
+            this.postTo = postTo;
+        }
+
+
     }
     public PostQueryParamsDto(String query,int page,int limit){
         super(page,limit);

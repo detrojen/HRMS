@@ -6,10 +6,7 @@ import com.hrms.backend.dtos.requestDto.gameScheduling.CreateUpdateGameTypeReque
 import com.hrms.backend.dtos.requestDto.gameScheduling.UpdateGameInterestRequestDto;
 import com.hrms.backend.dtos.responseDtos.*;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
-import com.hrms.backend.dtos.responseDtos.gameSheduling.EmployeeWiseGameInterestResponseDto;
-import com.hrms.backend.dtos.responseDtos.gameSheduling.GameSlotResponseDto;
-import com.hrms.backend.dtos.responseDtos.gameSheduling.SlotRequsetResponseDto;
-import com.hrms.backend.dtos.responseDtos.gameSheduling.UpdateGameTypeResponseDto;
+import com.hrms.backend.dtos.responseDtos.gameSheduling.*;
 import com.hrms.backend.services.GameSchedulingServices.EmployeeWiseGameInterestService;
 import com.hrms.backend.services.GameSchedulingServices.GameSlotService;
 import com.hrms.backend.services.GameSchedulingServices.GameTypeService;
@@ -125,6 +122,13 @@ public class GameSchedulingController {
         UpdateGameTypeResponseDto gameTypeResponseDto = gameTypeService.createGameType(requestDto);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(gameTypeResponseDto)
+        );
+    }
+
+    @GetMapping("/game/current")
+    public ResponseEntity<GlobalResponseDto<List<CurrentGameStatusResponse>>> getCurrentGameStatus(){
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(slotRequestService.getCurrentGameStatus())
         );
     }
 }

@@ -17,13 +17,18 @@ import { Input } from "@/components/ui/input"
 import useLoginMutation from "@/api/mutations/login.mutation"
 import { useForm } from "react-hook-form"
 import type { TLoginPayload } from "@/types/apiRequestTypes/TLoginPayload.type"
+import { useNavigate } from "react-router-dom"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const navTo = useNavigate()
   const loginMutation = useLoginMutation()
   const {register, handleSubmit} = useForm<TLoginPayload>();
+  if(localStorage.getItem("HRMS_AUTH_TOKEN")){
+    navTo("/")
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>

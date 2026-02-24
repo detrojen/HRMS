@@ -20,7 +20,9 @@ public class GameSlot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate slotDate;
+    @Column(columnDefinition = "TIME")
     private LocalTime startsFrom;
+    @Column(columnDefinition = "TIME")
     private LocalTime endsAt;
     private boolean isAvailable;
 

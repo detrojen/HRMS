@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -54,8 +55,10 @@ public class PostController {
             @RequestParam(defaultValue = "0") int page
           ,@RequestParam(defaultValue = "5") int limit
             ,@RequestParam(defaultValue = "") String query
+            ,@RequestParam(required = false) Date postFrom
+            ,@RequestParam(required = false) Date postTo
     ){
-        PostQueryParamsDto postParams = new PostQueryParamsDto(query,page,limit);
+        PostQueryParamsDto postParams = new PostQueryParamsDto(query,page,limit,postFrom,postTo);
         return ResponseEntity.ok(new GlobalResponseDto<>(_postService.getPosts(postParams)));
     }
     @GetMapping("/posts/{postId}")

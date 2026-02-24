@@ -8,11 +8,11 @@ const GameSchedulingPage = () => {
     const {data} = useFetchGameInterests()
     return (
         <>
-            <Card className="w-1/1 max-h-full p-2 grid grid-cols-10 gap-2">
+            <Card className="w-1/1 max-h-full p-2 grid grid-cols-10 gap-2 relative ">
                 <div className="col-span-6">
                     <Outlet />
                 </div>
-                <div className="flex flex-col gap-3 col-span-4">
+                <div className="flex flex-col gap-3 col-span-4 sticky top-0">
                     <EmployeeWiseGameInterestList />
                     <SlotHistory />
                 </div>

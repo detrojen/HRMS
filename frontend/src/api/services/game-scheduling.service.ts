@@ -7,6 +7,7 @@ import type { TRequestedSlotDetail } from "@/types/apiResponseTypes/TRequestedSl
 import type { TUpdateGameInterest } from "@/types/apiRequestTypes/TUpdateGameInterest.type";
 import type { TGameInterest } from "@/types/apiResponseTypes/TGameInterest.type";
 import type { TGameType } from "@/types/apiResponseTypes/TGameType.type";
+import type { TCurrentGameStatusResponse } from "@/types/apiResponseTypes/TCurrentGameStatusResponse.type";
 
 export const getGameSlotByGameTypeIdOfDate = (payload:TQueryGameSlots)  => {
     return api.get<TGlobalResponse<any>>(`/api/game-slots/${payload.gameTypeId}?slotDate=${payload.date}`).then(res=>res.data)
@@ -55,4 +56,8 @@ export const createGameType = (payload:Omit<TGameType,"id">) => {
 export const updateGameType =  (payload:any) => {
     
     return  api.put<TGameType>(`/api/game-types`,payload).then(res=>res.data)
+}
+
+export const getCurrentGameStatus = () => {
+    return api.get<TGlobalResponse<TCurrentGameStatusResponse[]>>("/api/game/current")
 }

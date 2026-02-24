@@ -6,6 +6,8 @@ import com.hrms.backend.dtos.responseDtos.travel.TravelDocumentResponseDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.entities.TravelEntities.TravelDocument;
+import com.hrms.backend.exceptions.InvalidActionException;
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.TravelRepositories.TravelDocumentRepository;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import org.modelmapper.ModelMapper;
@@ -35,11 +37,15 @@ public class TravelDocumentService {
     }
 
     public TravelDocumentResponseDto updateDocument(Travel travel, AddUpdateTravelDocumentRequestDto documentRequestDto){
-        TravelDocument travelDocument = modelMapper.map(documentRequestDto,TravelDocument.class);
+        TravelDocument travelDocument = travelDocumentRepository.findById(documentRequestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("Document not found"));
         travelDocument.setDocumentPath(documentRequestDto.getDocumentPath());
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Employee uploadedBy = employeeService.getEmployeeById(jwtInfoDto.getUserId());
-        travelDocument.setUploadedBy(uploadedBy);
+        if(jwtInfoDto.getUserId() != travelDocument.getUploadedBy().getId()){
+            throw new InvalidActionException("you can not update this document. Cause: you have not uploaded this document");
+        }
+        travelDocument.setDescription(documentRequestDto.getDescription());
+        travelDocument.setType(documentRequestDto.getType());
+        travelDocument.setDocumentPath(documentRequestDto.getDocumentPath());
         travelDocument = travelDocumentRepository.save(travelDocument);
         return modelMapper.map(travelDocument,TravelDocumentResponseDto.class);
     }

@@ -27,7 +27,7 @@ const GameSlotBook = () => {
   const games = useAppSelector((state) => state.gameInterest.filter(item => item.interested).map((item) => {
     return { id: item.gameTypeId, game: item.gameType }
   }))
-  if(games.find(game=>game.id == Number(searchParams.get("game-id")))==undefined){
+  if(games.find(game=>game.id == Number(searchParams.get("game-id") )||searchParams.get("game-id") == null)==undefined){
     return "Please first selects that game as interested"
   }
   return (

@@ -30,13 +30,14 @@ export const updatePost = (payload:TCreatePostRequest) => {
     })
 }
 
-export const fetchPosts = ({page,limit,query}:{page?:string,limit?:string,query?:string}) => {
-    var queryString = "".concat(page?`page=${page}&`:"").concat(limit?`limit=${limit}&`:"").concat(query?`query=${query}&`:"")
+export const fetchPosts = ({page,limit,query,postTo,postFrom}:{page?:string,limit?:string,query?:string, postTo?:string,postFrom?:string}) => {
+    debugger
+    var queryString = "".concat(page?`page=${page}&`:"").concat(limit?`limit=${limit}&`:"").concat(query?`query=${query}&`:"").concat(postTo?`postTo=${postTo}&`:"").concat(postFrom?`postFrom=${postFrom}&`:"")
     return api.get<TGlobalResponse<TPageableProps<TPostWisthCommentsAndLikeResponse>>>("/api/posts?"+queryString)
 }
 
-export const fetchPostUploadedBySelf = ({page,limit,query}:{page?:string,limit?:string,query?:string}) => {
-    var queryString = "".concat(page?`page=${page}&`:"").concat(limit?`limit=${limit}&`:"").concat(query?`query=${query}&`:"")
+export const fetchPostUploadedBySelf = ({page,limit,query, postTo,postFrom}:{page?:string,limit?:string,query?:string, postTo?:string,postFrom?:string}) => {
+    var queryString = "".concat(page?`page=${page}&`:"").concat(limit?`limit=${limit}&`:"").concat(query?`query=${query}&`:"").concat(postTo?`postTo=${postTo}&`:"").concat(postFrom?`postFrom=${postFrom}&`:"")
     return api.get<TGlobalResponse<TPageableProps<TPostWisthCommentsAndLikeResponse>>>("/api/posts/uploaded-by-self?"+queryString)
 }
 

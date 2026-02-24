@@ -64,6 +64,17 @@ public class JobController {
                 new GlobalResponseDto<>(jobApplications)
         );
     }
+    @GetMapping("/jobs/refered-job-applications")
+    public ResponseEntity<GlobalResponseDto<Page<JobApplicationResponseDto>>> referedJobApplicationList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int limit
+    ){
+        PageableDto pageParams = new PageableDto(page,limit);
+        Page<JobApplicationResponseDto> jobApplications = jobApplicationService.getReferedJobApplications(pageParams);
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(jobApplications)
+        );
+    }
 
     @GetMapping("/jobs/{jobId}")
     public ResponseEntity<GlobalResponseDto<CreateJobResponseDto>> jobById(@PathVariable Long jobId){
