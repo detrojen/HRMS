@@ -9,6 +9,8 @@ import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import type { TCreateTravelRequest } from "@/types/apiRequestTypes/TcreateTravelRequest.type"
 import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type"
+import { travelSchema } from "@/validation-schema/travel-schema"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import { Controller, useForm, type UseFormReturn } from "react-hook-form"
 
@@ -22,7 +24,7 @@ const TravelAddEmployeesField = ({form}:{form: UseFormReturn<TCreateTravelReques
     return (
         <>
 
-          <FieldLabel >Add Reviewers</FieldLabel>
+          <FieldLabel >Add Employees</FieldLabel>
           <Input
             id="search-player"
             type="text"
@@ -57,6 +59,16 @@ const TravelBasicDetailFields = ({form}:{form: UseFormReturn<TCreateTravelReques
                     <Field>
                         <FieldLabel>Title</FieldLabel>
                         <Input {...field}/>
+                    </Field>
+                )}
+            />
+             <Controller 
+                control={form.control}
+                name="maxReimbursementAmountPerDay"
+                render={({field,fieldState})=>(
+                    <Field>
+                        <FieldLabel>Max reiembesment per day</FieldLabel>
+                        <Input type="number"{...field}/>
                     </Field>
                 )}
             />
@@ -118,16 +130,15 @@ const TravelDescriptionField = ({form}:{form: UseFormReturn<TCreateTravelRequest
 const TravelForm = () => {
     const form = useForm<TCreateTravelRequest>({
         defaultValues:{
-            title:"Travel 1",
-            descripton:"travel 1",
-            employeeIds:[10,11,9],
-            maxReimbursementAmountPerDay: 10,
-            startDate: new Date("2026-02-11"),
-            endDate: new Date("2026-02-19"),
-            lastDateToSubmitExpense: new Date("2026-02-29")
+            title:"",
+            descripton:"",
+            employeeIds:[],
+            maxReimbursementAmountPerDay: 0,
+            startDate: undefined,
+            endDate: undefined,
+            lastDateToSubmitExpense: undefined
         }
     })
-
     const handleSubmit = form.handleSubmit((values)=>{
         createTravel(values);
     })
@@ -135,6 +146,7 @@ const TravelForm = () => {
         <>
         <Card className="w-1/1 p-4">
             <FieldGroup>
+                {JSON.stringify(form.formState.errors)}
                 <TravelBasicDetailFields form={form}/>
                 <TravelDescriptionField form={form} />
                 <Button onClick={()=>{handleSubmit()}}>Submit</Button>

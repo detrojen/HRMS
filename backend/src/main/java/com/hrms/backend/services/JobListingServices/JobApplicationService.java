@@ -1,7 +1,9 @@
 package com.hrms.backend.services.JobListingServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
+import com.hrms.backend.dtos.globalDtos.PageableDto;
 import com.hrms.backend.dtos.requestDto.job.ReferJobRequestDto;
+import com.hrms.backend.dtos.responseDtos.job.JobApplicationResponseDto;
 import com.hrms.backend.emailTemplates.JobEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.Job;
@@ -12,6 +14,10 @@ import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -52,5 +58,11 @@ public class JobApplicationService {
                 emailBody,jobApplication.getCvPath()
         );
         return jobApplication;
+    }
+
+    public Page<JobApplicationResponseDto> getJobApplications(PageableDto pageParams){
+        Pageable pageable = PageRequest.of(pageParams.getPageNumber(),pageParams.getLimit(), Sort.by("createdAt").descending());
+        Page<JobApplication> jobApplications = jobApplicationRepository.findAll(pageable);
+        return jobApplications.map(application->modelMapper.map(application, JobApplicationResponseDto.class));
     }
 }

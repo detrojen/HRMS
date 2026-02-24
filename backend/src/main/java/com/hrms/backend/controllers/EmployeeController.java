@@ -1,6 +1,7 @@
 package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeOneLevelReportResponseDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
@@ -26,6 +27,13 @@ public class EmployeeController {
     @GetMapping("/employees")
     public ResponseEntity<GlobalResponseDto<List<EmployeeWithNameOnlyDto>>> getEmployees(@RequestParam String nameLike){
         var employees = employeeService.getEmployeesByNameQuery(nameLike);
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(employees)
+        );
+    }
+    @GetMapping("/employees/role_hr")
+    public ResponseEntity<GlobalResponseDto<List<EmployeeMinDetailsDto>>> getEmployeeHasRoleHR(){
+        var employees = employeeService.getEmployeeWhoHr();
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(employees)
         );

@@ -1,13 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { TAddUpdateExpense } from "@/types/apiRequestTypes/TAddUpdateExpense.type";
+import { expenseSchema } from "@/validation-schema/expense-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
-import { Icon, PlusCircle, type LucideIcon } from "lucide-react";
+import { Edit, Icon, PlusCircle, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
 
@@ -15,14 +17,23 @@ type TAddUpdateExpenseActionProps = {
     title?: string
     icon?: LucideIcon
     travelId: number | string,
-    expense?:Pick<TAddUpdateExpense,"expenseDetails"> | undefined
+    expense?: Pick<TAddUpdateExpense, "expenseDetails"> | undefined
     mutation: () => UseMutationResult<AxiosResponse<any, any, {}>, Error, TAddUpdateExpense & { travelId: number | string }, unknown>
 }
-const AddUpdateExpenseAction = ({ travelId, mutation, expense ,icon,title}: TAddUpdateExpenseActionProps) => {
+const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TAddUpdateExpenseActionProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const uploadTravelDocumentMutation = mutation()
     const form = useForm<TAddUpdateExpense>({
-        defaultValues: expense?{expenseDetails:{...expense.expenseDetails}}:{}
+        defaultValues: expense ? { expenseDetails: { ...expense.expenseDetails } } : {
+            expenseDetails: {
+                description: "",
+                categoryId: 0,
+                askedAmount: 0,
+                dateOfExpense: undefined,
+            },
+            
+        }
+        , resolver: zodResolver(expenseSchema)
     })
 
     useEffect(() => {
@@ -31,49 +42,52 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense ,icon,title}: TAdd
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>, field: ControllerRenderProps<TAddUpdateExpense, "file">) => {
         if (e.target.files != null && e.target.files.length > 0) {
-            form.setValue(field.name, e.target.files[0]);
+            form.setValue(field.name!, e.target.files[0]);
         }
     }
     const handleSubmit = form.handleSubmit((values) => {
         uploadTravelDocumentMutation.mutate({ ...values, travelId })
     })
     return (
+
         <Dialog open={isOpen} onOpenChange={() => { setIsOpen(!isOpen) }}>
-            <DialogTrigger  className="flex gap-0.5"><PlusCircle/></DialogTrigger>
+            <DialogTrigger className="flex gap-0.5">{expense != undefined ? <Edit /> : <PlusCircle />}</DialogTrigger>
 
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Upload travel documnet</DialogTitle>
                 </DialogHeader>
-            
+                <h1>{expense?.expenseDetails.id}</h1>
                 <Controller
                     control={form.control}
                     name="expenseDetails.dateOfExpense"
-                    render={({ field, fieldstate }) => (
+                    render={({ field, fieldState: { error } }) => (
                         <Field>
                             <DatePicker value={field.value!} title={"Date of expense"} onSelect={(date) => {
                                 form.setValue(field.name, date)
                             }} />
+                            <FieldError>{error?.message}</FieldError>
                         </Field>
                     )}
                 />
                 <Controller
                     control={form.control}
                     name="expenseDetails.askedAmount"
-                    render={({ field, fieldstate }) => (
+                    render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel>Expense Amount</FieldLabel>
                             <Input type="number" {...field} />
+                            <FieldError>{fieldState?.error?.message}</FieldError>
                         </Field>
                     )}
                 />
                 <Controller
                     control={form.control}
                     name="expenseDetails.categoryId"
-                    render={({ field, fieldstate }) => (
+                    render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel>Type</FieldLabel>
-                            <Select value={field.value} onValueChange={field.onChange}>
+                            <Select value={field.value.toString()} onValueChange={field.onChange}>
                                 <SelectTrigger className="w-full max-w-48">
                                     <SelectValue placeholder="Select a category" />
                                 </SelectTrigger>
@@ -86,30 +100,33 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense ,icon,title}: TAdd
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
-                        </Field>
-                    )}
-                />
-                 <Controller
-                    control={form.control}
-                    name="expenseDetails.description"
-                    render={({ field, fieldstate }) => (
-                        <Field>
-                            <Field>
-                            <FieldLabel>Description</FieldLabel>
-                            <Input  {...field} />
-                        </Field>
+                            <FieldError>{fieldState?.error?.message}</FieldError>
                         </Field>
                     )}
                 />
                 <Controller
                     control={form.control}
+                    name="expenseDetails.description"
+                    render={({ field, fieldState }) => (
+
+                        <Field>
+                            <FieldLabel>Description</FieldLabel>
+                            <Input  {...field} />
+                            <FieldError>{fieldState?.error?.message}</FieldError>
+                        </Field>
+
+                    )}
+                />
+                <Controller
+                    control={form.control}
                     name="file"
-                    render={({ field, fieldstate }) => (
+                    render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel>File</FieldLabel>
                             <Input type="file" onChange={(e) => {
                                 handleFileChange(e, field)
                             }} />
+                            <FieldError>{fieldState?.error?.message}</FieldError>
                         </Field>
                     )}
                 />
@@ -122,3 +139,6 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense ,icon,title}: TAdd
 }
 
 export default AddUpdateExpenseAction
+
+// Resolver<{ expenseDetails: { description: string; categoryId: unknown; askedAmount: unknown; dateOfExpense: unknown; id?: unknown; reciept?: string | undefined; }; file?: File | undefined; }, any, { expenseDetails: { description: string; ... 4 more ...; reciept?: string | undefined; }; file?: File | undefined; }>' is not assignable to type 'Resolver<{ expenseDetails: { description: string; categoryId: number; askedAmount: number; dateOfExpense: Date; id?: number | undefined; reciept?: string | undefined; }; file?: File | undefined; }, any, { ...; }>'.
+// ResolverOptions<{ expenseDetails: { description: string; categoryId: number; askedAmount: number; dateOfExpense: Date; id?: number | undefined; reciept?: string | undefined; }; file?: File | undefined; }>' is not assignable to type 'ResolverOptions<{ expenseDetails: { description: string; categoryId: unknown; askedAmount: unknown; dateOfExpense: unknown; id?: unknown; reciept?: string | undefined; }; file?: File | undefined; }>'.

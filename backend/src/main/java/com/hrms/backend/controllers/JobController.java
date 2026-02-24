@@ -6,6 +6,7 @@ import com.hrms.backend.dtos.requestDto.job.ReferJobRequestDto;
 import com.hrms.backend.dtos.requestDto.job.ShareJobRequestDto;
 import com.hrms.backend.dtos.responseDtos.job.CreateJobResponseDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
+import com.hrms.backend.dtos.responseDtos.job.JobApplicationResponseDto;
 import com.hrms.backend.services.JobListingServices.JobApplicationService;
 import com.hrms.backend.services.JobListingServices.JobService;
 import com.hrms.backend.utils.FileUtility;
@@ -50,6 +51,17 @@ public class JobController {
         Page<CreateJobResponseDto> jobs = jobService.getJobList(pageParams);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(jobs)
+        );
+    }
+    @GetMapping("/jobs/job-applications")
+    public ResponseEntity<GlobalResponseDto<Page<JobApplicationResponseDto>>> jobApplicationList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int limit
+    ){
+        PageableDto pageParams = new PageableDto(page,limit);
+        Page<JobApplicationResponseDto> jobApplications = jobApplicationService.getJobApplications(pageParams);
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(jobApplications)
         );
     }
 

@@ -23,7 +23,7 @@ const JobShare = ({jobId}:{jobId:number}) => {
                            }}/>
                            <Button 
                             onClick={()=>{
-                                debugger
+                                
                                 shareJobMutation.mutate({
                                     jobId:jobId,
                                     data: {email: inputRef.current?.value!}

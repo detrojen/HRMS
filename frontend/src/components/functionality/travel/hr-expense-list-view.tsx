@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom"
 import { useContext } from "react"
 import { useFetchExpenseAsHR } from "@/api/queries/travel.queries"
 import ReviewExpenseAction from "./review-expense-action"
+import { Badge } from "@/components/ui/badge"
 
 
 const HrExpenseListView = () => {
@@ -40,6 +41,7 @@ const HrExpenseListView = () => {
                             <TableHead className="text-center">Aprooved amt</TableHead>
                             <TableHead className="text-center">Aprooved by</TableHead>
                             <TableHead className="text-center">Remark</TableHead>
+                            <TableHead className="text-center">Status</TableHead>
                             <TableHead className="text-center">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -57,6 +59,11 @@ const HrExpenseListView = () => {
                                         "-"}
                                     </TableCell>
                                     <TableCell className="text-center">{expense.remark}</TableCell>
+                                    <TableCell className="text-center">
+                                        <Badge className={`expense-${[expense.status]}`}>
+                                            {expense.status} 
+                                        </Badge>
+                                    </TableCell>
                                     <TableCell className="text-center">
                                         <DocViewer url={`/api/resource/expenses/${expense.reciept}`} />
                                         <ReviewExpenseAction {...expense} />

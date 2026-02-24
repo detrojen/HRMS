@@ -1,11 +1,4 @@
-export type TAddUpdateExpense = {
-    expenseDetails:{
-        id?:  number
-        description?:string
-        categoryId?: string
-        askedAmount?: number
-        dateOfExpense?: Date
-        reciept?:string
-    },
-    file?: File
-}
+import type { expenseSchema } from "@/validation-schema/expense-schema";
+import * as z from "zod";
+
+export type TAddUpdateExpense = z.infer<typeof expenseSchema>

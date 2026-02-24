@@ -5,6 +5,7 @@ import type { TPageableResponse } from "@/types/apiResponseTypes/TPageableRespon
 import type { TJobResponse } from "@/types/apiResponseTypes/TJobResponse.type";
 import type { TReferJobRequest } from "@/types/apiRequestTypes/TReferJobRequest.type";
 import type { TShareJobPayload } from "@/types/apiRequestTypes/TShareJobPayload";
+import type { TJobApplicationResponse } from "@/types/apiResponseTypes/TJobApplicationResponse.type";
 
 export const createJobRequest = (payload: TCreateJobRequest) => {
     const formData = new FormData()
@@ -42,6 +43,16 @@ export const referJob = (payload:TReferJobRequest & {jobId: number}) => {
 }
 
 export const shareJob = (payload:TShareJobPayload) => {
-    debugger
+    
     return api.post<TGlobalResponse<any>>(`/api/jobs/${payload.jobId}/share`,payload.data)
+}
+
+export const jobApplications = (page?:number|null,limit?:number|null) =>{
+    let searchParams = "?"
+    if(page) {
+        searchParams+=`page=${page}&`
+    }if(limit){
+        searchParams+=`limit=${limit}&`
+    }
+    return api.get<TGlobalResponse<TPageableResponse<TJobApplicationResponse>>>("/api/jobs/job-applications"+searchParams)
 }

@@ -12,18 +12,24 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.UUID;
 
 public class FileUtility {
+
     private static String uploadFolderPath = System.getProperty("user.dir") + File.separator + "uploads";
     public static String Save(MultipartFile file, String folderName){
-        String filePath = uploadFolderPath + File.separator + folderName + File.separator + file.getOriginalFilename();
+        UUID uuid = UUID.randomUUID();
+        String fileType = Arrays.stream(file.getContentType().split("/")).toArray()[1].toString();
+        String folderPath = uploadFolderPath + File.separator + folderName;
+        String filePath = folderPath + File.separator + uuid.toString() +"."+ fileType;
         File file1 = new File(filePath);
         try {
             file.transferTo(file1);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return file.getOriginalFilename();
+        return uuid.toString() + "." + fileType;
     }
 
     public static Resource Get(String folderName,String fileName) throws MalformedURLException {

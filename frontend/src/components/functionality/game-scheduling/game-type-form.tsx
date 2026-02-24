@@ -10,6 +10,8 @@ import useUpdategameTypeMutation from "@/api/mutations/update-game-type.mutation
 import { useContext } from "react";
 import { AuthContext } from "@/contexts/AuthContextProvider";
 import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { gameTypeSchema } from "@/validation-schema/game-type-schema";
 
 const GameTypeForm = ({ gameType , isEditable=true}: { gameType: TGameType | null, isEditable:boolean }) => {
     const form = useForm<TGameType>({
@@ -22,6 +24,7 @@ const GameTypeForm = ({ gameType , isEditable=true}: { gameType: TGameType | nul
     const updateGameTypeMutation = useUpdategameTypeMutation()
     
     const handleSubmit =  form.handleSubmit((values)=>{
+        debugger
         if(user.role != "HR"){
             toast("You can not create or update game type")
             return
@@ -35,8 +38,10 @@ const GameTypeForm = ({ gameType , isEditable=true}: { gameType: TGameType | nul
     
     return (
         <Form {...form} >
+            
             <form onSubmit={handleSubmit}>
                 <FieldGroup>
+                    
                     <FormField
                         disabled={!isEditable}
                         control={form.control}
@@ -46,6 +51,19 @@ const GameTypeForm = ({ gameType , isEditable=true}: { gameType: TGameType | nul
                                 <FieldLabel>Game name</FieldLabel>
                                 <FormControl>
                                 <Input {...field} placeholder="enter game name"></Input>
+                                </FormControl>
+                            </FormItem>
+                        }
+                    />
+                    <FormField
+                        disabled={!isEditable}
+                        control={form.control}
+                        name="slotCanBeBookedBefore"
+                        render={({ field }) =>
+                            <FormItem>
+                                <FieldLabel>Slot can be booked before</FieldLabel>
+                                <FormControl>
+                                <Input type="number" {...field} placeholder="enter time in minutes"></Input>
                                 </FormControl>
                             </FormItem>
                         }

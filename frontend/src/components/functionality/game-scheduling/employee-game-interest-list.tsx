@@ -21,7 +21,7 @@ const  EmployeeWiseGameInterestList = () => {
                     Games
                 </CardHeader>
                 <div className="flex w-full max-w-md flex-col gap-2">
-                    {data.map(item=><Item variant="outline">
+                    {data.map(item=><Item key={item.id} variant="outline">
                         <ItemContent>
                             <ItemTitle><Link to={`book-slot?game-id=${item.gameTypeId}`}>{item.gameType}</Link></ItemTitle>
                         </ItemContent>

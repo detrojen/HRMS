@@ -4,7 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class PostCommentRequestDto {
+public class CreateUpdateCommentRequestDto {
+    private Long id;
     @NotBlank(message = "comment not be blank")
     private String comment;
 }

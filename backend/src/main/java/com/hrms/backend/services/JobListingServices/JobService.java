@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -61,8 +62,7 @@ public class JobService {
 
     public Page<CreateJobResponseDto> getJobList(PageableDto pageParams) {
         Specification<Job> jobByStatusSpec = JobSpecs.getJobByStatus("Hiring");
-        Pageable pageable = PageRequest.of(pageParams.getPageNumber(),pageParams.getLimit());
-//        Pag<Job> jobs = jobRepository.findAll()
+        Pageable pageable = PageRequest.of(pageParams.getPageNumber(),pageParams.getLimit(),Sort.by("createdAt").descending());
         Page<Job> jobs = jobRepository.findAll(jobByStatusSpec,pageable);
         return jobs.map(job->modelMapper.map(job,CreateJobResponseDto.class));
     }

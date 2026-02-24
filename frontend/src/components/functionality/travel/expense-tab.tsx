@@ -66,7 +66,7 @@ const ExpenseTab = () => {
                                     </TableCell>
                                     <TableCell className="text-center">{expense.remark}</TableCell>
                                     <TableCell className="text-center">
-                                        <Badge className={`selected-slot expense-${[expense.status]}`}>
+                                        <Badge className={`expense-${[expense.status]}`}>
                                             {expense.status} 
                                         </Badge>
                                     </TableCell>

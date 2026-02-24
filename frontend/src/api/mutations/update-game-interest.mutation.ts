@@ -1,14 +1,16 @@
 import type { TUpdateGameInterest } from "@/types/apiRequestTypes/TUpdateGameInterest.type";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateGameInterest } from "../services/game-scheduling.service";
 
-const updateGameInterestMutation = () => useMutation(
+const updateGameInterestMutation = () =>{
+    const queryClient = useQueryClient()
+    return useMutation(
     {
         mutationFn: (payload: TUpdateGameInterest) => updateGameInterest(payload),
         onSuccess: (data)=>{
-            console.log(data)
+            queryClient.invalidateQueries({queryKey:["game-interest"]})
         }
     }
-)
+)}
 
 export default updateGameInterestMutation

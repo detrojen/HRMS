@@ -25,6 +25,11 @@ public class GlobalResponseDto<T> {
         this.message = message;
         this.status = status;
     }
+    public GlobalResponseDto(T data,String message){
+        this.data = data;
+        this.message = message;
+        this.status = HttpStatus.OK;
+    }
     public GlobalResponseDto(List< Map<String, String>> errors,String message, HttpStatus status){
         this.errors = errors;
         this.message = message;

@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { commentOn } from "../services/post.service";
+import {  updateComment } from "../services/post.service";
 import type { TComment } from "@/types/apiRequestTypes/TCommentRequest.type";
 
-const useCommentMutation = () => {
+const useUpdateCommentMutation = () => {
     const queryClient = useQueryClient()
     return useMutation(
         {
-            mutationFn: (payload: TComment & { postId: number | string }) => commentOn(payload),
+            mutationFn: (payload: TComment) => updateComment(payload),
             onSuccess: (data) => {
                 if(data.status === "OK"){
                     queryClient.invalidateQueries({queryKey:["posts"]})
@@ -15,4 +15,4 @@ const useCommentMutation = () => {
         }
     )
 }
-export default useCommentMutation
+export default useUpdateCommentMutation

@@ -15,7 +15,7 @@ const TagsAdd = ({ field, form, placeholder }: {
             <Input
                 ref={skillRef}
                 type="text"
-                onKeyUp={(e) => {
+                onKeyDown={(e) => {
                    
                     if (e.key === "Enter" && skillRef.current != null) {
                         
@@ -28,7 +28,7 @@ const TagsAdd = ({ field, form, placeholder }: {
             <div className="flex gap-2 my-2">
                 {
                   field.value &&  field.value.map(
-                        item => <Badge className="text-sm px-5" onClick={()=>{
+                        item => <Badge key={item} className="text-sm px-5" onClick={()=>{
                             console.log(field.value.filter(tag => tag != item))
                             form.setValue(field.name, field.value.filter(tag => tag != item))
                         }}>{item} </Badge>

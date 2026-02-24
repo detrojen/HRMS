@@ -103,6 +103,11 @@ const data = {
           url: "/jobs/add",
           icon: Gamepad2,
         },
+        {
+          title: "Job applications",
+          url: "/jobs/job-applications",
+          role: "HR"
+        },
       ]
     },
     {
@@ -138,6 +143,11 @@ const data = {
         {
           title: "post",
           url: "/posts",
+          icon: Image,
+        },
+        {
+          title: "Personal post",
+          url: "/posts/self-uploded",
           icon: Image,
         },
         {

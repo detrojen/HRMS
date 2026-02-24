@@ -1,6 +1,7 @@
 package com.hrms.backend.dtos.requestDto.job;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
@@ -17,7 +18,7 @@ public class CreateJobRequestDto {
     @Positive
     private int vacancy;
     private Long[] reviewerIds;
-    @NotBlank(message = "hr owner required")
+    @NotNull(message = "hr owner required")
     private Long hrOwnerId;
 //    private MultipartFile jdDocument;
 }

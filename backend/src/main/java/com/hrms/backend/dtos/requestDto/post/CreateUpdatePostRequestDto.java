@@ -4,7 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class CreatePostRequestDto {
+public class CreateUpdatePostRequestDto {
+    private Long id;
     @NotBlank(message = "post title is mandatory")
     private String title;
     @NotBlank(message = "post body is mandatory")

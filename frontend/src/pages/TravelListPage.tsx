@@ -29,7 +29,7 @@ const TravelList = ({getAsa}:{getAsa:string}) => {
                             <TableCell>{travel.endDate}</TableCell>
                             <TableCell>{travel.initiatedBy.firstName} {travel.initiatedBy.lastName}</TableCell>
                             <TableCell>
-                                <Link to={"/travels/1"} ><Button>Details</Button></Link>
+                                <Link to={`/travels/${travel.id}`} ><Button>Details</Button></Link>
                             </TableCell>
                         </TableRow>))}
                 </TableBody>

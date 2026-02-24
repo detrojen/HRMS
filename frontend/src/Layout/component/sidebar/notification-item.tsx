@@ -4,7 +4,7 @@ import type { TNotification } from "@/types/apiResponseTypes/TNotification.type"
 const NotificationItem = (props:TNotification) => {
 
     return (
-        <div onMouseLeave={
+        <div onClick={
             ()=>{
                 readNotification(props.id)
             }

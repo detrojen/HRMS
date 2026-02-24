@@ -4,6 +4,7 @@ export type TCreatePostRequest = {
 }
 
 type TPostDetails ={
+    id?:number
     title: string,
     body : string,
     tags: string[]

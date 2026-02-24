@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getEmployeesByNameQuery, getOneLevelReportOrgChart } from "../services/employee.service"
+import { fetchHrList, getEmployeesByNameQuery, getOneLevelReportOrgChart } from "../services/employee.service"
 export const useGetchEmployeesByNameLike = (nameQuery:string) => {
     return useQuery(
         {
@@ -14,6 +14,15 @@ export const useFetchOrgChart = (employeeId:string | null) => {
         {
             queryKey: ["orgchart", `orgchart-${employeeId}`],
             queryFn: ()=>getOneLevelReportOrgChart(employeeId)
+        }
+    )
+}
+
+export const useFetchHrList = () => {
+    return useQuery(
+        {
+            queryKey: ["hr-list"],
+            queryFn: ()=>fetchHrList()
         }
     )
 }

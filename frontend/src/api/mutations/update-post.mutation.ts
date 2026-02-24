@@ -1,20 +1,20 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { createPost } from "../services/post.service";
+import {  updatePost } from "../services/post.service";
 import type { TCreatePostRequest } from "@/types/apiRequestTypes/TCreatePostRequest.type";
 
-const useCreatePostMutation = () => {
+const useUpdatePostMutation = () => {
     const navTo = useNavigate();
     return useMutation(
     {
-        mutationFn: (payload: TCreatePostRequest) => createPost(payload),
+        mutationFn: (payload: TCreatePostRequest) => updatePost(payload),
         onSuccess:(data)=>{
-            if(data.data.status == "OK"){
-                navTo("/")
+            if(data.status == "OK"){
+                navTo("/posts")
             }
         },
         
     }
 ) 
 }
-export default useCreatePostMutation
+export default useUpdatePostMutation

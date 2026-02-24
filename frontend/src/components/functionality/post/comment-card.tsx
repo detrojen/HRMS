@@ -6,23 +6,28 @@ import DeleteUnappropriateContentAction from "./delete-unappropriate-content-act
 import useDeleteUnappropriateCommentMutation from "@/api/mutations/delete-unappropriate-comment.mutation"
 import { useContext } from "react"
 import { AuthContext } from "@/contexts/AuthContextProvider"
-import { Trash } from "lucide-react"
+import { Edit, Trash } from "lucide-react"
 import useDeletePostCommentMutation from "@/api/mutations/delete-comment.mutation"
+import CommentAction from "./comment-action"
+import useUpdateCommentMutation from "@/api/mutations/update-comment-mutation"
 
-const CommentCard = ({comment}:{comment:TCommentResponse})=> {
-    const {user} = useContext(AuthContext)
+const CommentCard = ({ comment }: { comment: TCommentResponse }) => {
+    const { user } = useContext(AuthContext)
     const commentDeleteMutation = useDeletePostCommentMutation()
     const handleDelete = () => {
-        const flag =  confirm("sure want to delete this comment")
-        if(flag){
+        const flag = confirm("sure want to delete this comment")
+        if (flag) {
             commentDeleteMutation.mutate(comment.id)
         }
     }
     return (
         <Item>
             <ItemHeader>
-                {user.id === comment.commentedBy.id && <Trash onClick={handleDelete}/>}
-                {user.role === "HR" && <DeleteUnappropriateContentAction deleteMutation={useDeleteUnappropriateCommentMutation} contentId={comment.id} />}
+                <div className="flex w-1/1 justify-end">
+                    {user.id === comment.commentedBy.id && <CommentAction mutation={useUpdateCommentMutation} icon={Edit} value={{id:comment.id, comment:comment.comment}}/>}
+                    {user.id === comment.commentedBy.id && <Trash onClick={handleDelete} />}
+                    {user.role === "HR" && <DeleteUnappropriateContentAction deleteMutation={useDeleteUnappropriateCommentMutation} contentId={comment.id} />}
+                </div>
             </ItemHeader>
             <ItemContent>
                 <ItemTitle><EmployeeMinDetailCard {...comment.commentedBy}></EmployeeMinDetailCard></ItemTitle>

@@ -9,7 +9,6 @@ const useAddExpenseMutation = () => {
             mutationFn: (payload:TAddUpdateExpense & {travelId:string | number}) => addExpense(payload),
             onSuccess: (data) => {
                 if(data.status == "OK"){
-                    
                     queryClient.invalidateQueries({queryKey:["travel-by-id"]})
                 }
             }

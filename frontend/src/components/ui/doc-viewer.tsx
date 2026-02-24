@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useEffect, useState } from "react"
 
 const DocRenderer = ({ url }: { url: string }) => {
-    debugger
+    
     if (url.includes(".pdf")) {
         return <object
             type="application/pdf"

@@ -26,12 +26,6 @@ const PostFilter = () => {
         <div className="flex gap-1 p-1">
             <Field>
                 <FieldLabel>
-                    Author
-                </FieldLabel>
-                <Input onChange={(e) => { handleFilterChange("author", e.target.value) }} />
-            </Field>
-            <Field>
-                <FieldLabel>
                     Text
                 </FieldLabel>
                 <Input onChange={(e) => { handleFilterChange("query", e.target.value) }} />

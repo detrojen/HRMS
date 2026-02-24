@@ -56,7 +56,7 @@ export const updateTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
 
 export const uploadEmployeeTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
     const formData = new FormData()
-    debugger
+    
     formData.append("documentDetails", new Blob([JSON.stringify(payload.documentDetails)], { type: "application/json" }))
     formData.append("file", payload.file!)
 
@@ -67,7 +67,7 @@ export const uploadEmployeeTraveldocumnet = (payload: TUploadTravelDocumnetReque
     })
 }
 export const updateEmployeeTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
-    debugger
+    
     const formData = new FormData()
     formData.append("documentDetails", new Blob([JSON.stringify(payload.documentDetails)], { type: "application/json" }))
     if(payload.file){

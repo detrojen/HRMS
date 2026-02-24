@@ -20,6 +20,9 @@ import TravelDetailPage from './pages/TravelDetailPage'
 import CreatePostPage from './pages/CreatePostPage'
 import PostListPage from './pages/PostListPage'
 import OrgChartPage from './pages/OrgChartPage'
+import { fetchPosts } from './api/services/post.service'
+import { useFetchPosts, usePostUploadedBySelf } from './api/queries/post.queries'
+import JobApplicationListPage from './pages/JobApplicationListPage'
 const routes : RouteObject[] = [
   {
     path:"/login",
@@ -44,6 +47,9 @@ const routes : RouteObject[] = [
       {
         path:"jobs/add",
         element:<JobForm />
+      },{
+        path: "jobs/job-applications",
+        element:<JobApplicationListPage/>
       },
       {
         path: "travels/add",
@@ -67,10 +73,18 @@ const routes : RouteObject[] = [
       },
       {
         path:"posts",
-        element: <PostListPage />
+        element: <PostListPage query={useFetchPosts} />
+      },
+      {
+        path:"posts/self-uploded",
+        element: <PostListPage query={usePostUploadedBySelf} />
       },
       {
         path:"posts/create",
+        element: <CreatePostPage />
+      },
+      {
+        path:"posts/update/:postId",
         element: <CreatePostPage />
       },
       {

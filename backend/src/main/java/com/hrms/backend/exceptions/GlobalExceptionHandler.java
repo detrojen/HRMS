@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JwtTokenRequired.class)
     public ResponseEntity<GlobalResponseDto<?>> handleJwtRequired(JwtTokenRequired e){
         List<Map<String,String>> errors= new ArrayList<>(){};
-        errors.add(Map.of( "message", e.getMessage()));
+        errors.add(Map.of( "message", "Login required"));
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new GlobalResponseDto<>(errors,"login required!",HttpStatus.UNAUTHORIZED));
 

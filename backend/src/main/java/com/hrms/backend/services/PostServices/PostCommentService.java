@@ -2,12 +2,12 @@ package com.hrms.backend.services.PostServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.requestDto.post.DeleteUnappropriatedContentRequestDto;
-import com.hrms.backend.dtos.requestDto.post.PostCommentRequestDto;
+import com.hrms.backend.dtos.requestDto.post.CreateUpdateCommentRequestDto;
 import com.hrms.backend.dtos.responseDtos.post.CommentResponseDto;
-import com.hrms.backend.dtos.responseDtos.post.DeletePostResponseDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.PostEntities.Post;
 import com.hrms.backend.entities.PostEntities.PostComment;
+import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.InvalidDeleteAction;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.exceptions.PostNotFound;
@@ -44,7 +44,7 @@ public class PostCommentService {
         return response;
     }
 
-    public CommentResponseDto commentOn(Post post, PostCommentRequestDto requestDto){
+    public CommentResponseDto commentOn(Post post, CreateUpdateCommentRequestDto requestDto){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PostComment comment = new PostComment();
         comment.setComment(requestDto.getComment());
@@ -83,6 +83,17 @@ public class PostCommentService {
         comment.setDeleted(true);
         postCommentRepository.save(comment);
         return comment.getPost();
+    }
+
+    public CommentResponseDto updateComment(CreateUpdateCommentRequestDto requestDto){
+        PostComment comment = postCommentRepository.findById(requestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("Comment not found"));
+        JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(comment.getCommentedBy().getId() != jwtInfo.getUserId()){
+            throw  new InvalidActionException("You can not update others comment.");
+        }
+        comment.setComment(requestDto.getComment());
+        comment = postCommentRepository.save(comment);
+        return  modelMapper.map(comment, CommentResponseDto.class);
     }
 
 

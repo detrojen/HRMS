@@ -1,16 +1,13 @@
 import { useFetchActiveSlots } from "@/api/queries/game-scheduling.queries";
 import { Card } from "../../ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../ui/select";
-import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "../../ui/item";
-import { Button } from "../../ui/button";
+import { Item, ItemContent, ItemDescription, ItemTitle } from "../../ui/item";
 import { Badge } from "../../ui/badge";
-import { useCancelSlotMutation } from "@/api/mutations/cancel-request.mutation";
 import { useNavigate } from "react-router-dom";
 
 const SlotHistory = () => {
     const navTo = useNavigate();
     const { data } = useFetchActiveSlots();
-    const cancelRequestMutation = useCancelSlotMutation();
     return (
         <>
 
@@ -39,9 +36,7 @@ const SlotHistory = () => {
                                         {item.gameSlot.startsFrom} to {item.gameSlot.endsAt}
                                     </ItemDescription>
                                 </ItemContent>
-                                <ItemActions>
-                                    <Button variant={"destructive"} onClick={()=>cancelRequestMutation.mutate(item.id)}>Cancel</Button>
-                                </ItemActions>
+                               
                             </Item>
                         )
                     }

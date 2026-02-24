@@ -1,8 +1,8 @@
 package com.hrms.backend.services.PostServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
-import com.hrms.backend.dtos.requestDto.post.CreatePostRequestDto;
-import com.hrms.backend.dtos.requestDto.post.PostCommentRequestDto;
+import com.hrms.backend.dtos.requestDto.post.CreateUpdatePostRequestDto;
+import com.hrms.backend.dtos.requestDto.post.CreateUpdateCommentRequestDto;
 import com.hrms.backend.dtos.requestDto.post.DeleteUnappropriatedContentRequestDto;
 import com.hrms.backend.dtos.requestDto.post.PostQueryParamsDto;
 import com.hrms.backend.dtos.responseDtos.post.CommentResponseDto;
@@ -11,9 +11,9 @@ import com.hrms.backend.dtos.responseDtos.post.PostResponseDto;
 import com.hrms.backend.dtos.responseDtos.post.PostWithCommentsAndLikesDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.PostEntities.Post;
-import com.hrms.backend.entities.PostEntities.PostComment;
-import com.hrms.backend.entities.TravelEntities.Travel;
+import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.InvalidDeleteAction;
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.exceptions.PostNotFound;
 import com.hrms.backend.repositories.PostRepositories.PostRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
@@ -32,8 +32,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -70,7 +68,7 @@ public class PostService {
         return response;
     }
 
-    public PostResponseDto createPost(CreatePostRequestDto postRequestDto, String attachmentpath){
+    public PostResponseDto createPost(CreateUpdatePostRequestDto postRequestDto, String attachmentpath){
         Post post = new Post();
         post.setBody(postRequestDto.getBody());
         post.setTitle(postRequestDto.getTitle());
@@ -79,6 +77,28 @@ public class PostService {
         JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Employee employee = _employeeService.getEmployeeById(jwtInfo.getUserId());
         post.setCreatedBy(employee);
+        post = _postRepository.save(post);
+        return _modelMapper.map(post,PostResponseDto.class);
+    }
+
+    public PostResponseDto getPostById(Long postId){
+        Post post = _postRepository.findById(postId).orElseThrow(()->new ItemNotFoundExpection("post not found"));
+        return _modelMapper.map(post,PostResponseDto.class);
+    }
+
+    public PostResponseDto updatePost(CreateUpdatePostRequestDto postRequestDto, String attachmentpath){
+        Post post = _postRepository.findById(postRequestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("Post not found"));
+        JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(post.getCreatedBy().getId() != jwtInfo.getUserId()){
+            throw new InvalidActionException("You can not update others post");
+        }
+        post.setBody(postRequestDto.getBody());
+        post.setTitle(postRequestDto.getTitle());
+        post.setTags(Arrays.stream(postRequestDto.getTags()).reduce((acc,tag)->acc+ ","+tag).get());
+        if(attachmentpath != null){
+            post.setAttachmentPath(attachmentpath);
+        }
+
         post = _postRepository.save(post);
         return _modelMapper.map(post,PostResponseDto.class);
     }
@@ -114,7 +134,7 @@ public class PostService {
         return true;
     }
     @Transactional
-    public CommentResponseDto comment(Long postId, PostCommentRequestDto requestDto){
+    public CommentResponseDto comment(Long postId, CreateUpdateCommentRequestDto requestDto){
         Post post = _postRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
         CommentResponseDto comment =  postCommentService.commentOn(post,requestDto);
         post.setCommentCount(post.getCommentCount()+1);
@@ -143,5 +163,24 @@ public class PostService {
     public void genrateBirthdayAndWorkAniversaryPost(){
         _postRepository.sp_birthdayAndOrkAniversary();
     }
+    public Page<PostWithCommentsAndLikesDto> getPostUploadedBySelf(PostQueryParamsDto params){
+        JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Specification<Post> specs = ((root, query, criteriaBuilder) -> {
+            Join<Post,Employee> employeeJoin = root.join("createdBy");
+            return criteriaBuilder.and(criteriaBuilder.isFalse(root.get("isDeleted")),criteriaBuilder.isFalse(root.get("isDeletedByHr")),criteriaBuilder.like(root.get("tags"),"%"+params.getQuery()+"%"),criteriaBuilder.equal(employeeJoin.get("id"), jwtInfo.getUserId()));
+        });
+        Pageable pageable = PageRequest.of(params.getPageNumber(),params.getLimit(), Sort.by("createdAt").descending());
+        Page<Post> posts = _postRepository.findAll(specs,pageable);
+        Page<PostWithCommentsAndLikesDto> response= posts.map(post->{
+            PostWithCommentsAndLikesDto dto = _modelMapper.map(post,PostWithCommentsAndLikesDto.class);
+            dto.setRecentComments(postCommentService.getRecentComments(post.getId()));
+            dto.setRecentLikedBy(postLikeService.getRecentLikes(post.getId()));
+            return dto;
+        });
+        return response;
+    }
+
+
 
 }

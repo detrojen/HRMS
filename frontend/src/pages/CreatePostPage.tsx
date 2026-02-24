@@ -1,24 +1,44 @@
 import useCreatePostMutation from "@/api/mutations/create-post.mutation"
+import useUpdatePostMutation from "@/api/mutations/update-post.mutation"
+import { usePostById } from "@/api/queries/post.queries"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import TagsAdd from "@/components/ui/tags-add"
 import type { TCreatePostRequest } from "@/types/apiRequestTypes/TCreatePostRequest.type"
+import { useEffect } from "react"
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form"
+import { useParams } from "react-router-dom"
 
 const CreatePostPage = () => {
+    const {postId} = useParams()
+    const postQuery = postId!=undefined ? usePostById(Number(postId)) : null
     const form = useForm<TCreatePostRequest>()
     const postMutation = useCreatePostMutation()
+    const updatePostMutation = useUpdatePostMutation()
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>, field: ControllerRenderProps<TCreatePostRequest, "attachment">) => {
         if (e.target.files != null && e.target.files.length > 0) {
             form.setValue(field.name, e.target.files[0]);
         }
     }
     const handleSubmit = form.handleSubmit((values) => {
-        debugger
-        postMutation.mutate(values)
+        if(postQuery != null && postQuery.data != undefined || postQuery?.data!=null){
+            updatePostMutation.mutate(values)
+        }else{
+
+            postMutation.mutate(values)
+        }
     })
+    useEffect(()=>{
+        if(postQuery?.data){
+            console.log(postQuery.data)
+            form.setValue("postDetails.id",postQuery?.data.data.id)
+            form.setValue("postDetails.body",postQuery?.data.data.body)
+            form.setValue("postDetails.title",postQuery?.data.data.title)
+            form.setValue("postDetails.tags",postQuery?.data.data.tags.split(","))
+        }
+    },[postQuery?.data])
     return (
         <Card className="w-1/1 md:w-2/3 mx-10 md:mx-auto p-3">
             <Controller
