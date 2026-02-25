@@ -23,6 +23,7 @@ public class TravelWiseEmployeeDetailService {
     }
 
     public EmployeeWithNameOnlyDto addEmployeeToTravel(Travel travel,Long employeeId){
+
         Employee employee = employeeService.getEmployeeById(employeeId);
         TravelWiseEmployee travelWiseEmployee = new TravelWiseEmployee();
         travelWiseEmployee.setEmployee(employee);

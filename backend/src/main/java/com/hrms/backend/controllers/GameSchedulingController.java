@@ -119,7 +119,7 @@ public class GameSchedulingController {
     }
     @PutMapping("/game-types")
     public ResponseEntity<GlobalResponseDto<UpdateGameTypeResponseDto>> updateGameType(@RequestBody @Validated(OnUpdate.class) CreateUpdateGameTypeRequestDto requestDto){
-        UpdateGameTypeResponseDto gameTypeResponseDto = gameTypeService.createGameType(requestDto);
+        UpdateGameTypeResponseDto gameTypeResponseDto = gameTypeService.updateGameType(requestDto);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(gameTypeResponseDto)
         );

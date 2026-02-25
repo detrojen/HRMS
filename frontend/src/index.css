@@ -29,6 +29,7 @@
   --chart-4: oklch(0.5553 0.1455 48.9975);
   --chart-5: oklch(0.4732 0.1247 46.2007);
   --sidebar: oklch(0.9431 0.0068 53.4442);
+  --header: oklch(0.9431 0.0068 53.4442);
   --sidebar-foreground: oklch(0.2178 0 0);
   --sidebar-primary: oklch(0.4650 0.1470 24.9381);
   --sidebar-primary-foreground: oklch(1.0000 0 0);

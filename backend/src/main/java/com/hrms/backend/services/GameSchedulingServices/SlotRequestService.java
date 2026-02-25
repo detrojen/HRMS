@@ -183,6 +183,9 @@ public class SlotRequestService {
 
     public SlotRequsetResponseDto cancelRequest(Long requestId){
         SlotRequest slotRequest = slotRequestRepository.findById(requestId).orElseThrow(()->new ItemNotFoundExpection("slot request with this id does not exist"));
+        if(LocalDate.now().isBefore(slotRequest.getGameSlot().getSlotDate()) || (LocalDate.now().isEqual(slotRequest.getGameSlot().getSlotDate()) && LocalTime.now().isAfter(slotRequest.getGameSlot().getStartsFrom()))){
+            throw new InvalidActionException("You  can not cancel slot after slot starts or ended");
+        }
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(jwtInfoDto.getUserId() != slotRequest.getRequestedBy().getId()){
             throw new InvalidActionException("slot only can be cancelled by who has reqyested");
@@ -191,7 +194,6 @@ public class SlotRequestService {
             return cancelConfirmRequest(slotRequest);
         }
         SlotRequest sr = onHoldToCancel(slotRequest);
-
         return modelMapper.map(sr,SlotRequsetResponseDto.class);
     }
 

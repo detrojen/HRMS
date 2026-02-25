@@ -3,6 +3,7 @@ package com.hrms.backend.controllers;
 import com.hrms.backend.dtos.globalDtos.PageableDto;
 import com.hrms.backend.dtos.requestDto.job.CreateJobRequestDto;
 import com.hrms.backend.dtos.requestDto.job.ReferJobRequestDto;
+import com.hrms.backend.dtos.requestDto.job.ReviewJobApplicationRequestDto;
 import com.hrms.backend.dtos.requestDto.job.ShareJobRequestDto;
 import com.hrms.backend.dtos.responseDtos.job.CreateJobResponseDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
@@ -97,5 +98,17 @@ public class JobController {
         jobService.shareJob(jobId,requestDto);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(null, "Job refered successfull.",HttpStatus.OK));
 
+    }
+
+    @GetMapping("/jobs/job-applications/{jobApplicationId}")
+    public ResponseEntity<GlobalResponseDto<JobApplicationResponseDto>> getJobApplicationById(@PathVariable Long jobApplicationId){
+        JobApplicationResponseDto responseDto = jobApplicationService.getJobApplicationById(jobApplicationId);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(responseDto));
+    }
+
+    @PatchMapping("/jobs/job-applications/{jobApplicationId}")
+    public ResponseEntity<GlobalResponseDto<JobApplicationResponseDto>> reviewJobApplication(@PathVariable Long jobApplicationId,@RequestBody ReviewJobApplicationRequestDto requestDto){
+        JobApplicationResponseDto responseDto = jobApplicationService.reviewJobApplication(jobApplicationId, requestDto);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(responseDto));
     }
 }

@@ -58,8 +58,12 @@ public class TravelWiseExpenseService {
     }
 
     public TravelExpenseResponseDto createTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String recieptPath){
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(travel.getLastDateToSubmitExpense().isBefore(LocalDate.now())){
             throw new InvalidActionException("you can not submit new expenses");
+        }
+        if(travel.getStartDate().isAfter(LocalDate.now())){
+            throw new InvalidActionException("travel not starts yet, you can not submit expense");
         }
         if(travel.getEndDate().isBefore(requestDto.getDateOfExpense())){
             throw  new InvalidActionException("You can not submit expense with expense date after trip end date");
@@ -67,7 +71,13 @@ public class TravelWiseExpenseService {
         if(travel.getStartDate().isAfter(requestDto.getDateOfExpense())){
             throw  new InvalidActionException("You can not submit expense with expense date before trip start date");
         }
-        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        int totalExpenseRequested = travelWiseExpenseRepository.getTotalExpenseByEmployeeByTravelByDate(jwtInfoDto.getUserId(), travel.getId(), requestDto.getDateOfExpense()).orElse(0);
+        if(travel.getMaxReimbursementAmountPerDay() == totalExpenseRequested){
+            throw  new InvalidActionException("you have reached limit of Maximum reimbursement amount per day for date = " + requestDto.getDateOfExpense());
+        }
+        if(travel.getMaxReimbursementAmountPerDay() < totalExpenseRequested + requestDto.getAskedAmount()){
+            throw new InvalidActionException("Maximum reimbursement amount limit reached. you can only asks for expense amount =" +(travel.getMaxReimbursementAmountPerDay()-totalExpenseRequested) + " for date = "+requestDto.getDateOfExpense() );
+        }
         Employee employee = employeeService.getReference(jwtInfoDto.getUserId());
         TravelWiseExpense travelWiseExpense = modelMapper.map(requestDto,TravelWiseExpense.class);
         travelWiseExpense.setTravel(travel);
@@ -84,8 +94,16 @@ public class TravelWiseExpenseService {
 
     public TravelExpenseResponseDto updateTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String recieptPath){
         TravelWiseExpense travelWiseExpense = travelWiseExpenseRepository.findById(requestDto.getId()).orElseThrow(()->new RuntimeException("expense not found"));
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(travelWiseExpense.getStatus().equals("approved") || travelWiseExpense.getStatus().equals("rejected")){
             throw new InvalidActionException("you can not update expense once it reviewed");
+        }
+        int totalExpenseRequested = travelWiseExpenseRepository.getTotalExpenseByEmployeeByTravelByDate(jwtInfoDto.getUserId(), travel.getId(), requestDto.getDateOfExpense()).orElse(0)-travelWiseExpense.getAskedAmount();
+        if(travel.getMaxReimbursementAmountPerDay() == totalExpenseRequested){
+            throw  new InvalidActionException("you have reached limit of Maximum reimbursement amount per day for date = " + requestDto.getDateOfExpense());
+        }
+        if(travel.getMaxReimbursementAmountPerDay() < totalExpenseRequested + requestDto.getAskedAmount()){
+            throw new InvalidActionException("Maximum reimbursement amount limit reached. you can only asks for expense amount =" +(travel.getMaxReimbursementAmountPerDay()-totalExpenseRequested) + " for date = "+requestDto.getDateOfExpense() );
         }
         int oldAskedAmount = travelWiseExpense.getAskedAmount();
         ExpenseCategory category = expenseCategoryRepository.getReferenceById(requestDto.getCategoryId());

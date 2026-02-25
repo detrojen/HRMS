@@ -3,6 +3,7 @@ package com.hrms.backend.services.GameSchedulingServices;
 import com.hrms.backend.dtos.requestDto.gameScheduling.CreateUpdateGameTypeRequestDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.UpdateGameTypeResponseDto;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
+import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.GameSchedulingRepositories.GameTypeRepository;
 import org.modelmapper.ModelMapper;
@@ -28,12 +29,18 @@ public class GameTypeService {
     }
 
     public UpdateGameTypeResponseDto createGameType(CreateUpdateGameTypeRequestDto requestDto){
+        if(requestDto.getOpeningHours().isAfter(requestDto.getClosingHours())){
+            throw  new InvalidActionException("games openig hour must be before closing hour.");
+        }
         GameType gameType = modelMapper.map(requestDto, GameType.class);
         gameType = gameTypeRepository.save(gameType);
         return modelMapper.map(gameType, UpdateGameTypeResponseDto.class);
     }
 
-    public UpdateGameTypeResponseDto updateGameType(Long gameTypeId,CreateUpdateGameTypeRequestDto requestDto){
+    public UpdateGameTypeResponseDto updateGameType(CreateUpdateGameTypeRequestDto requestDto){
+        if(requestDto.getOpeningHours().isAfter(requestDto.getClosingHours())){
+            throw  new InvalidActionException("games openig hour must be before closing hour.");
+        }
         GameType gameType = getById(requestDto.getId());
         gameType.setGame(requestDto.getGame());
         gameType.setOpeningHours(requestDto.getOpeningHours());

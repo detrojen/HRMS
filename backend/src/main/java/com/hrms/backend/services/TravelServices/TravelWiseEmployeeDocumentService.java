@@ -6,6 +6,7 @@ import com.hrms.backend.dtos.responseDtos.travel.TravelDocumentResponseDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.entities.TravelEntities.TravelWiseEmployeeWiseDocument;
+import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.repositories.TravelRepositories.TravelWiseEmployeeWiseDocumentRepository;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import com.hrms.backend.specs.TravelWiseEmployeeDocumentSpecs;
@@ -72,7 +73,7 @@ public class TravelWiseEmployeeDocumentService {
         TravelWiseEmployeeWiseDocument travelDocument = repository.findById(documentRequestDto.getId()).orElseThrow(()->new RuntimeException("document details not found"));
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(travelDocument.getUploadedBy().getId() != jwtInfoDto.getUserId()){
-            throw new RuntimeException("Invalid action");
+            throw new InvalidActionException("Invalid action");
         }
         travelDocument.setDocumentPath(documentRequestDto.getDocumentPath());
         travelDocument.setDescription(documentRequestDto.getDescription());

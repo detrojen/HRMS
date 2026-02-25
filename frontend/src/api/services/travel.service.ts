@@ -3,7 +3,7 @@ import api from "../api";
 import type { TGlobalResponse } from "@/types/TGlobalResponse.type";
 import type { TCreateTravelRequest } from "@/types/apiRequestTypes/TcreateTravelRequest.type";
 import type { TTravelDetails } from "@/types/apiResponseTypes/TTravelDetails.type";
-import type { TTypeMinDetails } from "@/types/apiResponseTypes/TTravelMinDetails.type";
+import type { TTravelMinDetail } from "@/types/apiResponseTypes/TTravelMinDetails.type";
 import type { TAddUpdateExpense } from "@/types/apiRequestTypes/TAddUpdateExpense.type";
 import type { TTravelExpenseResponse } from "@/types/apiResponseTypes/TTravelExpenseResponse.type";
 import type { TTravelExpenseQueryParams } from "@/types/apiRequestTypes/TTravelExpenseQueryParams.type";
@@ -13,13 +13,13 @@ export const createTravel = (payload: TCreateTravelRequest) => {
     return api.post<TGlobalResponse<any>>("/api/travels", payload)
 }
 export const fetchTravels = (getAsa: string) => {
-     return api.get<TGlobalResponse<TTypeMinDetails>>(`/api/travels/list/${getAsa}`)
+     return api.get<TGlobalResponse<TTravelMinDetail>>(`/api/travels/list/${getAsa}`)
 }
 // export const fetchAssignedTravels = () => {
-//     return api.get<TGlobalResponse<TTypeMinDetails>>("/api/travels/assigned-travels")
+//     return api.get<TGlobalResponse<TTravelMinDetail>>("/api/travels/assigned-travels")
 // }
 // export const fetchAssignedTravelsOfEmployee = () => {
-//     return api.get<TGlobalResponse<TTypeMinDetails>>("/api/travels/as-a-manager")
+//     return api.get<TGlobalResponse<TTravelMinDetail>>("/api/travels/as-a-manager")
 // }
 
 

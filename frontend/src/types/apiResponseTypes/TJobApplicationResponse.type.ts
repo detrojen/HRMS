@@ -9,5 +9,8 @@ export type TJobApplicationResponse = {
     details: string
     cvPath: string
     referedBy: TEmployeeMinDetail
+    status:string
+    remark: string
+    reviewedBy: TEmployeeMinDetail | null
     job: TJobResponse
 }

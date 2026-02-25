@@ -5,10 +5,10 @@ import { Card } from "@/components/ui/card"
 import { Outlet } from "react-router-dom"
 
 const GameSchedulingPage = () => {
-    const {data} = useFetchGameInterests()
+    const {} = useFetchGameInterests()
     return (
         <>
-            <Card className="w-1/1 max-h-full p-2 grid grid-cols-10 gap-2 relative ">
+            <div className="-z-10 w-1/1 max-h-full p-2 grid grid-cols-10 gap-2 relative ">
                 <div className="col-span-6">
                     <Outlet />
                 </div>
@@ -16,7 +16,7 @@ const GameSchedulingPage = () => {
                     <EmployeeWiseGameInterestList />
                     <SlotHistory />
                 </div>
-            </Card>
+            </div>
            
         </>
     )

@@ -13,6 +13,7 @@ import type { AxiosResponse } from "axios";
 import { FileSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
+import { useOutletContext } from "react-router-dom";
 
 type TReviewExpenseActionProps = {
     reciept: string,
@@ -23,6 +24,7 @@ type TReviewExpenseActionProps = {
 }
 const ReviewExpenseAction = (props:TReviewExpenseActionProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const {setIsLoading} = useOutletContext()
     const reivewExpenseMutation = useReviewExpenseMutation()
     const form = useForm<TReviewExpenseRequest>({
         defaultValues: {
@@ -31,8 +33,12 @@ const ReviewExpenseAction = (props:TReviewExpenseActionProps) => {
     })
 
     useEffect(()=>{
-        setIsOpen(false)
-    },[reivewExpenseMutation.isSuccess])
+        setIsLoading(reivewExpenseMutation.isPending)
+        if(reivewExpenseMutation.isSuccess){
+
+            setIsOpen(false)
+        }
+    },[reivewExpenseMutation.isPending, reivewExpenseMutation.isSuccess])
 
 
     const handleSubmit = form.handleSubmit((values)=>{

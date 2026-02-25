@@ -4,13 +4,9 @@ import type { TNotification } from "@/types/apiResponseTypes/TNotification.type"
 const NotificationItem = (props:TNotification) => {
 
     return (
-        <div onClick={
-            ()=>{
-                readNotification(props.id)
-            }
-        }>
-            <p>{props.message}</p>
-        </div>
+        
+            <p className="text-sm my-2">{props.message}</p>
+
     )
 }
 

@@ -9,6 +9,7 @@ import type { AxiosResponse } from "axios"
 import { ChartBar, Edit, MessageCircle, type LucideIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
+import { useOutletContext } from "react-router-dom"
 
 type TCommentActionProps = {
     postId?:string|number, 
@@ -19,6 +20,7 @@ type TCommentActionProps = {
  
 const CommentAction = ({postId, value, mutation, icon}:TCommentActionProps) => {
      const [isOpen, setIsOpen] = useState<boolean>(false);
+     const {setIsLoading} = useOutletContext();
     const commentMutation = mutation()
     const form = useForm<TComment>({
         defaultValues: value??{comment:""}
@@ -40,7 +42,8 @@ const CommentAction = ({postId, value, mutation, icon}:TCommentActionProps) => {
                 queryKey:["posts"]
             })
         }
-    },[commentMutation.isSuccess])
+        setIsLoading(commentMutation.isPending)
+    },[commentMutation.isSuccess,commentMutation.isPending])
     return(
         <Dialog open={isOpen} onOpenChange={() => { setIsOpen(!isOpen) }}>
             <DialogTrigger>

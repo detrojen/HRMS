@@ -26,7 +26,7 @@ export const getActiveSlots = () => {
 }
 
 export const cancelRequestedSlot = (slotRequestId:number) => {
-    return api.delete(`/api/game-slots/cancel/${slotRequestId}`).then(res=>res.data)
+    return api.delete(`/api/game-slots/cancel/${slotRequestId}`)
 }
 
 export const getGameInterests = () => {
@@ -50,12 +50,12 @@ export const getGameTypeById = (gameTypeId:string) => {
 
 export const createGameType = (payload:Omit<TGameType,"id">) => {
     
-    return api.post("/api/game-types", payload).then(res=>res.data)
+    return api.post("/api/game-types", payload)
 }
 
 export const updateGameType =  (payload:any) => {
     
-    return  api.put<TGameType>(`/api/game-types`,payload).then(res=>res.data)
+    return  api.put<TGameType>(`/api/game-types`,payload)
 }
 
 export const getCurrentGameStatus = () => {

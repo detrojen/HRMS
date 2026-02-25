@@ -8,8 +8,8 @@ const DocRenderer = ({ url }: { url: string }) => {
         return <object
             type="application/pdf"
             data={url}
-            width="800"
-            height="500">
+            width="900"
+            height="600">
                 fallback
         </object>
     } else if (url.includes(".png") || url.includes(".jpg")) {
@@ -22,7 +22,7 @@ const DocRenderer = ({ url }: { url: string }) => {
 const DocViewer = ({ url }: { url: string }) => {
     return (
         <Dialog >
-            <DialogTrigger><Eye /></DialogTrigger>
+            <DialogTrigger><Eye className="text-blue-500"/></DialogTrigger>
 
             <DialogContent>
                 <DialogHeader>
@@ -35,3 +35,4 @@ const DocViewer = ({ url }: { url: string }) => {
 }
 
 export default DocViewer
+export {DocRenderer}

@@ -13,8 +13,9 @@ const useUpdategameTypeMutation = () => {
                 return updateGameType(payload)
             }
             , onSuccess: (data) => {
+                debugger
                 if (data.status == "OK") {
-                    queryClient.invalidateQueries({ queryKey: ["game-interest"] })
+                    queryClient.invalidateQueries({ queryKey: ["game-interest", "game-types"] })
                     navTo("/game")
                 }
             }

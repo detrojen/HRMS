@@ -19,7 +19,6 @@ public class TravelMinDetailResponseDto {
     private LocalDate endDate;
     private LocalDate lastDateToSubmitExpense;
     private EmployeeWithNameOnlyDto initiatedBy;
-
     public Long getId() {
         return id;
     }

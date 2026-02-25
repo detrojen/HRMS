@@ -8,6 +8,7 @@ import type { AxiosResponse } from "axios"
 import { Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
+import { useOutletContext } from "react-router-dom"
 
 const DeleteUnappropriateContentAction = ({ contentId, deleteMutation }: {
     contentId: number,
@@ -16,6 +17,7 @@ const DeleteUnappropriateContentAction = ({ contentId, deleteMutation }: {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const deleterMutationInstance = deleteMutation()
+    const {setIsLoading} = useOutletContext()
     const form = useForm<TDeleteUnappropriateContent>({
         defaultValues: {
             id: contentId
@@ -26,6 +28,7 @@ const DeleteUnappropriateContentAction = ({ contentId, deleteMutation }: {
         deleterMutationInstance.mutate(values)
     })
     useEffect(() => {
+        setIsLoading(deleterMutationInstance.isPending)
         if (deleterMutationInstance.isSuccess) {
             setIsOpen(false)
             queryClient.invalidateQueries({

@@ -28,7 +28,7 @@ const RecursiveComp = ({ emp }: { emp: TEmp }) => {
         return <Card className={`${empId == emp.id ? "bg-green-300" : ""}`} onClick={() => { setSearchParams({ "employeeId": emp.id.toString() }) }}>
             <CardHeader>
                 <div className="flex gap-1 content-center">
-                    <EmployeeMinDetailCard firstName={emp.firstName} lastName={emp.lastName} designation={emp.designation} />
+                    <EmployeeMinDetailCard id={emp.id} firstName={emp.firstName} lastName={emp.lastName} designation={emp.designation} />
 
                 </div>
             </CardHeader>
@@ -41,7 +41,7 @@ const RecursiveComp = ({ emp }: { emp: TEmp }) => {
             <Card className={`${empId == emp.id ? "bg-green-300" : ""}`} onClick={() => { setSearchParams({ "employeeId": emp.id.toString() }) }}>
                 <CardHeader>
                     <div className="flex gap-1 content-center">
-                        <EmployeeMinDetailCard firstName={emp.firstName} lastName={emp.lastName} designation={emp.designation} />
+                        <EmployeeMinDetailCard id={emp.id} firstName={emp.firstName} lastName={emp.lastName} designation={emp.designation} />
 
                     </div>
                 </CardHeader>
@@ -92,7 +92,7 @@ const OneLevelDown = ({ emps }: { emps: TEmp[] }) => {
                 return <Card className="col-span-2" onClick={() => { setSearchParams({ "employeeId": emp.id.toString() }) }}>
                     <CardHeader>
                         <div className="flex gap-1 content-center">
-                            <EmployeeMinDetailCard firstName={emp.firstName} lastName={emp.lastName} designation={emp.designation} />
+                            <EmployeeMinDetailCard id={emp.id} firstName={emp.firstName} lastName={emp.lastName} designation={emp.designation} />
                         </div>
                     </CardHeader>
                 </Card>

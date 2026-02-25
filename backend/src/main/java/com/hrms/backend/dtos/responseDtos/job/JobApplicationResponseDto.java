@@ -1,10 +1,9 @@
 package com.hrms.backend.dtos.responseDtos.job;
 
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
-import com.hrms.backend.entities.EmployeeEntities.Employee;
-import com.hrms.backend.entities.JobListingEntities.Job;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
+
+import java.util.Optional;
 
 @Data
 public class JobApplicationResponseDto {
@@ -14,6 +13,9 @@ public class JobApplicationResponseDto {
     private String applicantsPhone;
     private String details;
     private String cvPath;
+    private String status;
+    private String remark;
+    private EmployeeMinDetailsDto reviewedBy;
     private EmployeeMinDetailsDto referedBy;
     private CreateJobResponseDto job;
 }

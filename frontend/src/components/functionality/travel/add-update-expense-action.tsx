@@ -12,6 +12,7 @@ import type { AxiosResponse } from "axios";
 import { Edit, Icon, PlusCircle, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
+import { useOutletContext } from "react-router-dom";
 
 type TAddUpdateExpenseActionProps = {
     title?: string
@@ -22,7 +23,8 @@ type TAddUpdateExpenseActionProps = {
 }
 const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TAddUpdateExpenseActionProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const uploadTravelDocumentMutation = mutation()
+    const{setIsLoading} = useOutletContext()
+    const uplaodExpenseMutation = mutation()
     const form = useForm<TAddUpdateExpense>({
         defaultValues: expense ? { expenseDetails: { ...expense.expenseDetails } } : {
             expenseDetails: {
@@ -36,9 +38,14 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TA
         , resolver: zodResolver(expenseSchema)
     })
 
-    useEffect(() => {
-        if (uploadTravelDocumentMutation.isSuccess) setIsOpen(false)
-    }, [uploadTravelDocumentMutation.isSuccess])
+    useEffect(()=>{
+      
+        setIsLoading(uplaodExpenseMutation.isPending)
+        if(uplaodExpenseMutation.isSuccess){
+
+            setIsOpen(false)
+        }
+    },[uplaodExpenseMutation.isPending, uplaodExpenseMutation.isSuccess])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>, field: ControllerRenderProps<TAddUpdateExpense, "file">) => {
         if (e.target.files != null && e.target.files.length > 0) {
@@ -46,7 +53,7 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TA
         }
     }
     const handleSubmit = form.handleSubmit((values) => {
-        uploadTravelDocumentMutation.mutate({ ...values, travelId })
+        uplaodExpenseMutation.mutate({ ...values, travelId })
     })
     return (
 
@@ -55,7 +62,7 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TA
 
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Upload travel documnet</DialogTitle>
+                    <DialogTitle>Expense</DialogTitle>
                 </DialogHeader>
                 <h1>{expense?.expenseDetails.id}</h1>
                 <Controller

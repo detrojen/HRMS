@@ -9,10 +9,12 @@ import type { AxiosResponse } from "axios";
 import type { LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
+import { useOutletContext } from "react-router-dom";
 
 const AddUpdateTravelDocumnetAction = ({ travelId, mutation, defaultValues, Actionicon }: {defaultValues?:TUploadTravelDocumnetRequest, travelId: number, mutation:()=> UseMutationResult<AxiosResponse<any, any, {}>, Error, TUploadTravelDocumnetRequest, unknown>, Actionicon:LucideIcon }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const uploadTravelDocumentMutation = mutation()
+    const {setIsLoading} = useOutletContext()
     const form = useForm<Omit<TUploadTravelDocumnetRequest,"travelId">>({
         defaultValues: {
             documentDetails: {
@@ -25,9 +27,15 @@ const AddUpdateTravelDocumnetAction = ({ travelId, mutation, defaultValues, Acti
         }
     })
 
-    useEffect(()=>{
-        setIsOpen(false)
-    },[uploadTravelDocumentMutation.isSuccess])
+     useEffect(()=>{
+      
+        setIsLoading(uploadTravelDocumentMutation.isPending)
+        if(uploadTravelDocumentMutation.isSuccess){
+
+            setIsOpen(false)
+        }
+    },[uploadTravelDocumentMutation.isPending, uploadTravelDocumentMutation.isSuccess])
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>, field: ControllerRenderProps<TUploadTravelDocumnetRequest, "file">) => {
         if (e.target.files != null && e.target.files.length > 0) {
             form.setValue(field.name, e.target.files[0]);
@@ -35,7 +43,6 @@ const AddUpdateTravelDocumnetAction = ({ travelId, mutation, defaultValues, Acti
     }
 
     const handleSubmit = form.handleSubmit((values)=>{
-        debugger
         uploadTravelDocumentMutation.mutate({...values,travelId})
     })
     return (

@@ -1,6 +1,6 @@
 import type { TEmployeeWithNameOnly } from "../TEmployeeWithNameOnly.type"
 
-export type TTypeMinDetails = {
+export type TTravelMinDetail = {
     id: number
     title: string
     descripton: string

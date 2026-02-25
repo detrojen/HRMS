@@ -6,6 +6,8 @@ import com.hrms.backend.entities.TravelEntities.TravelWiseEmployee;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
+
 public class TravelSpecs {
 
     public static Specification<Travel> hasEmployee(Long employeeId){
@@ -20,6 +22,15 @@ public class TravelSpecs {
         return ((root, query, criteriaBuilder) -> {
             Join<Travel,Employee> managerJoin = root.join("travelWiseEmployees").join("employee").join("manager");
             return criteriaBuilder.equal(managerJoin.get("id"),managerId);
+        });
+    }
+
+    public static Specification<Travel> isNotStartedOrNotEnded(){
+        return ((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.or(
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), LocalDate.now())
+                    ,criteriaBuilder.lessThanOrEqualTo(root.get("endDate"),LocalDate.now())
+            );
         });
     }
 

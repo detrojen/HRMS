@@ -5,7 +5,6 @@ import { TravelDetailContext } from "@/contexts/TravelDetailContext"
 
 const TravelEmployeeDocumnetDetails = () => {
     const { employeeDocuments: documents } = useContext(TravelDetailContext)
-
     return (
         <Card className="w-1/1">
             <CardContent>

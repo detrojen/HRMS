@@ -73,10 +73,11 @@ const TravelBasicDetailFields = ({form}:{form: UseFormReturn<TCreateTravelReques
                 )}
             />
             <Controller 
+                
                 control={form.control}
                 name="employeeIds"
                 render={({field,fieldState})=>(
-                    <Field>
+                    <Field className="col-span-2">
                         <TravelAddEmployeesField form={form}/>
                     </Field>
                 )}/>
@@ -118,7 +119,7 @@ const TravelDescriptionField = ({form}:{form: UseFormReturn<TCreateTravelRequest
                 control={form.control}
                 name="descripton"
                 render={({field,fieldState})=>(
-                    <Field>
+                    <Field className="col-span-2">
                         <FieldLabel>Description</FieldLabel>
                         <Textarea {...field}/>
                     </Field>
@@ -127,9 +128,9 @@ const TravelDescriptionField = ({form}:{form: UseFormReturn<TCreateTravelRequest
     )
 }
 
-const TravelForm = () => {
+const TravelForm = ({travel}:{travel?:TCreateTravelRequest}) => {
     const form = useForm<TCreateTravelRequest>({
-        defaultValues:{
+        defaultValues:travel??{
             title:"",
             descripton:"",
             employeeIds:[],
@@ -145,7 +146,7 @@ const TravelForm = () => {
     return (
         <>
         <Card className="w-1/1 p-4">
-            <FieldGroup>
+            <FieldGroup className="grid grid-cols-2">
                 
                 <TravelBasicDetailFields form={form}/>
                 <TravelDescriptionField form={form} />

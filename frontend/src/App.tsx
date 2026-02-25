@@ -26,6 +26,7 @@ import JobApplicationListPage from './pages/JobApplicationListPage'
 import GameHomePage from './pages/GameHomePage'
 import ReferedJobApplicationListPage from './pages/ReferedJobApllicationPage'
 import RoleCheck from './components/functionality/role-check'
+import JobApplicationDetailPage from './pages/JobApplicationDetailPage'
 const routes: RouteObject[] = [
   {
     path: "/login",
@@ -53,13 +54,20 @@ const routes: RouteObject[] = [
           {
             path: "add",
             element: <RoleCheck roles={["HR"]}><JobForm /></RoleCheck>
-          }, {
+          },
+          {
             path: "job-applications",
             element: <JobApplicationListPage />
-          }, {
+          },
+          {
+            path: "job-applications/:jobApplicationId",
+            element: <JobApplicationDetailPage />
+          },
+          {
             path: "refered-job-applications",
             element: <ReferedJobApplicationListPage />
           },
+          
         ]
       },
 

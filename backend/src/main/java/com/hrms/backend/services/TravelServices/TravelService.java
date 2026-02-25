@@ -1,6 +1,7 @@
 package com.hrms.backend.services.TravelServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
+import com.hrms.backend.dtos.requestDto.travel.AddEmployeesToTravelRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelDocumentRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelExpenseRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.CreateTravelRequestDto;
@@ -14,6 +15,8 @@ import com.hrms.backend.emailTemplates.TravelAndExpenseEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.entities.TravelEntities.TravelWiseEmployeeWiseDocument;
+import com.hrms.backend.exceptions.InvalidActionException;
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.TravelRepositories.TravelRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
@@ -65,6 +68,12 @@ public class TravelService {
     }
     @Transactional
     public TravelDetailResponseDto createTravel(CreateTravelRequestDto travelRequestDto){
+        if(travelRequestDto.getStartDate().isAfter(travelRequestDto.getEndDate()) || travelRequestDto.getStartDate().isEqual(travelRequestDto.getEndDate())){
+            throw new InvalidActionException("Start date must be before of end date");
+        }
+        if(travelRequestDto.getEndDate().isAfter(travelRequestDto.getLastDateToSubmitExpense())){
+            throw new InvalidActionException("last date for submit expense must be after travel ends date");
+        }
         Travel travel = modelMapper.map(travelRequestDto,Travel.class);
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Employee employee = employeeService.getEmployeeById(jwtInfoDto.getUserId());
@@ -76,14 +85,37 @@ public class TravelService {
         return responseDto;
     }
     @Transactional
+    public TravelDetailResponseDto updateTravel(CreateTravelRequestDto travelRequestDto){
+        if(travelRequestDto.getStartDate().isAfter(travelRequestDto.getEndDate()) || travelRequestDto.getStartDate().isEqual(travelRequestDto.getEndDate())){
+            throw new InvalidActionException("Start date must be before of end date");
+        }
+        if(travelRequestDto.getEndDate().isAfter(travelRequestDto.getLastDateToSubmitExpense())){
+            throw new InvalidActionException("last date for submit expense must be after travel ends date");
+        }
+        Travel travel = travelRepository.findById(travelRequestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("Travel not found"));
+        if(travel.getStartDate().isBefore(LocalDate.now())){
+            throw new InvalidActionException("travel has already began , you can not update travel after starting of travel.");
+        }
+        travel.setDescripton(travelRequestDto.getDescripton());
+        travel.setTitle(travelRequestDto.getTitle());
+        travel.setStartDate(travelRequestDto.getStartDate());
+        travel.setEndDate(travelRequestDto.getEndDate());
+        travel.setLastDateToSubmitExpense(travelRequestDto.getLastDateToSubmitExpense());
+        Travel savedTravel = travelRepository.save(travel);
+        List<EmployeeWithNameOnlyDto> employees = travelRequestDto.getEmployeeIds().stream().map(employeeId->travelWiseEmployeeDetailService.addEmployeeToTravel(savedTravel,employeeId)).toList();
+        TravelDetailResponseDto responseDto = modelMapper.map(travel,TravelDetailResponseDto.class);
+        responseDto.setEmployees(employees);
+        return responseDto;
+    }
+    @Transactional
     public TravelDocumentResponseDto addDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto, String filePath){
         Travel travel = travelRepository.getReferenceById(travelId);
         if(travel == null){
-            throw new RuntimeException("travel not found");
+            throw new ItemNotFoundExpection("travel not found");
         }
         TravelDocumentResponseDto documentResponseDto = travelDocumentService.addDocument(travel,requestDto,filePath);
         emailService.sendMail(
-                "Travel Documnet uploaded"
+                "Travel Document uploaded"
                         , TravelAndExpenseEmailTemplates.forTravleDocumnet(documentResponseDto, modelMapper.map(travel, TravelMinDetailResponseDto.class))
                     ,travel.getTravelWiseEmployees().stream().map(employee->employee.getEmployee().getEmail()).collect(Collectors.toUnmodifiableList()).toArray(new String[]{})
                 ,new String[]{}
@@ -102,7 +134,7 @@ public class TravelService {
     public TravelDocumentResponseDto updateDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto){
         Travel travel = travelRepository.getReferenceById(travelId);
         if(travel == null){
-            throw new RuntimeException("travel not found");
+            throw new ItemNotFoundExpection("travel not found");
         }
         TravelDocumentResponseDto documentResponseDto = travelDocumentService.updateDocument(travel,requestDto);
         emailService.sendMail(
@@ -121,11 +153,23 @@ public class TravelService {
         return  documentResponseDto;
     }
 
+    public TravelMinDetailResponseDto addEmployeesToTravel(Long travelId, AddEmployeesToTravelRequestDto requestDto){
+        Travel travel = travelRepository.getReferenceById(travelId);
+        if(travel == null){
+            throw new ItemNotFoundExpection("travel not found");
+        }
+        List<Long> assignedEmployeeId = travel.getTravelWiseEmployees().stream().map(emp->emp.getEmployee().getId()).collect(Collectors.toUnmodifiableList());
+        requestDto.getEmployeeIds().removeAll(assignedEmployeeId);
+        List<EmployeeWithNameOnlyDto> employees = requestDto.getEmployeeIds().stream().map(employeeId->travelWiseEmployeeDetailService.addEmployeeToTravel(travel,employeeId)).collect(Collectors.toUnmodifiableList());
+        TravelMinDetailResponseDto responseDto = modelMapper.map(travel,TravelMinDetailResponseDto.class);
+        return responseDto;
+    }
+
     @Transactional
     public TravelDocumentResponseDto addEmployeeDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto, String filePath){
         Travel travel = travelRepository.getReferenceById(travelId);
         if(travel == null){
-            throw new RuntimeException("travel not found");
+            throw new ItemNotFoundExpection("travel not found");
         }
         TravelDocumentResponseDto documentResponseDto = travelWiseEmployeeDocumentService.addDocument(travel,requestDto,filePath);
         List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
@@ -147,7 +191,7 @@ public class TravelService {
     public TravelDocumentResponseDto updateEmployeeDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto){
         Travel travel = travelRepository.getReferenceById(travelId);
         if(travel == null){
-            throw new RuntimeException("travel not found");
+            throw new ItemNotFoundExpection("travel not found");
         }
         TravelDocumentResponseDto documentResponseDto = travelWiseEmployeeDocumentService.updateDocument(travel,requestDto);
         List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
@@ -200,22 +244,7 @@ public class TravelService {
         return null;
     }
 
-    public List<TravelMinDetailResponseDto> getAssignedTravels(){
-        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Specification<Travel> specs = TravelSpecs.hasEmployee(jwtInfoDto.getUserId());
-        List<Travel> travels = travelRepository.findAll(specs);
-        return travels.stream().map(travel -> modelMapper.map(travel, TravelMinDetailResponseDto.class)).collect(Collectors.toUnmodifiableList());
-    }
-    public List<TravelMinDetailResponseDto> getTravelsAsManager(){
-        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Specification<Travel> specs = TravelSpecs.hasManger(jwtInfoDto.getUserId());
-        List<Travel> travels = travelRepository.findAll(specs);
-        return travels.stream().map(travel -> modelMapper.map(travel, TravelMinDetailResponseDto.class)).collect(Collectors.toUnmodifiableList());
-    }
-    public List<TravelMinDetailResponseDto> getTravelsAsHR(){
-        List<Travel> travels = travelRepository.findAll();
-        return travels.stream().map(travel -> modelMapper.map(travel, TravelMinDetailResponseDto.class)).collect(Collectors.toUnmodifiableList());
-    }
+
     @Transactional
     public TravelExpenseResponseDto addExpense(Long travelId, AddUpdateTravelExpenseRequestDto requestDto, String filePath){
         Travel travel = travelRepository.findById(travelId).orElseThrow(()->new RuntimeException("travel not found"));
@@ -267,5 +296,17 @@ public class TravelService {
                 ,hrs.stream().map(hr->hr.getId()).collect(Collectors.toUnmodifiableList()).toArray(new Long[]{})
         );
         return expense;
+    }
+
+    public List<TravelMinDetailResponseDto> getUpcomingTravels(){
+
+        Specification<Travel> specs = TravelSpecs.isNotStartedOrNotEnded();
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!jwtInfoDto.getRoleTitle().equals("HR")){
+            specs = specs.and(
+                    TravelSpecs.hasEmployee(jwtInfoDto.getUserId()).or(TravelSpecs.hasManger(jwtInfoDto.getUserId()))
+            );
+        }
+        return travelRepository.findBy(specs,q->q.stream().distinct().map(travel -> modelMapper.map(travel, TravelMinDetailResponseDto.class)).collect(Collectors.toUnmodifiableList()));
     }
 }

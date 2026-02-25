@@ -2,6 +2,7 @@ package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.markers.OnUpdate;
 import com.hrms.backend.dtos.requestDto.ReviewTravelExpenseRequestDto;
+import com.hrms.backend.dtos.requestDto.travel.AddEmployeesToTravelRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelDocumentRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelExpenseRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.CreateTravelRequestDto;
@@ -45,12 +46,18 @@ public class TravelController {
         );
     }
 
+    @PatchMapping(value = "/travels/{travelId}/add-employees")
+    public ResponseEntity<GlobalResponseDto<TravelMinDetailResponseDto>> addEmployeeToTravel(@PathVariable Long travelId, @RequestBody AddEmployeesToTravelRequestDto requestDto){
+        TravelMinDetailResponseDto responseDto = travelService.addEmployeesToTravel(travelId,requestDto);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(responseDto,"Employees added"));
+    }
+
     @PostMapping("/travels/{travelId}/documents")
     public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> addTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") MultipartFile file){
         String filePath = FileUtility.Save(file,"travel-documents");
         TravelDocumentResponseDto responseDto = travelService.addDocument(travelId,documentDetails,filePath);
         return ResponseEntity.ok().body(
-                new GlobalResponseDto<>(responseDto)
+                new GlobalResponseDto<>(responseDto,"travel document successfully added")
         );
     }
     @PutMapping("/travels/{travelId}/documents")
@@ -61,7 +68,7 @@ public class TravelController {
         }
         TravelDocumentResponseDto responseDto = travelService.updateDocument(travelId,documentDetails);
         return ResponseEntity.ok().body(
-                new GlobalResponseDto<>(responseDto)
+                new GlobalResponseDto<>(responseDto, "travel document successfully updated")
         );
     }
 

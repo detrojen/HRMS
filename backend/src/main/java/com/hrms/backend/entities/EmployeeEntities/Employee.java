@@ -78,6 +78,9 @@ public class Employee {
     private Collection<JobApplication> referedJobApplication;
 
 
+    @OneToMany(mappedBy = "reviewedBy")
+    private Collection<JobApplication> reviewedJobApplication;
+
     @OneToMany(mappedBy = "hrOwner")
     private Collection<Job> ownedJobs;
 
@@ -121,11 +124,4 @@ public class Employee {
     @OneToMany(mappedBy = "DeletedBy")
     private Collection<PostComment> deletedComments;
 
-    public Collection<PostComment> getDeletedComments() {
-        return deletedComments;
-    }
-
-    public void setDeletedComments(Collection<PostComment> deletedComments) {
-        this.deletedComments = deletedComments;
-    }
 }

@@ -16,7 +16,7 @@ const GameCurrentStatusCard = (props: TCurrentGameStatusResponse) => {
             <CardContent className="flex flex-col gap-4">
                 <img className="rounded-2xl" src={`/api/resource/games/${props.gameSlot.gameType}.png`}></img>
                 <div className="grid grid-cols-2 gap-2">
-                    {props.players.map(player => <EmployeeMinDetailCard key={player.email} firstName={player.firstName} lastName={player.lastName} designation={player.designation} />)}
+                    {props.players.map(player => <EmployeeMinDetailCard id={player.id} key={player.email} firstName={player.firstName} lastName={player.lastName} designation={player.designation} />)}
                 </div>
                 <div>
                     <p>Slot Details</p>

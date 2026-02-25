@@ -3,11 +3,14 @@ package com.hrms.backend.services.JobListingServices;
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.globalDtos.PageableDto;
 import com.hrms.backend.dtos.requestDto.job.ReferJobRequestDto;
+import com.hrms.backend.dtos.requestDto.job.ReviewJobApplicationRequestDto;
 import com.hrms.backend.dtos.responseDtos.job.JobApplicationResponseDto;
 import com.hrms.backend.emailTemplates.JobEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.Job;
 import com.hrms.backend.entities.JobListingEntities.JobApplication;
+import com.hrms.backend.exceptions.InvalidActionException;
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.JobListingRepositories.JobApplicationRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
@@ -85,4 +88,32 @@ public class JobApplicationService {
 
         return jobApplications.map(application->modelMapper.map(application, JobApplicationResponseDto.class));
     }
+
+    public JobApplicationResponseDto getJobApplicationById(Long jobApplicationId){
+        Specification<JobApplication> specs = JobApplicationSpecs.hasId(jobApplicationId);
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!jwtInfoDto.getRoleTitle().equals("HR")){
+            specs =specs.and(JobApplicationSpecs.hasAssignedToReview(jwtInfoDto.getUserId()));
+        }
+        JobApplication application = jobApplicationRepository.findBy(specs,q->q.first()).orElseThrow(()->new InvalidActionException("Either job not found or you have no access to see details"));//.orElseThrow(()->new ItemNotFoundExpection("Job not found"));
+        if(application.getStatus().equals("pending")){
+            application.setStatus("in review");
+            jobApplicationRepository.save(application);
+        }
+
+        return modelMapper.map(application,JobApplicationResponseDto.class);
+    }
+
+    public JobApplicationResponseDto reviewJobApplication(Long jobApplicationId , ReviewJobApplicationRequestDto review){
+        JobApplication application = jobApplicationRepository.findById(jobApplicationId).orElseThrow(()->new ItemNotFoundExpection("Job not found"));
+        JwtInfoDto jwtinfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Employee reviewedBy = employeeService.getReference(jwtinfo.getUserId());
+        application.setStatus(review.getStatus());
+        application.setRemark(review.getStatus());
+        application.setReviewedBy(reviewedBy);
+        jobApplicationRepository.save(application);
+        return modelMapper.map(application, JobApplicationResponseDto.class);
+    }
+
+
 }

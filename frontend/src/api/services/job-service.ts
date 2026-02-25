@@ -6,6 +6,7 @@ import type { TJobResponse } from "@/types/apiResponseTypes/TJobResponse.type";
 import type { TReferJobRequest } from "@/types/apiRequestTypes/TReferJobRequest.type";
 import type { TShareJobPayload } from "@/types/apiRequestTypes/TShareJobPayload";
 import type { TJobApplicationResponse } from "@/types/apiResponseTypes/TJobApplicationResponse.type";
+import type { TReivewJobApplicationRequest } from "@/types/apiRequestTypes/TReivewJobApplicationRequest.type";
 
 export const createJobRequest = (payload: TCreateJobRequest) => {
     const formData = new FormData()
@@ -64,4 +65,12 @@ export const referedJobApplication = (page?:number|null,limit?:number|null) =>{
         searchParams+=`limit=${limit}&`
     }
     return api.get<TGlobalResponse<TPageableResponse<TJobApplicationResponse>>>("/api/jobs/refered-job-applications"+searchParams)
+}
+
+export const getJobApplicationById = (jobApplicationId : number) => {
+    return api.get<TGlobalResponse<TJobApplicationResponse>>("/api/jobs/job-applications/"+jobApplicationId);
+}
+
+export const reviewJobApplication = (payload:{review:TReivewJobApplicationRequest,jobApplicationId:number}) => {
+    return api.patch("/api/jobs/job-applications/"+ payload.jobApplicationId, payload.review)
 }

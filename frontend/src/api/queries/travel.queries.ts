@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchExpenseAsHR, fetchTravelById, fetchTravels } from "../services/travel.service";
-import type { TTypeMinDetails } from "@/types/apiResponseTypes/TTravelMinDetails.type";
+import type { TTravelMinDetail } from "@/types/apiResponseTypes/TTravelMinDetails.type";
 import type { TTravelExpenseQueryParams } from "@/types/apiRequestTypes/TTravelExpenseQueryParams.type";
 
 export const useFetchTravels = (getAsa:string) => useQuery(

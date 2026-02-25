@@ -22,4 +22,10 @@ public class JobApplicationSpecs {
         );
     }
 
+    public static Specification<JobApplication> hasId(Long id){
+        return ((root, query, criteriaBuilder) -> {
+           return criteriaBuilder.equal(root.get("id"),id);
+        });
+    }
+
 }

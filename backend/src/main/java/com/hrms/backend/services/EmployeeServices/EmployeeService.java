@@ -51,6 +51,15 @@ public class EmployeeService {
         return responseDto;
     }
 
+    public List<EmployeeMinDetailsDto> getBirthdayPersons(){
+        List<Employee> employees = employeeRepository.findBy(EmployeeSpecs.hasBirthday(),q->q.all());
+        return employees.stream().map(employee->modelMapper.map(employee,EmployeeMinDetailsDto.class)).collect(Collectors.toUnmodifiableList());
+    }
+    public List<EmployeeMinDetailsDto> getWorkAnniversaryPersons(){
+        List<EmployeeMinDetailsDto> employees = employeeRepository.findBy(EmployeeSpecs.hasWorkAnniversary(),q->q.stream().map(employee -> modelMapper.map(employee,EmployeeMinDetailsDto.class)).collect(Collectors.toUnmodifiableList()));
+        return employees;
+    }
+
     public List<EmployeeMinDetailsDto> getEmployeeWhoHr(){
         return employeeRepository.getEmployeeWhoHr();
     }
