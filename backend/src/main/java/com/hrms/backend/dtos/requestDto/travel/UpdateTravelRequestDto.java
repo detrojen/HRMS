@@ -1,16 +1,14 @@
 package com.hrms.backend.dtos.requestDto.travel;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
-public class CreateTravelRequestDto {
+public class UpdateTravelRequestDto {
     private  Long id;
     @NotBlank(message = "desricption is mandatory")
     private String descripton;
@@ -25,5 +23,4 @@ public class CreateTravelRequestDto {
     private LocalDate endDate;
     @NotNull(message = "last date expense is mandatory")
     private LocalDate lastDateToSubmitExpense;
-    private List<Long> employeeIds;
 }

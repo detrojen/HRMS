@@ -78,6 +78,10 @@ const routes: RouteObject[] = [
             path: "add",
             element: <RoleCheck roles={["HR"]}><TravelForm /></RoleCheck>
           },
+           {
+            path: "update/:travelId",
+            element: <RoleCheck roles={["HR"]}><TravelForm /></RoleCheck>
+          },
           {
             path: "manage",
             element: <TravelList getAsa='hr' />

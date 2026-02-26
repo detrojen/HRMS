@@ -5,8 +5,8 @@ export type TTravelMinDetail = {
     title: string
     descripton: string
     maxReimbursementAmountPerDay: number
-    startDate: Date
-    endDate: Date
-    lastDateToSubmitExpense: Date
+    startDate: string
+    endDate: string
+    lastDateToSubmitExpense: string
     initiatedBy: TEmployeeWithNameOnly
 }

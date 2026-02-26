@@ -2,10 +2,7 @@ package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.markers.OnUpdate;
 import com.hrms.backend.dtos.requestDto.ReviewTravelExpenseRequestDto;
-import com.hrms.backend.dtos.requestDto.travel.AddEmployeesToTravelRequestDto;
-import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelDocumentRequestDto;
-import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelExpenseRequestDto;
-import com.hrms.backend.dtos.requestDto.travel.CreateTravelRequestDto;
+import com.hrms.backend.dtos.requestDto.travel.*;
 import com.hrms.backend.dtos.requestParamDtos.TravelExpenseParamsDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
 import com.hrms.backend.dtos.responseDtos.travel.TravelExpenseResponseDto;
@@ -39,8 +36,15 @@ public class TravelController {
     }
 
     @PostMapping(value = "/travels")
-    public ResponseEntity<GlobalResponseDto<TravelDetailResponseDto>> createTravel(@RequestBody CreateTravelRequestDto requestDto){
+    public ResponseEntity<GlobalResponseDto<TravelDetailResponseDto>> createTravel(@RequestBody @Valid CreateTravelRequestDto requestDto){
         TravelDetailResponseDto responseDto = travelService.createTravel(requestDto);
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(responseDto)
+        );
+    }
+    @PatchMapping(value = "/travels")
+    public ResponseEntity<GlobalResponseDto<TravelDetailResponseDto>> updateTravel(@RequestBody @Valid UpdateTravelRequestDto requestDto){
+        TravelDetailResponseDto responseDto = travelService.updateTravel(requestDto);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto)
         );
@@ -117,6 +121,13 @@ public class TravelController {
     @GetMapping("/travels/{travelId}")
     public ResponseEntity<GlobalResponseDto<TravelDetailResponseDto>> getTravelDetail(@PathVariable Long travelId){
         TravelDetailResponseDto travelDetail = travelService.getTravelDetail(travelId);
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(travelDetail)
+        );
+    }
+    @GetMapping("/travels/min-details/{travelId}")
+    public ResponseEntity<GlobalResponseDto<TravelMinDetailResponseDto>> getTravelMinDetail(@PathVariable Long travelId){
+        TravelMinDetailResponseDto travelDetail = travelService.getTravelMinDetail(travelId);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(travelDetail)
         );

@@ -26,4 +26,11 @@ public class AuthService {
         }
         return _jwtService.generateToken(employee.getId(),employee.getEmail(),employee.getRole().getRoleTitle());
     }
+    public String login(String email){
+        Employee employee = _employeeRepository.getEmployeeByEmail(email).orElse(null);
+        if(employee == null){
+            throw new InvalidCredentialsException();
+        }
+        return _jwtService.generateToken(employee.getId(),employee.getEmail(),employee.getRole().getRoleTitle());
+    }
 }

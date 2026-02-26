@@ -3,6 +3,7 @@ import { DatePicker } from "@/components/ui/date-picker"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TravelDetailContext } from "@/contexts/TravelDetailContext"
+import { format } from "date-fns"
 import React, { useEffect } from "react"
 import { useContext } from "react"
 import { useSearchParams } from "react-router-dom"
@@ -61,10 +62,10 @@ const ExpenseFilter = () => {
                 </Select>
             </Field>
             <Field>
-                <DatePicker title={"Expense from"} onSelect={(value) => { handleFilterChange("dateFrom", `${value.getFullYear()}-${(value.getMonth()+1).toString().padStart(2,"0")}-${(value.getDate()).toString().padStart(2,"0")}`) }} value={new Date(serachParams.get("dateFrom") ?? startDate)} />
+                <DatePicker title={"Expense from"} onSelect={(value) => { handleFilterChange("dateFrom", format(value,"yyyy-MM-dd")) }} value={new Date(serachParams.get("dateFrom") ?? startDate)} />
             </Field>
             <Field>
-                <DatePicker title={"Expense To"} onSelect={(value) => { handleFilterChange("dateTo", `${value.getFullYear()}-${(value.getMonth()+1).toString().padStart(2,"0")}-${(value.getDate()).toString().padStart(2,"0")}`) }} value={new Date(serachParams.get("dateTo") ?? endDate)} />
+                <DatePicker title={"Expense To"} onSelect={(value) => { handleFilterChange("dateTo", format(value,"yyyy-MM-dd")) }} value={new Date(serachParams.get("dateTo") ?? endDate)} />
             </Field>
             <Button onClick={resetFilter}>Reset</Button>
         </div>

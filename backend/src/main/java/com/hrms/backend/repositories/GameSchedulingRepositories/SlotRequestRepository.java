@@ -24,5 +24,4 @@ public interface SlotRequestRepository extends JpaRepository<SlotRequest,Long>, 
 
     @Query(value = "select top 1 SlotRequest.*, EmployeeWiseGameInterest.gameType_id from SlotRequest join EmployeeWiseGameInterest on EmployeeWiseGameInterest.employee_id = SlotRequest.requestedBy_id and gameType_id = :gameTypeId where gameSlot_id = :slotId and gameType_id = 1 and SlotRequest.status = 'On hold' order by SlotRequest.createdAt asc, EmployeeWiseGameInterest.currentCyclesSlotConsumed asc", nativeQuery = true)
     SlotRequest getTopCandidate(Long slotId, Long gameTypeId);
-
 }

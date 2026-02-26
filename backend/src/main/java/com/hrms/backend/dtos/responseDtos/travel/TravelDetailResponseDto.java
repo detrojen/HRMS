@@ -1,5 +1,6 @@
 package com.hrms.backend.dtos.responseDtos.travel;
 
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
 import lombok.Data;
 
@@ -16,14 +17,14 @@ public class TravelDetailResponseDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDate lastDateToSubmitExpense;
-    private List<EmployeeWithNameOnlyDto> employees;
+    private List<EmployeeMinDetailsDto> employees;
     private EmployeeWithNameOnlyDto initiatedBy;
     private List<TravelDocumentResponseDto> travelDocuments;
 
     private List<TravelDocumentResponseDto> employeeDocuments;
     private List<TravelDocumentResponseDto> personalDocumnets;
     private List<TravelExpenseResponseDto> expensesMadeByMe;
-    public void setEmployees(List<EmployeeWithNameOnlyDto> employees,Long employeeId){
+    public void setEmployees(List<EmployeeMinDetailsDto> employees,Long employeeId){
         this.employees = employees;
         this.isInEmployeeList = employees.stream().anyMatch(employee->employee.getId() == employeeId);
     }

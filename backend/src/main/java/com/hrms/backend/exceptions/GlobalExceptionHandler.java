@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         List<Map<String,String>> errors= new ArrayList<>(){};
         errors.add(Map.of( "message", e.getMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new GlobalResponseDto<>(errors,"Invalid credential",HttpStatus.BAD_REQUEST));
+                .body(new GlobalResponseDto<>(errors,"Invalid action",HttpStatus.BAD_REQUEST));
 
     }
     @ExceptionHandler(InvalidDeleteAction.class)
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
         List<Map<String,String>> errors= new ArrayList<>(){};
         errors.add(Map.of( "message", e.getMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new GlobalResponseDto<>(errors,"Invalid credential",HttpStatus.BAD_REQUEST));
+                .body(new GlobalResponseDto<>(errors,"Invalid delete action",HttpStatus.BAD_REQUEST));
 
     }
 

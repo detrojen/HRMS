@@ -6,5 +6,5 @@ export type TCreateTravelRequest = {
     startDate: Date
     endDate: Date
     lastDateToSubmitExpense: Date
-    employeeIds: number[];
+    employeeIds?: number[];
 }

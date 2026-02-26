@@ -12,10 +12,12 @@ import {
 import { format } from "date-fns"
 
 export function DatePicker({title,onSelect,value}:{title:string,onSelect:(date:Date)=>void, value?:Date|null}) {
-  const [date, setDate] = React.useState<Date|undefined | null>(value)
+
+  // const [date, setDate] = React.useState<Date|undefined | null>(value)
 
   return (
     <>
+    
       <FieldLabel htmlFor="date-picker-simple">{title}</FieldLabel>
       <Popover>
         <PopoverTrigger asChild>
@@ -24,18 +26,18 @@ export function DatePicker({title,onSelect,value}:{title:string,onSelect:(date:D
             id="date-picker-simple"
             className="justify-start font-normal"
           >
-            {date ? format(date, "PPP") : <span>Pick a date</span>}
+            {value ? format(value, "PPP") : <span>Pick a date</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="single"
-            selected={date??undefined}
+            selected={value??undefined}
             onSelect={(value)=>{
-                setDate(value)
+                // setDate(value)
                 onSelect(value!)
             }}
-            defaultMonth={date??undefined}
+            defaultMonth={value??undefined}
           />
         </PopoverContent>
       </Popover>

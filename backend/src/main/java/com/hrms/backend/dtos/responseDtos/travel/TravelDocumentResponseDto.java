@@ -1,5 +1,6 @@
 package com.hrms.backend.dtos.responseDtos.travel;
 
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
 import lombok.Data;
 
@@ -9,6 +10,6 @@ public class TravelDocumentResponseDto {
     private String type;
     private String documentPath;
     private String description;
-    private EmployeeWithNameOnlyDto uploadedBy;
+    private EmployeeMinDetailsDto uploadedBy;
 //    private TravelMinDetailResponseDto travel;
 }

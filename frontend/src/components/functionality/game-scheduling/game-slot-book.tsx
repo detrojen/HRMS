@@ -12,6 +12,7 @@ import { Slot } from "radix-ui"
 import { DatePicker } from "@/components/ui/date-picker"
 import { useAppSelector } from "@/store/hooks"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { format } from "date-fns"
 function getSlotAppearnceClass(slotStatus: boolean) {
   return slotStatus ? "available-slot" : "unavailable-slot"
 }
@@ -37,7 +38,7 @@ const GameSlotBook = () => {
         <div className="flex gap-1">
           <div>
             <DatePicker title={"Date"} onSelect={function (value: Date): void {
-              searchParams.set("slotDate", `${value.getFullYear()}-${(value.getMonth() + 1).toString().padStart(2, "0")}-${(value.getDate()).toString().padStart(2, "0")}`)
+              searchParams.set("slotDate", format(value, "yyyy-MM-dd"))
               setSearchParams(searchParams)
             }} />
           </div>

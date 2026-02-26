@@ -9,6 +9,7 @@ import { expenseSchema } from "@/validation-schema/expense-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
+import { format } from "date-fns";
 import { Edit, Icon, PlusCircle, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
@@ -64,14 +65,14 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TA
                 <DialogHeader>
                     <DialogTitle>Expense</DialogTitle>
                 </DialogHeader>
-                <h1>{expense?.expenseDetails.id}</h1>
+                
                 <Controller
                     control={form.control}
                     name="expenseDetails.dateOfExpense"
                     render={({ field, fieldState: { error } }) => (
                         <Field>
                             <DatePicker value={field.value!} title={"Date of expense"} onSelect={(date) => {
-                                form.setValue(field.name, date)
+                                form.setValue(field.name, new Date(format(date,"yyyy-MM-dd")))
                             }} />
                             <FieldError>{error?.message}</FieldError>
                         </Field>

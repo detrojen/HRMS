@@ -11,7 +11,7 @@ const EmployeeMinDetailCard = ({ id, firstName, lastName, designation }: TEmploy
     return (
         <Link to={"/org-chart?employeeId=" + id} className="flex gap-1 content-center ">
 
-            <Avatar className=" h-8 w-8 rounded-4xl my-auto">
+            <Avatar className="-z-0 h-8 w-8 rounded-4xl my-auto">
                 <AvatarFallback className="rounded-lg">{firstName[0] + lastName[0]}</AvatarFallback>
             </Avatar>
             <div>

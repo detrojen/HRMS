@@ -8,9 +8,13 @@ import type { TAddUpdateExpense } from "@/types/apiRequestTypes/TAddUpdateExpens
 import type { TTravelExpenseResponse } from "@/types/apiResponseTypes/TTravelExpenseResponse.type";
 import type { TTravelExpenseQueryParams } from "@/types/apiRequestTypes/TTravelExpenseQueryParams.type";
 import type { TReviewExpenseRequest } from "@/types/apiRequestTypes/TReviewExpenesRequest.type";
+import type { TAddEmployeeToTravelRequest } from "@/types/apiRequestTypes/TAddEmployeeToTravelRequest.type";
 
 export const createTravel = (payload: TCreateTravelRequest) => {
     return api.post<TGlobalResponse<any>>("/api/travels", payload)
+}
+export const updateTravel = (payload: TCreateTravelRequest) => {
+    return api.patch<TGlobalResponse<any>>("/api/travels", payload)
 }
 export const fetchTravels = (getAsa: string) => {
      return api.get<TGlobalResponse<TTravelMinDetail>>(`/api/travels/list/${getAsa}`)
@@ -26,7 +30,9 @@ export const fetchTravels = (getAsa: string) => {
 export const fetchTravelById = (travelId: string) => {
     return api.get<TGlobalResponse<TTravelDetails>>("/api/travels/" + travelId)
 }
-
+export const fetchTravelMinDetailById = (travelId: string) => {
+    return api.get<TGlobalResponse<TTravelMinDetail>>("/api/travels/min-details/" + travelId)
+}
 export const uploadTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
     const formData = new FormData()
     formData.append("documentDetails", new Blob([JSON.stringify(payload.documentDetails)], { type: "application/json" }))
@@ -111,4 +117,8 @@ export const fetchExpenseAsHR = ({travelId,category,dateFrom,dateTo,employeeId}:
 
 export const reviewExpense = (payload:TReviewExpenseRequest) => {
     return api.patch("/api/travels/expenses",payload)
+}
+
+export const addEmployeeToTravel = ({travelId,employeeIds}: TAddEmployeeToTravelRequest) => {
+    return api.patch(`/api/travels/${travelId}/add-employees`,{employeeIds})
 }

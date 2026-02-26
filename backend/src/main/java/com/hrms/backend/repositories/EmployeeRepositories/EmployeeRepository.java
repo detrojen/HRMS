@@ -19,6 +19,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>, JpaSpe
     List<EmployeeWithManagerIdDto> getOneLevelReport(Long employeeId);
     @Query(value = "select new com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto(e.id,e.firstName,e.lastName,e.email,e.designation) from Employee e join e.role r where r.roleTitle = 'HR'", nativeQuery = false)
     List<EmployeeMinDetailsDto> getEmployeeWhoHr();
-
+    Optional<Employee> getEmployeeByEmail(String email);
 
 }

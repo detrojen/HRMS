@@ -171,7 +171,7 @@ const JobAddCvReviewrersForm = ({ form }: { form: UseFormReturn<TCreateJobReques
                     <Input
                         id="search-player"
                         type="text"
-                        placeholder="search player"
+                        placeholder="search employee"
                         onChange={(e) => { setNameQuery(e.target.value) }}
                     />
                 </Field>

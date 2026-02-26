@@ -1,6 +1,7 @@
 package com.hrms.backend.services.TravelServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.Travel;
@@ -22,14 +23,14 @@ public class TravelWiseEmployeeDetailService {
         this.employeeService = employeeService;
     }
 
-    public EmployeeWithNameOnlyDto addEmployeeToTravel(Travel travel,Long employeeId){
+    public EmployeeMinDetailsDto addEmployeeToTravel(Travel travel, Long employeeId){
 
         Employee employee = employeeService.getEmployeeById(employeeId);
         TravelWiseEmployee travelWiseEmployee = new TravelWiseEmployee();
         travelWiseEmployee.setEmployee(employee);
         travelWiseEmployee.setTravel(travel);
         travelWiseEmployeeDetailRepsitory.save(travelWiseEmployee);
-        return modelMapper.map(employee,EmployeeWithNameOnlyDto.class);
+        return modelMapper.map(employee,EmployeeMinDetailsDto.class);
     }
 
     public boolean addAskedAmount(Long travelId , int askedAmount){
