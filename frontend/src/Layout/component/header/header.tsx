@@ -32,10 +32,10 @@ const Header = () => {
         })
     }
     return (
-        <div className="sticky flex gap-4 justify-end px-3 top-0 left-0 bg-sidebar py-4">
+        <div className="sticky flex gap-4 justify-end px-3 top-0 left-0 bg-sidebar py-4 border border-0 border-b-1">
             <div>
                 <Button variant={"outline"} onClick={() => setShowNotification(!showNotification)}><Bell /></Button>
-                {showNotification && <Card style={{zIndex:1000}} className=" w-100 absolute top-1/1 left-1/2 h-100 overflow-scroll">
+                {showNotification && <Card className="z-50 w-100 absolute top-1/1 left-1/2 h-100 overflow-scroll">
                     <CardContent>
                         {
                             notifications?.map(
@@ -54,12 +54,12 @@ const Header = () => {
                 </Card>}
             </div>
             <div className="flex data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                <Avatar className="h-8 w-8 rounded-lg">
+                <Avatar className="h-8 w-8 rounded-3xl me-1">
                     <AvatarImage src={""} alt={user.firstName} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">{user.firstName[0]+ user.lastName[0]}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.firstName}</span>
+                    <span className="truncate font-medium">{user.firstName} {user.lastName}</span>
                     <span className="truncate text-xs">{user.email}</span>
                 </div>
             </div>

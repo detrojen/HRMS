@@ -14,7 +14,7 @@ const Layout = () => {
         <AuthContextProvider>
             <SidebarProvider>
                 <AppSidebar />
-                <div className=" w-screen">
+                <div className="relative w-screen">
                     <Header />
                     <Outlet context={{setIsLoading}}/>
                 </div>

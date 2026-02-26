@@ -10,7 +10,7 @@ const GameCurrentStatusCard = (props: TCurrentGameStatusResponse) => {
                 <CardTitle>
                     {props.gameSlot.gameType}
                 </CardTitle>
-                <Badge className={`${props.gameSlot.available ? "bg-green-500" : "bg-red-500"}`}>{props.gameSlot.available ? "Free" : "Occupied"}</Badge>
+                <Badge variant={props.gameSlot.available? "default":"destructive"} >{props.gameSlot.available ? "Free" : "Occupied"}</Badge>
 
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
