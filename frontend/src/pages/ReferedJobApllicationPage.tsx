@@ -10,8 +10,8 @@ const ReferedJobApplicationListPage = () => {
     const {data,isLoading} = useFetchReferedJobApplications(Number(searchParams.get("page")), Number(searchParams.get("limit")))
     return (
         <>
-           <div className="grid grid-cols-2 gap-2">
-            {isLoading ? "Loading applications": <Pageable data={data?.data!} render={(item:TJobApplicationResponse)=><JobApplicationListCard key={item.id} {...item}/>} />}
+           <div className="">
+            {isLoading ? "Loading applications": <Pageable className="grid grid-cols-1 md:grid-cols-3 gap-2" data={data?.data!} render={(item:TJobApplicationResponse)=><JobApplicationListCard key={item.id} {...item}/>} />}
            </div>
         </>
     )

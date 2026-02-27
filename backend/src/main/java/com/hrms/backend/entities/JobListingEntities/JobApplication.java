@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -33,7 +34,8 @@ public class JobApplication {
     private Employee referedBy;
     @ManyToOne()
     private Job job;
-
+    @OneToMany(mappedBy = "jobApplication")
+    private List<CvReview> cvReviews;
     @CreatedDate
     private Date createdAt;
 

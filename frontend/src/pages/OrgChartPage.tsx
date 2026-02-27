@@ -1,15 +1,12 @@
 import { useFetchOrgChart, useGetchEmployeesByNameLike } from "@/api/queries/employee.queries"
 import EmployeeMinDetailCard from "@/components/functionality/employee-min-detail-card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
-import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { Card, CardHeader } from "@/components/ui/card"
+import Searchable from "@/components/ui/searchable"
 import { Separator } from "@/components/ui/separator"
 import { AuthContext } from "@/contexts/AuthContextProvider"
-import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type"
 import { ArrowDown } from "lucide-react"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 type TEmp = {
     oneLevelDown?: TEmp[],
@@ -57,18 +54,21 @@ const OrgChartPage = () => {
     const { data } = useGetchEmployeesByNameLike(nameQuery);
     return <>
         <div className="flex flex-col w-1/1">
-            <Field>
-                <FieldLabel >Search employee</FieldLabel>
-                <Input
-                    id="search-player"
-                    type="text"
-                    placeholder="search employee"
-                    onChange={(e) => { setNameQuery(e.target.value) }}
-                />
-            </Field>
-            {
-                data?.map(e => <h1 onClick={() => { setNameQuery(""); setSearchParams({ "employeeId": e.id.toString() }) }}>{e.firstName}</h1>)
-            }
+            <Searchable 
+                data={data??[]}
+                setQuery={setNameQuery}
+                render={(item)=><h1>{item.firstName} {item.lastName}</h1>}
+                onSelectItem={(item)=>{
+                    setNameQuery("")
+                    setSearchParams({ "employeeId": item.id.toString()})
+                }}
+            >
+                <Button>
+                    Serach Employee
+                </Button>
+            </Searchable>
+            
+           
             {orgChartQuery.data || !orgChartQuery.isLoading ?
                 <div className="flex flex-col w-1/2 mx-auto gap-2 p-2 justify-center content-center">
                     <RecursiveComp emp={orgChartQuery.data?.data} />
@@ -78,7 +78,7 @@ const OrgChartPage = () => {
                     </div>
                 </div> : <>Loading org chart</>
             }
-        </div>
+        </div >
 
 
     </>

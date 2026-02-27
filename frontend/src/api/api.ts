@@ -19,7 +19,6 @@ axiosInstence.interceptors.request.use((config)=>{
 
 axiosInstence.interceptors.response.use((response)=>{
     if(response.headers["authorization"]){
-      debugger
       localStorage.setItem("HRMS_AUTH_TOKEN",response.headers["authorization"])
       // localStorage.setItem("HRMS_AUTH_TOKEN",response.headers.getAuthorization.toString())
     }

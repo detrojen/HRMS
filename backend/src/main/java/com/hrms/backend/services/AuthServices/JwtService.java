@@ -8,6 +8,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -22,12 +24,13 @@ public class JwtService {
 
     public static final  String SECRET = "5367566859703373367639792F423F452848284D6251655468576D5A71347437";
 
-    public String generateToken(Long userId,String email,String role) {
+    public String generateToken(Long userId,String email,String role, String fullName) {
         log.info(SECRET);
         Map<String, Object> claims = new HashMap<>();
         claims.put("roleTitle",role);
         claims.put("userId",userId);
         claims.put("email",email);
+        claims.put("fullName",fullName);
         return createToken(claims,email);
     }
 
@@ -59,10 +62,10 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public JwtInfoDto getJwtInfo(String tocken){
-        Claims claims = extractAllClaims(tocken);
+    public JwtInfoDto getJwtInfo(String token){
+        Claims claims = extractAllClaims(token);
         Long userId = claims.get("userId", Long.class);
-        return new JwtInfoDto(userId,claims.get("email").toString(),claims.get("roleTitle").toString());
+        return new JwtInfoDto(userId,claims.get("email").toString(),claims.get("roleTitle").toString(),claims.get("fullName").toString());
     }
 
     public Date extractExpiration(String token) {

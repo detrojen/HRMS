@@ -9,6 +9,7 @@ import type { TTravelExpenseResponse } from "@/types/apiResponseTypes/TTravelExp
 import type { TTravelExpenseQueryParams } from "@/types/apiRequestTypes/TTravelExpenseQueryParams.type";
 import type { TReviewExpenseRequest } from "@/types/apiRequestTypes/TReviewExpenesRequest.type";
 import type { TAddEmployeeToTravelRequest } from "@/types/apiRequestTypes/TAddEmployeeToTravelRequest.type";
+import type { TCategory } from "@/types/apiResponseTypes/TCategory.type";
 
 export const createTravel = (payload: TCreateTravelRequest) => {
     return api.post<TGlobalResponse<any>>("/api/travels", payload)
@@ -121,4 +122,8 @@ export const reviewExpense = (payload:TReviewExpenseRequest) => {
 
 export const addEmployeeToTravel = ({travelId,employeeIds}: TAddEmployeeToTravelRequest) => {
     return api.patch(`/api/travels/${travelId}/add-employees`,{employeeIds})
+}
+
+export const fetchTraveExpensecategories = () => {
+    return api.get<TGlobalResponse<TCategory[]>>("/api/travels/expenses/categories")
 }

@@ -3,6 +3,7 @@ package com.hrms.backend.dtos.responseDtos.job;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Optional;
 
 @Data
@@ -18,4 +19,5 @@ public class JobApplicationResponseDto {
     private EmployeeMinDetailsDto reviewedBy;
     private EmployeeMinDetailsDto referedBy;
     private CreateJobResponseDto job;
+    private List<CvReviewResponseDto> cvReviews;
 }

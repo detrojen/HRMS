@@ -2,12 +2,15 @@ package com.hrms.backend.services.JobListingServices;
 
 import com.hrms.backend.dtos.requestDto.job.CreateJobRequestDto;
 import com.hrms.backend.dtos.globalDtos.PageableDto;
+import com.hrms.backend.dtos.requestDto.job.ReferJobRequestDto;
 import com.hrms.backend.dtos.requestDto.job.ShareJobRequestDto;
 import com.hrms.backend.dtos.responseDtos.job.CreateJobResponseDto;
 import com.hrms.backend.dtos.responseDtos.job.CvReviewerWithNameOnlyDto;
+import com.hrms.backend.dtos.responseDtos.job.JobWiseCvReviewerDto;
 import com.hrms.backend.emailTemplates.JobEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.Job;
+import com.hrms.backend.entities.JobListingEntities.JobApplication;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.JobListingRepositories.JobRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
@@ -36,13 +39,15 @@ public class JobService {
     private final EmployeeService employeeService;
     private final JobWiseCvReviewerService jobWiseCvReviewerService;
     private final EmailService emailService;
+    private final JobApplicationService jobApplicationService;
     @Autowired
-    public JobService(JobRepository jobRepository, ModelMapper modelMapper, EmployeeService employeeService,JobWiseCvReviewerService jobWiseCvReviewerService, EmailService emailService){
+    public JobService(JobRepository jobRepository, ModelMapper modelMapper, EmployeeService employeeService,JobWiseCvReviewerService jobWiseCvReviewerService, EmailService emailService, JobApplicationService jobApplicationService){
         this.jobRepository = jobRepository;
         this.modelMapper = modelMapper;
         this.employeeService = employeeService;
         this.jobWiseCvReviewerService = jobWiseCvReviewerService;
         this.emailService = emailService;
+        this.jobApplicationService = jobApplicationService;
     }
 
     @Transactional
@@ -55,7 +60,7 @@ public class JobService {
         job.setHrOwner(hrOwner);
         Job savedJob = jobRepository.save(job);
         CreateJobResponseDto jobResponseDto = modelMapper.map(savedJob,CreateJobResponseDto.class);
-        CvReviewerWithNameOnlyDto[] reviewers = Arrays.stream(requestDto.getReviewerIds()).map(reviewerId->jobWiseCvReviewerService.assignJobToReviewer(reviewerId, savedJob)).collect(Collectors.toUnmodifiableList()).toArray(new CvReviewerWithNameOnlyDto[]{});
+        JobWiseCvReviewerDto[] reviewers = Arrays.stream(requestDto.getReviewerIds()).map(reviewerId->jobWiseCvReviewerService.assignJobToReviewer(reviewerId, savedJob)).collect(Collectors.toUnmodifiableList()).toArray(new JobWiseCvReviewerDto[]{});
         jobResponseDto.setReviewers(reviewers);
         return jobResponseDto;
     }
@@ -81,5 +86,9 @@ public class JobService {
         String emailBody = JobEmailTemplates.shareJob(job);
         System.out.println(emailBody);
         emailService.shareJob("Job opening",requestDto.getEmail(),emailBody, job.getJdPath());
+    }
+
+    public JobApplication referJobTo(Long jobId, ReferJobRequestDto requestDto, String cvPath) throws MalformedURLException, MessagingException, FileNotFoundException {
+        return jobApplicationService.referJobTo(jobRepository.findById(jobId).orElseThrow(()->new ItemNotFoundExpection("Job Not found")), requestDto,cvPath);
     }
 }

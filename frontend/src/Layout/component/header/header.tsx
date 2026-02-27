@@ -35,7 +35,7 @@ const Header = () => {
         <div className="sticky flex gap-4 justify-end px-3 top-0 left-0 bg-sidebar py-4 border border-0 border-b-1">
             <div>
                 <Button variant={"outline"} onClick={() => setShowNotification(!showNotification)}><Bell /></Button>
-                {showNotification && <Card className="z-50 w-100 absolute top-1/1 left-1/2 h-100 overflow-scroll">
+                {showNotification && <Card className="z-100 w-100 absolute top-1/1 left-1/2 h-100 overflow-scroll">
                     <CardContent>
                         {
                             notifications?.map(

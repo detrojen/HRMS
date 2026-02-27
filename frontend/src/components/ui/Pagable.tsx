@@ -2,14 +2,17 @@ import type { TPageableProps } from "@/types/propsTypes/TPageableProps.type"
 import { Button } from "./button"
 import { useSearchParams } from "react-router-dom"
 import { Input } from "./input"
+import type { HtmlHTMLAttributes } from "react"
 
-function Pageable<T>({data,render}:TPageableProps<T>){
+function Pageable<T>({data,render,className}:TPageableProps<T>&HtmlHTMLAttributes<HTMLDivElement>){
     const [searchParams,setSearchparams] = useSearchParams()
     return (
         <>
-            {
+           <div className={className}>
+             {
                 data.content.map(render)
             }
+           </div>
             <div className="flex w-1/1 gap-1.5 justify-center">
             <Button
                     disabled={data.first} 

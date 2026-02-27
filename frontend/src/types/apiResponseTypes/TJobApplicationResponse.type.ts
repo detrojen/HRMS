@@ -13,4 +13,10 @@ export type TJobApplicationResponse = {
     remark: string
     reviewedBy: TEmployeeMinDetail | null
     job: TJobResponse
+    cvReviews: {
+        id:number
+        review: string
+        reviewedBy: TEmployeeMinDetail
+    }[]
+    
 }

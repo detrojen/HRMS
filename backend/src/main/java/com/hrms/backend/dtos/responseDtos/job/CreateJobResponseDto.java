@@ -13,6 +13,6 @@ public class CreateJobResponseDto {
     private String status;
     private int vacancy;
     private String jdPath;
-    private CvReviewerWithNameOnlyDto[] reviewers;
+    private JobWiseCvReviewerDto[] reviewers;
     private EmployeeWithNameOnlyDto hrOwner;
 }

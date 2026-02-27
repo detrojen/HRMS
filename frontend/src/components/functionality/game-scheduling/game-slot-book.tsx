@@ -13,6 +13,7 @@ import { DatePicker } from "@/components/ui/date-picker"
 import { useAppSelector } from "@/store/hooks"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { format } from "date-fns"
+import Searchable from "@/components/ui/searchable"
 function getSlotAppearnceClass(slotStatus: boolean) {
   return slotStatus ? "available-slot" : "unavailable-slot"
 }
@@ -28,7 +29,7 @@ const GameSlotBook = () => {
   const games = useAppSelector((state) => state.gameInterest.filter(item => item.interested).map((item) => {
     return { id: item.gameTypeId, game: item.gameType }
   }))
-  if(games.find(game=>game.id == Number(searchParams.get("game-id") )||searchParams.get("game-id") == null)==undefined){
+  if (games.find(game => game.id == Number(searchParams.get("game-id")) || searchParams.get("game-id") == null) == undefined) {
     return "Please first selects that game as interested"
   }
   return (
@@ -67,25 +68,23 @@ const GameSlotBook = () => {
               <div className="flex flex-row gap-2 flex-wrap">
                 {data && data.map(item => <div key={item.id} className={`w-fit p-2 ${selectedSlot == item.id ? "selected-slot" : getSlotAppearnceClass(item.available)}`} onClick={() => { setSelectedSlot(item.id) }}>{item.startsFrom}</div>)}
               </div>
-              <Field>
-                <FieldLabel >Add player</FieldLabel>
-                <Input
-                  id="search-player"
-                  type="text"
-                  placeholder="search player"
-                  onChange={(e) => { setNameQuery(e.target.value) }}
-                />
-              </Field>
-              {
-                interestedEmployees?.map(e => <h1 onClick={() => { setNameQuery(""); setPlayers([...plyers, e]) }}>{e.firstName}</h1>)
-              }
+            
+              <Searchable
+                data={interestedEmployees}
+                setQuery={setNameQuery}
+                onSelectItem={(player) => { setNameQuery(""); setPlayers([...plyers, player]) }}
+                render={(player) => <h1>{player.firstName} {player.lastName}</h1>}
+              >
+                <Button>Add Players</Button>
+              </Searchable>
               <Separator></Separator>
               {
                 plyers.map(player => <div className="flex gap-5">
-                  <h1>{player.firstName} </h1>
                   <Button size={"xs"} onClick={() => {
                     setPlayers(plyers.filter(p => p.id != player.id))
                   }}>remove</Button>
+                  <h1>{player.firstName} {player.lastName}</h1>
+
                 </div>
                 )
               }

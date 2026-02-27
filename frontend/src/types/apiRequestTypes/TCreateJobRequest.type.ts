@@ -16,4 +16,4 @@
 import type { jobCreateSchema } from "@/validation-schema/job-schema";
 import * as z from "zod";
 
-export type TCreateJobDetail = z.infer<typeof jobCreateSchema>
+export type TCreateJobRequest = z.infer<typeof jobCreateSchema>

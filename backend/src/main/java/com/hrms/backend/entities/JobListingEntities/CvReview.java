@@ -16,6 +16,14 @@ public class CvReview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String review;
+
+    @ManyToOne
+    private JobApplication jobApplication;
+
+    @ManyToOne
+    private JobWiseCvReviewer cvReviewer;
+
     @CreatedDate
     private java.util.Date createdAt;
     @LastModifiedDate

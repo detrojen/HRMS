@@ -1,18 +1,18 @@
 package com.hrms.backend.controllers;
 
 import com.hrms.backend.dtos.globalDtos.PageableDto;
-import com.hrms.backend.dtos.requestDto.job.CreateJobRequestDto;
-import com.hrms.backend.dtos.requestDto.job.ReferJobRequestDto;
-import com.hrms.backend.dtos.requestDto.job.ReviewJobApplicationRequestDto;
-import com.hrms.backend.dtos.requestDto.job.ShareJobRequestDto;
+import com.hrms.backend.dtos.requestDto.job.*;
 import com.hrms.backend.dtos.responseDtos.job.CreateJobResponseDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
+import com.hrms.backend.dtos.responseDtos.job.CvReviewResponseDto;
 import com.hrms.backend.dtos.responseDtos.job.JobApplicationResponseDto;
 import com.hrms.backend.services.JobListingServices.JobApplicationService;
 import com.hrms.backend.services.JobListingServices.JobService;
+import com.hrms.backend.services.JobListingServices.JobWiseCvReviewerService;
 import com.hrms.backend.utils.FileUtility;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,10 +28,12 @@ import java.net.MalformedURLException;
 public class JobController {
     private final JobService jobService;
     private final JobApplicationService jobApplicationService;
+    private final JobWiseCvReviewerService jobWiseCvReviewerService;
     @Autowired
-    public JobController(JobService jobService, JobApplicationService jobApplicationService){
+    public JobController(JobService jobService, JobApplicationService jobApplicationService, JobWiseCvReviewerService jobWiseCvReviewerService){
         this.jobService = jobService;
         this.jobApplicationService = jobApplicationService;
+        this.jobWiseCvReviewerService = jobWiseCvReviewerService;
     }
 
     @PostMapping(value = "/jobs")
@@ -89,7 +91,7 @@ public class JobController {
     @PostMapping("/jobs/{jobId}/refer")
     public ResponseEntity<GlobalResponseDto<?>> referJob(@PathVariable Long jobId, @RequestPart @Valid ReferJobRequestDto applicantsDetail, @NotNull(message = "cv must be uploaded") @RequestPart MultipartFile cv) throws MalformedURLException, MessagingException, FileNotFoundException {
         String cvpath = FileUtility.Save(cv, "cvs");
-        jobApplicationService.referJobTo(jobId,applicantsDetail,cvpath);
+        jobService.referJobTo(jobId,applicantsDetail,cvpath);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(null, "Job refered successfull.",HttpStatus.OK));
 
     }
@@ -110,5 +112,13 @@ public class JobController {
     public ResponseEntity<GlobalResponseDto<JobApplicationResponseDto>> reviewJobApplication(@PathVariable Long jobApplicationId,@RequestBody ReviewJobApplicationRequestDto requestDto){
         JobApplicationResponseDto responseDto = jobApplicationService.reviewJobApplication(jobApplicationId, requestDto);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(responseDto));
+    }
+
+    @PostMapping("/jobs/job-applications/{jobApplicationId}/cv-review")
+    public ResponseEntity<GlobalResponseDto<CvReviewResponseDto>> reviewJobApplication(@PathVariable Long jobApplicationId, @RequestBody @Valid CvReviewRequestDto requestDto ){
+        CvReviewResponseDto responseDto = jobWiseCvReviewerService.reviewJobApplication(jobApplicationId,requestDto);
+        return  ResponseEntity.ok().body(
+                new GlobalResponseDto<>(responseDto)
+        );
     }
 }

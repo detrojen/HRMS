@@ -33,23 +33,20 @@ import java.util.stream.Collectors;
 @Service
 public class JobApplicationService {
     private final JobApplicationRepository jobApplicationRepository;
-    private final JobService jobService;
     private final ModelMapper modelMapper;
     private final EmployeeService employeeService;
     private final EmailService emailService;
     @Autowired
-    public JobApplicationService(JobApplicationRepository jobApplicationRepository,JobService jobService, ModelMapper modelMapper, EmployeeService employeeService, EmailService emailService){
-        this.jobService = jobService;
+    public JobApplicationService(JobApplicationRepository jobApplicationRepository, ModelMapper modelMapper, EmployeeService employeeService, EmailService emailService){
         this.jobApplicationRepository = jobApplicationRepository;
         this.modelMapper = modelMapper;
         this.employeeService = employeeService;
         this.emailService = emailService;
     }
 
-    public JobApplication referJobTo(Long jobId,ReferJobRequestDto requestDto, String cvPath) throws MalformedURLException, MessagingException, FileNotFoundException {
+    public JobApplication referJobTo(Job job,ReferJobRequestDto requestDto, String cvPath) throws MalformedURLException, MessagingException, FileNotFoundException {
         JobApplication jobApplication = modelMapper.map(requestDto,JobApplication.class);
         JwtInfoDto jwtinfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Job job = jobService.getRef(jobId);
         jobApplication.setJob(job);
         Employee referdBy = employeeService.getReference(jwtinfo.getUserId());
         jobApplication.setReferedBy(referdBy);
@@ -86,7 +83,12 @@ public class JobApplicationService {
         Specification<JobApplication> specs = JobApplicationSpecs.hasRefered(jwtInfoDto.getUserId());
         Page<JobApplication> jobApplications = jobApplicationRepository.findAll(specs,pageable);
 
-        return jobApplications.map(application->modelMapper.map(application, JobApplicationResponseDto.class));
+        return jobApplications.map(application-> {
+            var model = modelMapper.map(application, JobApplicationResponseDto.class);
+            model.setCvReviews(null);
+            model.getJob().setReviewers(null);
+            return model;
+        });
     }
 
     public JobApplicationResponseDto getJobApplicationById(Long jobApplicationId){
@@ -100,7 +102,7 @@ public class JobApplicationService {
             application.setStatus("in review");
             jobApplicationRepository.save(application);
         }
-
+        application.getCvReviews();
         return modelMapper.map(application,JobApplicationResponseDto.class);
     }
 
@@ -114,6 +116,8 @@ public class JobApplicationService {
         jobApplicationRepository.save(application);
         return modelMapper.map(application, JobApplicationResponseDto.class);
     }
-
+    public JobApplication getReference(Long jobApplicationId){
+        return jobApplicationRepository.getReferenceById(jobApplicationId);
+    }
 
 }

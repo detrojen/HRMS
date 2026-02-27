@@ -3,12 +3,16 @@ package com.hrms.backend.config;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.EmployeeWiseGameInterestResponseDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.GameSlotResponseDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.UpdateGameTypeResponseDto;
+import com.hrms.backend.dtos.responseDtos.job.CreateJobResponseDto;
+import com.hrms.backend.dtos.responseDtos.job.CvReviewResponseDto;
 import com.hrms.backend.dtos.responseDtos.post.DeletePostResponseDto;
 import com.hrms.backend.dtos.responseDtos.post.PostResponseDto;
 import com.hrms.backend.dtos.responseDtos.travel.TravelDocumentResponseDto;
 import com.hrms.backend.entities.GameSchedulingEntities.EmployeeWiseGameInterest;
 import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
+import com.hrms.backend.entities.JobListingEntities.CvReview;
+import com.hrms.backend.entities.JobListingEntities.Job;
 import com.hrms.backend.entities.PostEntities.Post;
 import com.hrms.backend.entities.TravelEntities.TravelDocument;
 import com.hrms.backend.entities.TravelEntities.TravelWiseEmployeeWiseDocument;
@@ -33,18 +37,8 @@ public class ModelMapperConfig {
         addDeletedPostResponseDtoMapping(modelMapper);
         addGameSlotResponseDto(modelMapper);
         addEmployeeWiseGameInterestResponseDto(modelMapper);
-
-//        modelMapper.addConverter(new Converter<PersistentBag, List>() {
-//            public List convert(MappingContext<PersistentBag, List> context) {
-//                return new ArrayList(context.getSource());
-//            }
-//        });
-//        modelMapper.addConverter(new Converter<TravelDocument, TravelDocumentResponseDto>() {
-//            public TravelDocumentResponseDto convert(MappingContext<TravelDocument, TravelDocumentResponseDto> context) {
-//                return new TravelDocument(context.getSource());
-//            }
-//        });
-//        addGameTypeResponseDto(modelMapper);
+        addCvReviewResponseDto(modelMapper);
+//        addCreateJobResponseDto(modelMapper);
         return modelMapper;
     }
 
@@ -79,13 +73,20 @@ public class ModelMapperConfig {
                 }
         );
     }
-
-    public void addGameTypeResponseDto(ModelMapper modelMapper){
-        modelMapper.createTypeMap(GameType.class, UpdateGameTypeResponseDto.class).addMappings(
-          mapper->{
-              mapper.map(src->src.getEmployeeWiseGameInterests(), UpdateGameTypeResponseDto::setNoOfInteretedEmployees);
-          }
+    public void addCvReviewResponseDto(ModelMapper modelMapper){
+        modelMapper.createTypeMap(CvReview.class, CvReviewResponseDto.class).addMappings(
+                mapper->{
+                    mapper.map(src->src.getCvReviewer().getReviewer(), CvReviewResponseDto::setReviewedBy);
+                }
         );
     }
+
+//    public void addCreateJobResponseDto(ModelMapper modelMapper){
+//        modelMapper.createTypeMap(Job.class, CreateJobResponseDto.class).addMappings(
+//                mapper->{
+//                    mapper.map(src->src.getCvReviewers().stream().map(jobWiseCvReviewer -> jobWiseCvReviewer.getReviewer()).toList(), CreateJobResponseDto::setReviewers);
+//                }
+//        );
+//    }
 
 }

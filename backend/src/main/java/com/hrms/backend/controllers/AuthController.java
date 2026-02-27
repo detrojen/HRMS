@@ -31,7 +31,7 @@ public class AuthController {
     public ResponseEntity<GlobalResponseDto<LoginResponseDto>> login(@RequestBody LoginRequestDto requestDTO){
         String token = authService.login(requestDTO.getEmail(),requestDTO.getPassword());
         String refreshToken = jwtService.createRefreshToken(requestDTO.getEmail());
-        ResponseCookie cookie = ResponseCookie.from(refreshToken)
+        ResponseCookie cookie = ResponseCookie.from("HRMS_REFRESH_TOKEN",refreshToken)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")

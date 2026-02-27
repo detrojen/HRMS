@@ -10,8 +10,8 @@ const JobListPage = () => {
     const [searchParams] = useSearchParams()
     const { data } = useFetchJobs(Number(searchParams.get("page")), Number(searchParams.get("limit")))
     return (
-        <Card className="w-1/1 flex flex-col gap-2 px-2" >
-            {data && <Pageable data={data.data} render={(job)=><JobInfoCard key={job.id} job={job}/>}/>}
+        <Card className="w-1/1 " >
+            {data && <Pageable className="flex flex-col gap-2 px-2" data={data.data} render={(job)=><JobInfoCard key={job.id} job={job}/>}/>}
         </Card>
     )
 }

@@ -41,7 +41,7 @@ public class EmailService {
         mimeMessageHelper.setTo(recieptants);
         Resource file = FileUtility.Get("jds",jdPath);
         mimeMessageHelper.addAttachment(jdPath,file);
-        mailSender.send(mailMessage);
+//        mailSender.send(mailMessage);
     }
     public void refferJob(String subject, String[] recieptants,String[] ccs ,String body, String cvPath) throws MessagingException, MalformedURLException, FileNotFoundException {
         Parser parser = Parser.builder().build();
@@ -55,7 +55,7 @@ public class EmailService {
         mimeMessageHelper.setCc(ccs);
         Resource file = FileUtility.Get("cvs",cvPath);
         mimeMessageHelper.addAttachment(cvPath,file);
-        mailSender.send(mailMessage);
+//        mailSender.send(mailMessage);
     }
 
     public void sendMail(String subject,String body, String[] recieptants,String[] ccs){
@@ -68,7 +68,7 @@ public class EmailService {
             mimeMessageHelper.setCc(ccs);
 //            Resource file = FileUtility.Get("cvs",cvPath);
 //            mimeMessageHelper.addAttachment(cvPath,file);
-            mailSender.send(mailMessage);
+//            mailSender.send(mailMessage);
         }catch (MessagingException e){
             log.error("at mail service :- "+ e.getMessage());
         }
@@ -84,11 +84,11 @@ public class EmailService {
             mimeMessageHelper.setCc(ccs);
             Resource file = FileUtility.Get(attachmentFolderName, attachementFileName);
             mimeMessageHelper.addAttachment(attachementFileName, file);
-            mailSender.send(mailMessage);
+//            mailSender.send(mailMessage);
         } catch (MessagingException e) {
-            log.error("at mail service :- " + e.getMessage());
+            log.warn("at mail service :- " + e.getMessage());
         } catch (MalformedURLException e) {
-            log.error("at mail service while get file resource for " + attachmentFolderName + File.separator + attachementFileName);
+            log.warn("at mail service while get file resource for " + attachmentFolderName + File.separator + attachementFileName);
             log.error(e.getMessage());
         }
     }

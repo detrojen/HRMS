@@ -11,6 +11,7 @@ const TravelList = ({getAsa}:{getAsa:string}) => {
     }
     return (
         <>
+        
             <Table className="">
                 <TableHeader className="">
                     <TableRow>

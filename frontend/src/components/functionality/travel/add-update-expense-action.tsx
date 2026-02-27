@@ -1,3 +1,4 @@
+import { useFetchTraveExpensecategories } from "@/api/queries/travel.queries";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -26,6 +27,7 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TA
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const{setIsLoading} = useOutletContext()
     const uplaodExpenseMutation = mutation()
+    const {data,isLoading: isCategoryLoading} = useFetchTraveExpensecategories()
     const form = useForm<TAddUpdateExpense>({
         defaultValues: expense ? { expenseDetails: { ...expense.expenseDetails } } : {
             expenseDetails: {
@@ -101,10 +103,10 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TA
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectLabel>Fruits</SelectLabel>
-                                        <SelectItem value="1">Food</SelectItem>
-                                        <SelectItem value="2">Transport</SelectItem>
-                                        <SelectItem value="3">Stay</SelectItem>
+                                        <SelectLabel>Category</SelectLabel>
+                                        {
+                                            !isCategoryLoading && data && data.data.map((category)=><SelectItem key={`category-${category.id}`} value={category.id.toString()}>{category.category}</SelectItem>)
+                                        }
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>

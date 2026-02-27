@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { DatePicker } from "@/components/ui/date-picker"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import Searchable from "@/components/ui/searchable"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import type { TCreateTravelRequest } from "@/types/apiRequestTypes/TcreateTravelRequest.type"
@@ -27,18 +28,15 @@ const TravelAddEmployeesField = ({ form }: { form: UseFormReturn<TCreateTravelRe
     }, [employees])
     return (
         <>
-
-            <FieldLabel >Add Employees</FieldLabel>
-            <Input
-                id="search-player"
-                type="text"
-                placeholder="search employee"
-                onChange={(e) => { setNameQuery(e.target.value) }}
-            />
-
-            {
-                data?.map(e => <h1 onClick={() => { setNameQuery(""); seEmployees(employees => [...employees, e]); }}>{e.firstName}</h1>)
-            }
+            <Searchable
+                data={data}
+                setQuery={setNameQuery}
+                onSelectItem={(employee) => { setNameQuery(""); seEmployees(employees => [...employees, employee]) }}
+                render={(employee) => <h1>{employee.firstName} {employee.lastName}</h1>}
+              >
+                <Button type="button">Add Employees</Button>
+              </Searchable>
+           
             <Separator></Separator>
             {
                 employees.map(employee => <div key={`reviewer-${employee.id}`} className="flex gap-5">

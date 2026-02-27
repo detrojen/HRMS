@@ -7,6 +7,7 @@ import type { TReferJobRequest } from "@/types/apiRequestTypes/TReferJobRequest.
 import type { TShareJobPayload } from "@/types/apiRequestTypes/TShareJobPayload";
 import type { TJobApplicationResponse } from "@/types/apiResponseTypes/TJobApplicationResponse.type";
 import type { TReivewJobApplicationRequest } from "@/types/apiRequestTypes/TReivewJobApplicationRequest.type";
+import type { TReviewCvRequest } from "@/types/apiRequestTypes/TReviewCvRequest.type";
 
 export const createJobRequest = (payload: TCreateJobRequest) => {
     const formData = new FormData()
@@ -73,4 +74,8 @@ export const getJobApplicationById = (jobApplicationId : number) => {
 
 export const reviewJobApplication = (payload:{review:TReivewJobApplicationRequest,jobApplicationId:number}) => {
     return api.patch("/api/jobs/job-applications/"+ payload.jobApplicationId, payload.review)
+}
+
+export const reviewCv = (payload:{review:TReviewCvRequest,jobApplicationId:number}) =>{
+    return api.post(`/api/jobs/job-applications/${payload.jobApplicationId}/cv-review`,payload.review)
 }

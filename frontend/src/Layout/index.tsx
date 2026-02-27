@@ -16,7 +16,9 @@ const Layout = () => {
                 <AppSidebar />
                 <div className="relative w-screen">
                     <Header />
-                    <Outlet context={{setIsLoading}}/>
+                    <div className="p-1">
+                        <Outlet context={{setIsLoading}}/>
+                    </div>
                 </div>
                 {loading && <div className="absolute z-100 top-0 flex justify-center align-middle left-0 h-screen w-screen bg-white opacity-55">
                     <Loader />

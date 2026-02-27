@@ -1,3 +1,4 @@
+import { useFetchTraveExpensecategories } from "@/api/queries/travel.queries"
 import { Button } from "@/components/ui/button"
 import { DatePicker } from "@/components/ui/date-picker"
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -11,22 +12,23 @@ import { useSearchParams } from "react-router-dom"
 const ExpenseFilter = () => {
     const [serachParams, setSearchparams] = useSearchParams()
     const { employees, startDate, endDate } = useContext(TravelDetailContext)
+    const { data, isLoading: isCategoryLoading } = useFetchTraveExpensecategories()
 
     const handleFilterChange = (key: string, value: string) => {
-        if(value === "all"){
+        if (value === "all") {
             serachParams.delete(key)
-        }else{
+        } else {
             serachParams.set(key, value)
         }
         setSearchparams(serachParams)
     }
     const resetFilter = () => {
-        setSearchparams({dateFrom:startDate,dateTo:endDate})
+        setSearchparams({ dateFrom: startDate, dateTo: endDate })
     }
 
-    useEffect(()=>{
-        ()=>{console.log("ilter form rerendered")}
-    },[])
+    useEffect(() => {
+        () => { console.log("ilter form rerendered") }
+    }, [])
     return (
         <div className="flex gap-1">
             <Field>
@@ -39,9 +41,10 @@ const ExpenseFilter = () => {
                         <SelectGroup>
                             <SelectLabel>Select expense category</SelectLabel>
                             <SelectItem value="all">All</SelectItem>
-                            <SelectItem value="Food">Food</SelectItem>
-                            <SelectItem value="Transport">Transport</SelectItem>
-                            <SelectItem value="Stay">Stay</SelectItem>
+                            <SelectLabel>Category</SelectLabel>
+                            {
+                                !isCategoryLoading && data && data.data.map((category) => <SelectItem key={`category-${category.id}`} value={category.category}>{category.category}</SelectItem>)
+                            }
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -50,7 +53,7 @@ const ExpenseFilter = () => {
                 <FieldLabel>Employee</FieldLabel>
                 <Select defaultValue={serachParams.get("employeeId")?.toString()} onValueChange={(value) => { handleFilterChange("employeeId", value) }}>
                     <SelectTrigger className="w-full max-w-48">
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue placeholder="Select a employee" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
@@ -62,10 +65,10 @@ const ExpenseFilter = () => {
                 </Select>
             </Field>
             <Field>
-                <DatePicker title={"Expense from"} onSelect={(value) => { handleFilterChange("dateFrom", format(value,"yyyy-MM-dd")) }} value={new Date(serachParams.get("dateFrom") ?? startDate)} />
+                <DatePicker title={"Expense from"} onSelect={(value) => { handleFilterChange("dateFrom", format(value, "yyyy-MM-dd")) }} value={new Date(serachParams.get("dateFrom") ?? startDate)} />
             </Field>
             <Field>
-                <DatePicker title={"Expense To"} onSelect={(value) => { handleFilterChange("dateTo", format(value,"yyyy-MM-dd")) }} value={new Date(serachParams.get("dateTo") ?? endDate)} />
+                <DatePicker title={"Expense To"} onSelect={(value) => { handleFilterChange("dateTo", format(value, "yyyy-MM-dd")) }} value={new Date(serachParams.get("dateTo") ?? endDate)} />
             </Field>
             <Button onClick={resetFilter}>Reset</Button>
         </div>

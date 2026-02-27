@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -20,6 +21,8 @@ public class JobWiseCvReviewer {
     private Employee reviewer;
     @ManyToOne()
     private Job job;
+    @OneToMany()
+    private List<CvReview> cvReviews;
 
     @CreatedDate
     private java.util.Date createdAt;

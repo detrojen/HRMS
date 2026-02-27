@@ -7,6 +7,7 @@ import com.hrms.backend.dtos.responseDtos.gameSheduling.EmployeeWiseGameInterest
 import com.hrms.backend.entities.GameSchedulingEntities.EmployeeWiseGameInterest;
 import com.hrms.backend.repositories.GameSchedulingRepositories.EmployeeWiseGameInterestRepository;
 import com.hrms.backend.specs.InterestedEmployeeSpec;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class EmployeeWiseGameInterestService {
     private final EmployeeWiseGameInterestRepository employeeWiseGameInterestRepository;
@@ -62,6 +64,7 @@ public class EmployeeWiseGameInterestService {
         EmployeeWiseGameInterest gameInterest =  employeeWiseGameInterestRepository.findByEmployee_IdAndGameType_Id(jwtInfo.getUserId(), gameTypeId);
         gameInterest.setInterested(isInterested);
         gameInterest =  employeeWiseGameInterestRepository.save(gameInterest);
+        log.info("{} has update their interest in {} from {} to {}",jwtInfo.getFullName(),gameInterest.getGameType().getGame(),isInterested?"not interested":"interested" , isInterested?"interested":"not interested");
         return modelMapper.map(gameInterest,EmployeeWiseGameInterestResponseDto.class);
     }
 }

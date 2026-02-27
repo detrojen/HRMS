@@ -33,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -70,13 +71,13 @@ public class PostService {
         Pageable pageable = PageRequest.of(params.getPageNumber(),params.getLimit(), Sort.by("createdAt").descending());
 
         Page<Post> posts = _postRepository.findAll(specs,pageable);
-        Page<PostWithCommentsAndLikesDto> response= posts.map(post->{
+        log.info("read the post data");
+        return posts.map(post->{
             PostWithCommentsAndLikesDto dto = _modelMapper.map(post,PostWithCommentsAndLikesDto.class);
             dto.setRecentComments(postCommentService.getRecentComments(post.getId()));
             dto.setRecentLikedBy(postLikeService.getRecentLikes(post.getId()));
             return dto;
         });
-        return response;
     }
 
     public PostResponseDto createPost(CreateUpdatePostRequestDto postRequestDto, String attachmentpath){

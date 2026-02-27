@@ -5,10 +5,8 @@ import com.hrms.backend.dtos.requestDto.ReviewTravelExpenseRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.*;
 import com.hrms.backend.dtos.requestParamDtos.TravelExpenseParamsDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
-import com.hrms.backend.dtos.responseDtos.travel.TravelExpenseResponseDto;
-import com.hrms.backend.dtos.responseDtos.travel.TravelDetailResponseDto;
-import com.hrms.backend.dtos.responseDtos.travel.TravelDocumentResponseDto;
-import com.hrms.backend.dtos.responseDtos.travel.TravelMinDetailResponseDto;
+import com.hrms.backend.dtos.responseDtos.travel.*;
+import com.hrms.backend.services.TravelServices.ExpenseCategoryService;
 import com.hrms.backend.services.TravelServices.TravelService;
 import com.hrms.backend.services.TravelServices.TravelWiseExpenseService;
 import com.hrms.backend.utils.FileUtility;
@@ -27,12 +25,15 @@ import java.util.Optional;
 public class TravelController {
     private final TravelService travelService;
     private final TravelWiseExpenseService expenseService;
+    private final ExpenseCategoryService expenseCategoryService;
     @Autowired
     public  TravelController(TravelService travelService
             , TravelWiseExpenseService expenseService
+            ,ExpenseCategoryService expenseCategoryService
     ){
         this.travelService = travelService;
         this.expenseService = expenseService;
+        this.expenseCategoryService= expenseCategoryService;
     }
 
     @PostMapping(value = "/travels")
@@ -76,7 +77,6 @@ public class TravelController {
         );
     }
 
-//    updateEmployeeDocument
     @PostMapping("/travels/{travelId}/employee-documents")
     public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> addEmployeeTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") MultipartFile file){
         String filePath = FileUtility.Save(file,"travel-documents");
@@ -153,6 +153,14 @@ public class TravelController {
         TravelExpenseResponseDto expense = expenseService.reviewExpense(requestDto);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(expense)
+        );
+    }
+    @GetMapping("/travels/expenses/categories")
+    public ResponseEntity<GlobalResponseDto<List<ExpenseCategoryDto>>> getExpenseCategories(){
+        return ResponseEntity.ok().body(
+                new GlobalResponseDto<>(
+                        expenseCategoryService.getExpenseCategories()
+                )
         );
     }
 }

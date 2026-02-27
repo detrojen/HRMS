@@ -3,6 +3,7 @@ import { useGetchEmployeesByNameLike } from "@/api/queries/employee.queries";
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input";
+import Searchable from "@/components/ui/searchable";
 import { Separator } from "@/components/ui/separator";
 import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type";
 import { PlusCircle } from "lucide-react";
@@ -33,16 +34,14 @@ const AddEmployeeToTravelAction = ({travelId}:{travelId:number}) => {
                 <DialogHeader>
                     <DialogTitle>Assign travel to new employee</DialogTitle>
                 </DialogHeader>
-                <Input
-                    id="search-player"
-                    type="text"
-                    placeholder="search employee"
-                    onChange={(e) => { setNameQuery(e.target.value) }}
-                />
-
-                {
-                    employeesData?.map(e => <h1 onClick={() => { setNameQuery(""); setEmployees(employees => [...employees, e]); }}>{e.firstName}</h1>)
-                }
+                <Searchable
+                data={employeesData}
+                setQuery={setNameQuery}
+                onSelectItem={(employee) => { setNameQuery(""); setEmployees(employees => [...employees, employee]) }}
+                render={(employee) => <h1>{employee.firstName} {employee.lastName}</h1>}
+              >
+                <Button type="button">Add Employees</Button>
+              </Searchable>
                 <Separator></Separator>
                 {
                     employees.map(employee => <div key={`reviewer-${employee.id}`} className="flex gap-5">

@@ -1,11 +1,14 @@
 package com.hrms.backend.services.GameSchedulingServices;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.backend.dtos.requestDto.gameScheduling.CreateUpdateGameTypeRequestDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.UpdateGameTypeResponseDto;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
 import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.GameSchedulingRepositories.GameTypeRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class GameTypeService {
     private final GameTypeRepository gameTypeRepository;
@@ -28,7 +32,7 @@ public class GameTypeService {
         return this.gameTypeRepository.findById(id).orElseThrow(()->new ItemNotFoundExpection("Game type with this id not found"));
     }
 
-    public UpdateGameTypeResponseDto createGameType(CreateUpdateGameTypeRequestDto requestDto){
+    public UpdateGameTypeResponseDto createGameType(CreateUpdateGameTypeRequestDto requestDto) {
         if(requestDto.getOpeningHours().isAfter(requestDto.getClosingHours())){
             throw  new InvalidActionException("games openig hour must be before closing hour.");
         }
@@ -52,6 +56,11 @@ public class GameTypeService {
         gameType.setSlotDuration(requestDto.getSlotDuration());
         gameType.setSlotCanBeBookedBefore(requestDto.getSlotCanBeBookedBefore());
         gameType = gameTypeRepository.save(gameType);
+//        try {
+////            log.info("{}", objectMapper.writeValueAsString(requestDto));
+//        } catch (JsonProcessingException e) {
+////            log.error("json parsing error , \n {}",e.getMessage());
+//        }
         return modelMapper.map(gameType, UpdateGameTypeResponseDto.class);
     }
 

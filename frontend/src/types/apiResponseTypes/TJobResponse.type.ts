@@ -1,6 +1,5 @@
-import type { TCreateJobDetail } from "../apiRequestTypes/TCreateJobRequest.type";
+import type { TEmployeeMinDetail } from "../TEmployeeMinDetail.type";
 import type { TEmployeeWithNameOnly } from "../TEmployeeWithNameOnly.type";
-import type { TCvReviewerWithNameOnly } from "./TCvReviewerWithNameOnly";
 
 export type TJobResponse = {
     id: number,
@@ -11,5 +10,8 @@ export type TJobResponse = {
     skills: string
     status: string
     hrOwner: TEmployeeWithNameOnly
-    reviewers: TCvReviewerWithNameOnly[]
+    reviewers: {
+        id: number,
+        reviewer: TEmployeeMinDetail
+    }[]
 }

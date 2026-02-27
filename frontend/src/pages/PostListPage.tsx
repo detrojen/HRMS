@@ -35,10 +35,10 @@ const PostListPage = ({ query }: TPostListPageProps) => {
     
     return (
         <>
-            <div className="flex flex-col gap-2 w-1/1 my-2">
+            <div className="flex flex-col gap-2 w-1/1 my-2 p-2">
                 <PostFilter />
-                {isLoading ? <>Fetching posts</> : <div className="flex flex-col gap-2 w-1/1 mx-2 md:mx-auto md:w-2/5">
-                    {data && <Pageable data={data?.data} render={(post: TPostWisthCommentsAndLikeResponse): ReactNode => <PostDetailCard post={post} key={`post-${post.id}`} />} />}
+                {isLoading ? <>Fetching posts</> : <div className="flex flex-col gap-2 w-1/1">
+                    {data && <Pageable className="grid grid-cols-1 md:grid-cols-3 gap-2" data={data?.data} render={(post: TPostWisthCommentsAndLikeResponse): ReactNode => <PostDetailCard post={post} key={`post-${post.id}`} />} />}
                 </div>}
             </div>
         </>

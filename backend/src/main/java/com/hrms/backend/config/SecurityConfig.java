@@ -1,6 +1,7 @@
 package com.hrms.backend.config;
 
 import com.hrms.backend.filters.ExceptionFilter;
+import com.hrms.backend.filters.HttpRequestLoggingFilter;
 import com.hrms.backend.filters.JwtAuthfilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +20,8 @@ public class SecurityConfig {
     JwtAuthfilter jwtAuthFilter;
     @Autowired
     ExceptionFilter exceptionFilter;
-
+    @Autowired
+    HttpRequestLoggingFilter httpRequestLoggingFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
@@ -43,6 +45,7 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(exceptionFilter,UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+//                .addFilterAfter(httpRequestLoggingFilter,JwtAuthfilter.class);
 
         return http.build();
     }

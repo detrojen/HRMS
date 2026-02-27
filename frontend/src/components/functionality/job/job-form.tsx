@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type ControllerRenderProps, type UseFormReturn } from "react-hook-form";
 import { jobCreateSchema } from "@/validation-schema/job-schema";
+import Searchable from "@/components/ui/searchable";
 
 const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
     const { data: hrList } = useFetchHrList()
@@ -166,18 +167,16 @@ const JobAddCvReviewrersForm = ({ form }: { form: UseFormReturn<TCreateJobReques
     return (
         <>
             <Form {...form}>
-                <Field>
-                    <FieldLabel >Add Reviewers</FieldLabel>
-                    <Input
-                        id="search-player"
-                        type="text"
-                        placeholder="search employee"
-                        onChange={(e) => { setNameQuery(e.target.value) }}
-                    />
-                </Field>
-                {
-                    data?.map(e => <h1 onClick={() => { setNameQuery(""); setReviewers(reviewers => [...reviewers, e]); }}>{e.firstName}</h1>)
-                }
+                <Searchable
+                className="my-2"
+                data={data}
+                setQuery={setNameQuery}
+                onSelectItem={(reviewer) => { setNameQuery(""); setReviewers(reviewers => [...reviewers, reviewer]) }}
+                render={(reviewer) => <h1>{reviewer.firstName} {reviewer.lastName}</h1>}
+              >
+                <Button type="button">Add Reviewer</Button>
+              </Searchable>
+                
                 <Separator></Separator>
                 {
                     reviewers.map(employee => <div key={`reviewer-${employee.id}`} className="flex gap-5">
