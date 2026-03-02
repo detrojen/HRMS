@@ -21,7 +21,7 @@ const HrExpenseListView = () => {
         employeeId: searchParams.get("employeeId"),
     }
     const { data, isLoading, isError } = useFetchExpenseAsHR(params)
-    const expenses = data?.data
+    const expenses = data?.data.data
 
     if (isError) return "Error occured"
     return (

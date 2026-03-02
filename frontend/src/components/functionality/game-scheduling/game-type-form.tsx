@@ -1,5 +1,4 @@
-import type { TGameType } from "@/types/apiResponseTypes/TGameType.type";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../../ui/field";
+import {  FieldError, FieldGroup, FieldLabel } from "../../ui/field";
 import { Input } from "../../ui/input";
 import { Checkbox } from "../../ui/checkbox";
 import { Button } from "../../ui/button";
@@ -175,7 +174,7 @@ const GameTypeForm = ({ gameType, isEditable = true }: { gameType: TCreateUpdate
                                 <FormItem className="flex">
 
                                     <FormControl>
-                                        <Checkbox onCheckedChange={(value: boolean) => { form.setValue("inMaintenance", value) }} ></Checkbox>
+                                        <Checkbox onCheckedChange={(value: boolean) => { form.setValue(field.name, value) }} ></Checkbox>
                                     </FormControl>
                                     <p>is in maintenance</p>
                                 </FormItem>

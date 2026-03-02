@@ -2,27 +2,14 @@
 
 import * as React from "react"
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  ChartBar,
+  AudioWaveform, ChartBar,
   Command,
-  Computer,
-  Frame,
-  GalleryVerticalEnd,
+  Computer, GalleryVerticalEnd,
   Gamepad2,
-  HomeIcon,
-  Image,
-  Map,
-  PieChart,
-  Plane,
-  Settings2,
-  SquareTerminal,
+  HomeIcon, Plane
 } from "lucide-react"
 
 import { NavMain } from "@/Layout/component/sidebar/nav-main"
-import { NavProjects } from "@/Layout/component/sidebar/nav-projects"
-import { NavUser } from "@/Layout/component/sidebar/nav-user"
 import { TeamSwitcher } from "@/Layout/component/sidebar/team-switcher"
 import {
   Sidebar,
@@ -31,7 +18,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { AuthContext } from "@/contexts/AuthContextProvider"
 
 // This is sample data.
 const data = {
@@ -121,7 +107,7 @@ const data = {
     },
     {
       title: "Travel",
-      // url: "/travels/add",
+      url: "/travels/add",
       icon: Plane,
       items: [
         {
@@ -147,22 +133,18 @@ const data = {
     {
       title: "post",
       url: "/posts",
-      icon: Image,
       items: [
         {
           title: "post",
           url: "/posts",
-          icon: Image,
         },
         {
           title: "Personal post",
           url: "/posts/self-uploded",
-          icon: Image,
         },
         {
           title: "create post",
           url: "/posts/create",
-          icon: Image,
         }
       ]
     },
@@ -171,7 +153,6 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = React.useContext(AuthContext)
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

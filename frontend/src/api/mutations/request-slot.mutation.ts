@@ -6,14 +6,17 @@ const useRequestSlotMutation = () => {
     const navTo = useNavigate()
     const queryClient = useQueryClient()
     return useMutation(
-    {
-        mutationFn: (payload: { slotId: number; otherPlayersId: number[]; })=>requestSlot(payload),
-        onSuccess: (data)=>{
-            navTo("/game")
-            queryClient.invalidateQueries({queryKey:["active-slots"]})
+        {
+            mutationFn: (payload: { slotId: number; otherPlayersId: number[]; }) => requestSlot(payload),
+            onSuccess: (data) => {
+                if (data.data.status === "OK") {
+                    navTo("/game")
+                    queryClient.invalidateQueries({ queryKey: ["active-slots"] })
+                }
+
+            }
         }
-    }
-)
+    )
 }
 
 export default useRequestSlotMutation

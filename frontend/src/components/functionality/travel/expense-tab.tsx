@@ -28,7 +28,6 @@ const calcReducedExpense= (acc:TReducedExpense,expense:TTravelExpenseResponse):T
 }
 
 const ExpenseTab = () => {
-    const travelDetail = useContext(TravelDetailContext)
     const { expensesMadeByMe, id: travelId } = useContext(TravelDetailContext)
     const reducedData = expensesMadeByMe.reduce<TReducedExpense>((acc:TReducedExpense,expense)=>{return calcReducedExpense(acc,expense)}, {askedAmount:0,approvedAmount:0,totalApproved:0,totalRejected:0,totalPending:0})
     return (
@@ -76,7 +75,7 @@ const ExpenseTab = () => {
                                         <AddUpdateExpenseAction title="update" icon={Home} travelId={travelId}
                                             expense={{
                                                 expenseDetails: {
-                                                    categoryId: expense.category.id.toString(),
+                                                    categoryId: expense.category.id,
                                                     ...expense
                                                 }
                                             }} mutation={useUpdateExpenseMutation} />

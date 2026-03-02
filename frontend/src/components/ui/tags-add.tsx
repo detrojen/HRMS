@@ -28,9 +28,9 @@ const TagsAdd = ({ field, form, placeholder }: {
             <div className="flex gap-2 my-2">
                 {
                   field.value &&  field.value.map(
-                        item => <Badge key={item} className="text-sm px-5" onClick={()=>{
-                            console.log(field.value.filter(tag => tag != item))
-                            form.setValue(field.name, field.value.filter(tag => tag != item))
+                        (item :string)=> <Badge key={item} className="text-sm px-5" onClick={()=>{
+                            console.log(field.value.filter((tag:string) => tag != item))
+                            form.setValue(field.name, field.value.filter((tag:string) => tag != item))
                         }}>{item} </Badge>
                     )
                 }

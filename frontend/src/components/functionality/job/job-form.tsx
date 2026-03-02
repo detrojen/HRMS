@@ -1,9 +1,8 @@
 import useCreateJobMutation from "@/api/mutations/create-job-mutation";
 import { useFetchHrList, useGetchEmployeesByNameLike } from "@/api/queries/employee.queries";
-import { getEmployeesByNameQuery } from "@/api/services/employee.service";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -19,7 +18,8 @@ import { jobCreateSchema } from "@/validation-schema/job-schema";
 import Searchable from "@/components/ui/searchable";
 
 const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
-    const { data: hrList } = useFetchHrList()
+    const { data: hrListQueryData } = useFetchHrList()
+    const hrs = hrListQueryData?.data.data
     return (
         <>
             <Form {...form}>
@@ -58,7 +58,7 @@ const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, a
                                     <SelectTrigger ><SelectValue placeholder="Select" /></SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            {hrList && hrList.data.map(hr => (<SelectItem key={`hr-${hr.id}`} value={hr.id.toString()}>{hr.firstName + " " + hr.lastName}</SelectItem>))}
+                                            {hrs && hrs.map(hr => (<SelectItem key={`hr-${hr.id}`} value={hr.id.toString()}>{hr.firstName + " " + hr.lastName}</SelectItem>))}
 
                                         </SelectGroup>
                                     </SelectContent>
@@ -159,8 +159,9 @@ const JobDocumentUploadForm = ({ form }: { form: UseFormReturn<TCreateJobRequest
 
 const JobAddCvReviewrersForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
     const [nameQuery, setNameQuery] = useState("")
-    const { data } = useGetchEmployeesByNameLike(nameQuery);
     const [reviewers, setReviewers] = useState<TEmployeeWithNameOnly[]>([])
+    const { data:employeeQueryData } = useGetchEmployeesByNameLike(nameQuery);
+    const employees = employeeQueryData?.data.data
     useEffect(() => {
         form.setValue("jobDetail.reviewerIds", reviewers.map(reviewer => reviewer.id))
     }, [reviewers])
@@ -169,7 +170,7 @@ const JobAddCvReviewrersForm = ({ form }: { form: UseFormReturn<TCreateJobReques
             <Form {...form}>
                 <Searchable
                 className="my-2"
-                data={data}
+                data={employees??[]}
                 setQuery={setNameQuery}
                 onSelectItem={(reviewer) => { setNameQuery(""); setReviewers(reviewers => [...reviewers, reviewer]) }}
                 render={(reviewer) => <h1>{reviewer.firstName} {reviewer.lastName}</h1>}
@@ -198,14 +199,14 @@ const JobForm = () => {
             defaultValues: {
                 jobDetail: {
                     id:null,
-                    hrOwnerId: null,
+                    hrOwnerId: 0,
                     skills: [],
                     reviewerIds: [],
                     title: "",
                     vacancy: 0,
                     description: "",
                     workMode: ""
-                }, jdDocument: null
+                }, jdDocument: undefined
             }
             , resolver: zodResolver(jobCreateSchema)
             , mode: "onBlur"
@@ -214,8 +215,6 @@ const JobForm = () => {
     );
     const createJobMutation = useCreateJobMutation()
     const handleSubmit = form.handleSubmit((values) => {
-        console.log(form.formState)
-        console.log("submiting form")
         createJobMutation.mutate(values)
     })
 
@@ -228,7 +227,7 @@ const JobForm = () => {
                 <JobAddCvReviewrersForm form={form} />
                 <JobDescriptionForm form={form} />
                 <JobDocumentUploadForm form={form} />
-                <button type="submit" >Submit</button>
+                <Button className="my-2" type="submit" >Submit</Button>
             </form>
         </Card>
     )

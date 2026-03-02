@@ -1,26 +1,30 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import login from "../services/login.service"
 import type { TLoginPayload } from "@/types/apiRequestTypes/TLoginPayload.type"
-import type { TGlobalResponse } from "@/types/TGlobalResponse.type"
-import type { TLoginResponse } from "@/types/apiResponseTypes/TLoginResponse.type"
 import { useNavigate } from "react-router-dom"
+import errorHandler from "@/apiErrorHandler"
 
-const useLoginMutation = ()=>{
+const useLoginMutation = () => {
   const navTo = useNavigate()
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data:TLoginPayload) => {
-      return  login(data)
+    mutationFn: (data: TLoginPayload) => {
+      return login(data)
     },
-    onSuccess:(data: TGlobalResponse<TLoginResponse>)=>{
-      queryClient.invalidateQueries()
-      localStorage.setItem("HRMS_AUTH_TOKEN",data.data.jwtToken)
-      navTo("/")
+    onSuccess: (data) => {
+      debugger
+      if (data.data.status === "OK") {
+        queryClient.invalidateQueries()
+        localStorage.setItem("HRMS_AUTH_TOKEN", data?.data.data.jwtToken!)
+        navTo("/")
+      }else{
+        errorHandler(data.data)
+      }
     },
-    onError:(data)=>{
+    onError: (data) => {
       console.table(data)
     }
   })
 }
 
-  export default useLoginMutation
+export default useLoginMutation

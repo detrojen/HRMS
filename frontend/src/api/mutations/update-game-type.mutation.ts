@@ -1,20 +1,20 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateGameType } from "../services/game-scheduling.service";
-import type { TGameType } from "@/types/apiResponseTypes/TGameType.type";
 import { useNavigate } from "react-router-dom";
+import type { TCreateUpdateGameTypeRequest } from "@/types/apiRequestTypes/TCreateUpdateGameTypeRequest.type";
 
 const useUpdategameTypeMutation = () => {
     const queryClient = useQueryClient()
     const navTo = useNavigate()
     return useMutation(
         {
-            mutationFn: (payload: TGameType) => {
+            mutationFn: (payload: TCreateUpdateGameTypeRequest) => {
 
                 return updateGameType(payload)
             }
             , onSuccess: (data) => {
                 debugger
-                if (data.status == "OK") {
+                if (data.data.status === "OK") {
                     queryClient.invalidateQueries({ queryKey: ["game-interest", "game-types"] })
                     navTo("/game")
                 }

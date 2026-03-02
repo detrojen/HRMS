@@ -11,6 +11,6 @@ export type TTravelExpenseResponse = {
     employee: TEmployeeWithNameOnly
     reviewedBy:  TEmployeeWithNameOnly
     aprrovedAmount: number
-    remark: String
+    remark: string
     status: "approved" | "pending" | "rejected"
 }

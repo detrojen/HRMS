@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { TJobApplicationResponse } from "@/types/apiResponseTypes/TJobApplicationResponse.type"
 import EmployeeMinDetailCard from "../employee-min-detail-card"
-import DocViewer, { DocRenderer } from "@/components/ui/doc-viewer"
+import DocViewer from "@/components/ui/doc-viewer"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Link } from "react-router-dom"

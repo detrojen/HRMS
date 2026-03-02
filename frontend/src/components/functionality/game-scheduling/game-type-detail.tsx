@@ -7,14 +7,15 @@ import { AuthContext } from "@/contexts/AuthContextProvider"
 
 const GameTypeDetail = () => {
     const {gameTypeId} = useParams()
-    const {data:gameType} = useFetchGameTypeById(gameTypeId!)
+    const {data:gameTypeQueryData} = useFetchGameTypeById(gameTypeId!)
     const [isEditable, setIsEditable] = useState(false);
     const {user} = useContext(AuthContext)
+    const gameType = gameTypeQueryData?.data.data
     return (
         <>
            <div>
                 {user.role==="HR"&&<Button onClick={()=>setIsEditable(!isEditable)}>Enable editing</Button>}
-                 {gameType && <GameTypeForm gameType={gameType??null} isEditable={isEditable}/>}
+                 {gameType && <GameTypeForm gameType={gameType} isEditable={isEditable}/>}
            </div>
             
         </>

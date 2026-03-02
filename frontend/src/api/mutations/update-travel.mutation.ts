@@ -10,7 +10,7 @@ const useUpdateTravelMutation = () => {
     {
         mutationFn: (payload: TCreateTravelRequest)=>updateTravel(payload)
         ,onSuccess: (data) => {
-            if(data.status == "OK"){
+            if(data.data.status == "OK"){
                 queryClient.invalidateQueries({queryKey: ["travel-by-id","travles","travel-min-detail-by-id"]})
                 navTo("/travels/manage")
             }

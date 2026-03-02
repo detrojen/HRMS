@@ -1,18 +1,15 @@
 import useReviewExpenseMutation from "@/api/mutations/review-expense.mutation";
-import useUploadTravelDocumentMutation from "@/api/mutations/upload-travel-document.mutation";
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import DocViewer from "@/components/ui/doc-viewer";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { TReviewExpenseRequest } from "@/types/apiRequestTypes/TReviewExpenesRequest.type";
-import type { TUploadTravelDocumnetRequest } from "@/types/apiRequestTypes/TUploadTravelDocumentRequest.type";
-import type { UseMutationResult } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
+import type { TLayoutContext } from "@/types/TlayoutContext.type";
 import { FileSearch } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useOutletContext } from "react-router-dom";
 
 type TReviewExpenseActionProps = {
@@ -24,7 +21,7 @@ type TReviewExpenseActionProps = {
 }
 const ReviewExpenseAction = (props:TReviewExpenseActionProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const {setIsLoading} = useOutletContext()
+    const {setIsLoading} = useOutletContext<TLayoutContext>()
     const reivewExpenseMutation = useReviewExpenseMutation()
     const form = useForm<TReviewExpenseRequest>({
         defaultValues: {
@@ -56,20 +53,22 @@ const ReviewExpenseAction = (props:TReviewExpenseActionProps) => {
                 <Controller
                     control={form.control}
                     name="aprrovedAmount"
-                    render={({ field, fieldstate }) => (
+                    render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel>Approv </FieldLabel>
                             <Input type="number" {...field} />
+                            <FieldError>{fieldState.error?.message}</FieldError>
                         </Field>
                     )}
                 />
                 <Controller
                     control={form.control}
                     name="remark"
-                    render={({ field, fieldstate }) => (
+                    render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel>Type</FieldLabel>
                             <Textarea {...field} />
+                            <FieldError>{fieldState.error?.message}</FieldError>
                         </Field>
                     )}
                 />

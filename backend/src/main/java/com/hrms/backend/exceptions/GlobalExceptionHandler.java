@@ -21,7 +21,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<GlobalResponseDto<?>> handleInvalidCredentialException(InvalidCredentialsException e){
+    public ResponseEntity<GlobalResponseDto<Object>> handleInvalidCredentialException(InvalidCredentialsException e){
         List<Map<String,String>> errors= new ArrayList<>(){};
         errors.add(Map.of( "message", e.getMessage()));
         log.error(e.getMessage());
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidActionException.class)
-    public ResponseEntity<GlobalResponseDto<?>> handleInvalidActionException(InvalidActionException e){
+    public ResponseEntity<GlobalResponseDto<Object>> handleInvalidActionException(InvalidActionException e){
         List<Map<String,String>> errors= new ArrayList<>(){};
         errors.add(Map.of( "message", e.getMessage()));
         log.warn("Invalid action: ",e.getMessage());
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
 
     }
     @ExceptionHandler(InvalidDeleteAction.class)
-    public ResponseEntity<GlobalResponseDto<?>> handleInvalidDeleteAction(InvalidDeleteAction e){
+    public ResponseEntity<GlobalResponseDto<Object>> handleInvalidDeleteAction(InvalidDeleteAction e){
         List<Map<String,String>> errors= new ArrayList<>(){};
         errors.add(Map.of( "message", e.getMessage()));
         log.warn("invalid delete action: {}",e.getMessage());
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<GlobalResponseDto<?>> handleJwtExpiration(ExpiredJwtException e){
+    public ResponseEntity<GlobalResponseDto<Object>> handleJwtExpiration(ExpiredJwtException e){
         List<Map<String,String>> errors= new ArrayList<>(){};
         errors.add(Map.of( "message", e.getMessage()));
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
 
     }
     @ExceptionHandler(JwtTokenRequired.class)
-    public ResponseEntity<GlobalResponseDto<?>> handleJwtRequired(JwtTokenRequired e){
+    public ResponseEntity<GlobalResponseDto<Object>> handleJwtRequired(JwtTokenRequired e){
         List<Map<String,String>> errors= new ArrayList<>(){};
         errors.add(Map.of( "message", "Login required"));
         log.warn("Jwt token required");
@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
 
     }
     @ExceptionHandler(ServerError.class)
-    public ResponseEntity<GlobalResponseDto<?>> handleJwtRequired(ServerError e){
+    public ResponseEntity<GlobalResponseDto<Object>> handleJwtRequired(ServerError e){
         List<Map<String,String>> errors= new ArrayList<>(){};
         errors.add(Map.of( "message", e.getMessage()));
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SlotCanNotBeBookedException.class)
-    public ResponseEntity<GlobalResponseDto<?>> handleSlotCanNotBeBookedException(SlotCanNotBeBookedException e){
+    public ResponseEntity<GlobalResponseDto<Object>> handleSlotCanNotBeBookedException(SlotCanNotBeBookedException e){
         List<Map<String,String>> errors= new ArrayList<>(){};
         errors.add(Map.of( "message", e.getMessage()));
         log.warn("Slot can not booked: {}",e.getMessage());
@@ -85,7 +85,7 @@ public class GlobalExceptionHandler {
 
     }
     @ExceptionHandler(ItemNotFoundExpection.class)
-    public ResponseEntity<GlobalResponseDto<?>> handleItemNotFoundExpection(ItemNotFoundExpection e){
+    public ResponseEntity<GlobalResponseDto<Object>> handleItemNotFoundExpection(ItemNotFoundExpection e){
         List<Map<String,String>> errors= new ArrayList<>(){};
         errors.add(Map.of( "message", e.getMessage()));
         log.warn("resource not found: {}",e.getMessage() );

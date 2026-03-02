@@ -8,8 +8,8 @@ const useUploadEmployeeTravelDocumentMutation = () => {
     return useMutation(
         {
             mutationFn: (payload: TUploadTravelDocumnetRequest) => uploadEmployeeTraveldocumnet(payload),
-            onSuccess: (data, variable, context) => {
-                if (data.status == "OK") {
+            onSuccess: (data) => {
+                if (data.data.status == "OK") {
                     queryClient.invalidateQueries({queryKey:["travel-by-id"]})
                 }
             },

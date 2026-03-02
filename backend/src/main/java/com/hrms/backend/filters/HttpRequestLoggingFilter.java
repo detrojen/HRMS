@@ -18,7 +18,7 @@ public class HttpRequestLoggingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String logMessage = "incoming request:- " +request.getMethod() + ": " +request.getRequestURI();
-        if(!SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().equals("anonymousUser")){
+        if(SecurityContextHolder.getContext().getAuthentication().getPrincipal()!=null && !SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().equals("anonymousUser")){
             JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             logMessage += " , requested by:- " + jwtInfoDto.getFullName() + " , role:- " + jwtInfoDto.getRoleTitle();
         }

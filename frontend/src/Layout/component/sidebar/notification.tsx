@@ -1,5 +1,4 @@
 import { useNotifications } from "@/api/queries/notification.queries"
-import { AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useSidebar } from "@/components/ui/sidebar"
 import {  Bell } from "lucide-react"
@@ -8,7 +7,7 @@ import NotificationItem from "./notification-item"
 const Notification = () => {
     const { isMobile } = useSidebar()
     const { data } = useNotifications()
-    const notifications = data?.data
+    const notifications = data?.data.data
     return (
         <>
             <DropdownMenu >

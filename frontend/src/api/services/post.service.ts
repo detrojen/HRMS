@@ -4,7 +4,7 @@ import type { TGlobalResponse } from "@/types/TGlobalResponse.type"
 import  {type TPostMinResponse, type TPostWisthCommentsAndLikeResponse } from "@/types/apiResponseTypes/TPostWisthCommentsAndLikeResponse.type"
 import type { TComment } from "@/types/apiRequestTypes/TCommentRequest.type"
 import type { TDeleteUnappropriateContent } from "@/types/apiRequestTypes/TDeleteUnappropriateContent.type"
-import type { TPageableProps } from "@/types/propsTypes/TPageableProps.type"
+import type { TPageableResponse } from "@/types/apiResponseTypes/TPageableResponse.type"
 
 export const createPost = (payload:TCreatePostRequest) => {
     const formData = new FormData()
@@ -32,12 +32,12 @@ export const updatePost = (payload:TCreatePostRequest) => {
 
 export const fetchPosts = ({page,limit,query,postTo,postFrom}:{page?:string,limit?:string,query?:string, postTo?:string,postFrom?:string}) => {
     var queryString = "".concat(page?`page=${page}&`:"").concat(limit?`limit=${limit}&`:"").concat(query?`query=${query}&`:"").concat(postTo?`postTo=${postTo}&`:"").concat(postFrom?`postFrom=${postFrom}&`:"")
-    return api.get<TGlobalResponse<TPageableProps<TPostWisthCommentsAndLikeResponse>>>("/api/posts?"+queryString)
+    return api.get<TGlobalResponse<TPageableResponse<TPostWisthCommentsAndLikeResponse>>>("/api/posts?"+queryString)
 }
 
 export const fetchPostUploadedBySelf = ({page,limit,query, postTo,postFrom}:{page?:string,limit?:string,query?:string, postTo?:string,postFrom?:string}) => {
     var queryString = "".concat(page?`page=${page}&`:"").concat(limit?`limit=${limit}&`:"").concat(query?`query=${query}&`:"").concat(postTo?`postTo=${postTo}&`:"").concat(postFrom?`postFrom=${postFrom}&`:"")
-    return api.get<TGlobalResponse<TPageableProps<TPostWisthCommentsAndLikeResponse>>>("/api/posts/uploaded-by-self?"+queryString)
+    return api.get<TGlobalResponse<TPageableResponse<TPostWisthCommentsAndLikeResponse>>>("/api/posts/uploaded-by-self?"+queryString)
 }
 
 export const commentOn = (payload:TComment & {postId:string|number}) => {

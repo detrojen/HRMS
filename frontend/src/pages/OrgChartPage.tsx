@@ -51,11 +51,12 @@ const OrgChartPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const orgChartQuery = useFetchOrgChart(searchParams.get("employeeId"))
     const [nameQuery, setNameQuery] = useState("")
-    const { data } = useGetchEmployeesByNameLike(nameQuery);
+    const { data:employeeSearchQueryData } = useGetchEmployeesByNameLike(nameQuery);
+    const orgChartData = orgChartQuery.data?.data.data    
     return <>
         <div className="flex flex-col w-1/1">
             <Searchable 
-                data={data??[]}
+                data={employeeSearchQueryData?.data.data??[]}
                 setQuery={setNameQuery}
                 render={(item)=><h1>{item.firstName} {item.lastName}</h1>}
                 onSelectItem={(item)=>{
@@ -71,10 +72,10 @@ const OrgChartPage = () => {
            
             {orgChartQuery.data || !orgChartQuery.isLoading ?
                 <div className="flex flex-col w-1/2 mx-auto gap-2 p-2 justify-center content-center">
-                    <RecursiveComp emp={orgChartQuery.data?.data} />
+                    <RecursiveComp emp={orgChartData} />
                     <Separator />
                     <div className="grid grid-cols-6 gap-2">
-                        <OneLevelDown emps={orgChartQuery.data?.data.oneLevelDown} />
+                        <OneLevelDown emps={orgChartData.oneLevelDown} />
                     </div>
                 </div> : <>Loading org chart</>
             }

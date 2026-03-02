@@ -10,8 +10,8 @@ const useCreateJobMutation = () => {
     return useMutation(
     {
         mutationFn: (payload: TCreateJobRequest) => createJobRequest(payload),
-        onSuccess:(data,variable,context)=>{
-            if(data.status == "OK"){
+        onSuccess:(data)=>{
+            if(data.data.status == "OK"){
                 navTo("/")
                 queryClient.invalidateQueries({queryKey:["jobs"]})
             }

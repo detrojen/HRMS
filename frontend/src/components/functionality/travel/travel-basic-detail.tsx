@@ -2,15 +2,13 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { TravelDetailContext } from "@/contexts/TravelDetailContext"
 import { useContext } from "react"
 import EmployeeMinDetailCard from "../employee-min-detail-card"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Edit } from "lucide-react"
-import TravelForm from "@/pages/TravelForm"
 import { Link } from "react-router-dom"
 import AddEmployeeToTravelAction from "./add-employee-to-travel-action"
 import { AuthContext } from "@/contexts/AuthContextProvider"
 
 const TravelBasicDetail = () => {
-    const { descripton, startDate, endDate, lastDateToSubmitExpense, title, employees, id, maxReimbursementAmountPerDay } = useContext(TravelDetailContext)
+    const { descripton, startDate, endDate, lastDateToSubmitExpense, title, employees, id } = useContext(TravelDetailContext)
     const {user} = useContext(AuthContext)
     return (
         <Card>

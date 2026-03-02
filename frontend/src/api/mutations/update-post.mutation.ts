@@ -10,7 +10,7 @@ const useUpdatePostMutation = () => {
     {
         mutationFn: (payload: TCreatePostRequest) => updatePost(payload),
         onSuccess:(data)=>{
-            if(data.status == "OK"){
+            if(data.data.status == "OK"){
                 navTo("/posts")
                 queryClient.invalidateQueries({queryKey:["posts"]})
             }

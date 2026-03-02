@@ -5,6 +5,6 @@ export type TUploadTravelDocumnetRequest = {
         description: string
         documentPath?: string
     },
-    travelId: number
+    travelId?: number
     file?: File
 }

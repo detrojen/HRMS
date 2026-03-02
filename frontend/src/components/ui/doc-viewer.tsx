@@ -1,6 +1,5 @@
-import { Eye, View } from "lucide-react"
+import { Eye } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./dialog"
-import { useEffect, useState } from "react"
 
 const DocRenderer = ({ url }: { url: string }) => {
     

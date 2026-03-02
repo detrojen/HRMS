@@ -10,7 +10,7 @@ const useDeleteUnappropriatePostMutation = () => {
             mutationFn: (payload: TDeleteUnappropriateContent) => deleteUnAprropriatePost(payload)
             , onSuccess: (data) => {
 
-                if (data.status === "OK") {
+                if (data.data.status === "OK") {
                     queryClient.invalidateQueries({ queryKey: ["posts"] })
                 }
             }

@@ -1,9 +1,9 @@
-import useUploadTravelDocumentMutation from "@/api/mutations/upload-travel-document.mutation";
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { TUploadTravelDocumnetRequest } from "@/types/apiRequestTypes/TUploadTravelDocumentRequest.type";
+import type { TLayoutContext } from "@/types/TlayoutContext.type";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import type { LucideIcon } from "lucide-react";
@@ -14,7 +14,7 @@ import { useOutletContext } from "react-router-dom";
 const AddUpdateTravelDocumnetAction = ({ travelId, mutation, defaultValues, Actionicon }: {defaultValues?:TUploadTravelDocumnetRequest, travelId: number, mutation:()=> UseMutationResult<AxiosResponse<any, any, {}>, Error, TUploadTravelDocumnetRequest, unknown>, Actionicon:LucideIcon }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const uploadTravelDocumentMutation = mutation()
-    const {setIsLoading} = useOutletContext()
+    const {setIsLoading} = useOutletContext<TLayoutContext>()
     const form = useForm<Omit<TUploadTravelDocumnetRequest,"travelId">>({
         defaultValues: {
             documentDetails: {
@@ -36,7 +36,7 @@ const AddUpdateTravelDocumnetAction = ({ travelId, mutation, defaultValues, Acti
         }
     },[uploadTravelDocumentMutation.isPending, uploadTravelDocumentMutation.isSuccess])
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>, field: ControllerRenderProps<TUploadTravelDocumnetRequest, "file">) => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>, field: ControllerRenderProps<Omit<TUploadTravelDocumnetRequest, "travelId">, "file">) => {
         if (e.target.files != null && e.target.files.length > 0) {
             form.setValue(field.name, e.target.files[0]);
         }
@@ -56,32 +56,35 @@ const AddUpdateTravelDocumnetAction = ({ travelId, mutation, defaultValues, Acti
                 <Controller
                     control={form.control}
                     name="documentDetails.description"
-                    render={({ field, fieldstate }) => (
+                    render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel>Description</FieldLabel>
                             <Input {...field} />
+                            <FieldError>{fieldState.error?.message}</FieldError>
                         </Field>
                     )}
                 />
                 <Controller
                     control={form.control}
                     name="documentDetails.type"
-                    render={({ field, fieldstate }) => (
+                    render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel>Type</FieldLabel>
                             <Input {...field} />
+                            <FieldError>{fieldState.error?.message}</FieldError>
                         </Field>
                     )}
                 />
                 <Controller
                     control={form.control}
                     name="file"
-                    render={({ field, fieldstate }) => (
+                    render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel>File</FieldLabel>
                             <Input type="file" onChange={(e) => {
                                 handleFileChange(e, field)
                             }} />
+                            <FieldError>{fieldState.error?.message}</FieldError>
                         </Field>
                     )}
                 />

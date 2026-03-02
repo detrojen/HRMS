@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 const SlotHistory = () => {
     const navTo = useNavigate();
     const { data } = useFetchActiveSlots();
+    const slots = data?.data.data
     return (
         <>
 
@@ -28,7 +29,7 @@ const SlotHistory = () => {
                 {/* {JSON.stringify(data)} */}
                 <div className="flex w-full max-w-md flex-col gap-2">
                     {
-                        data && data.map(
+                        slots && slots.map(
                             item => <Item variant="outline" onClick={()=>navTo(`slots/requested/${item.id}`)}>
                                 <ItemContent>
                                     <ItemTitle> <Badge className={`${item.status=="Confirm"?"bg-green-500":"bg-orange-500"}`} variant={item.status=="Confirm"?"default":"ghost"}>{item.status}</Badge> <Badge variant={"outline"}>{item.gameSlot.gameType}</Badge> </ItemTitle>

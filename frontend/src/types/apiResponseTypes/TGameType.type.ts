@@ -1,8 +1,8 @@
 export type TGameType = {
     game: string,
     slotDuration: number,
-    openingHours: Date,
-    closingHours: Date,
+    openingHours: string,
+    closingHours: string,
     maxNoOfPlayers: number,
     slotCanBeBookedBefore: number,
     maxSlotPerDay: number,

@@ -6,12 +6,13 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { TAddUpdateExpense } from "@/types/apiRequestTypes/TAddUpdateExpense.type";
+import type { TLayoutContext } from "@/types/TlayoutContext.type";
 import { expenseSchema } from "@/validation-schema/expense-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import { format } from "date-fns";
-import { Edit, Icon, PlusCircle, type LucideIcon } from "lucide-react";
+import { Edit, PlusCircle, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, type ControllerRenderProps } from "react-hook-form";
 import { useOutletContext } from "react-router-dom";
@@ -23,9 +24,9 @@ type TAddUpdateExpenseActionProps = {
     expense?: Pick<TAddUpdateExpense, "expenseDetails"> | undefined
     mutation: () => UseMutationResult<AxiosResponse<any, any, {}>, Error, TAddUpdateExpense & { travelId: number | string }, unknown>
 }
-const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TAddUpdateExpenseActionProps) => {
+const AddUpdateExpenseAction = ({ travelId, mutation, expense }: TAddUpdateExpenseActionProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const{setIsLoading} = useOutletContext()
+    const{setIsLoading} = useOutletContext<TLayoutContext>()
     const uplaodExpenseMutation = mutation()
     const {data,isLoading: isCategoryLoading} = useFetchTraveExpensecategories()
     const form = useForm<TAddUpdateExpense>({
@@ -40,7 +41,7 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TA
         }
         , resolver: zodResolver(expenseSchema)
     })
-
+    const categories = data?.data.data
     useEffect(()=>{
       
         setIsLoading(uplaodExpenseMutation.isPending)
@@ -105,7 +106,7 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense, icon, title }: TA
                                     <SelectGroup>
                                         <SelectLabel>Category</SelectLabel>
                                         {
-                                            !isCategoryLoading && data && data.data.map((category)=><SelectItem key={`category-${category.id}`} value={category.id.toString()}>{category.category}</SelectItem>)
+                                            !isCategoryLoading && categories &&categories.map((category)=><SelectItem key={`category-${category.id}`} value={category.id.toString()}>{category.category}</SelectItem>)
                                         }
                                     </SelectGroup>
                                 </SelectContent>

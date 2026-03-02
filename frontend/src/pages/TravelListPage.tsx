@@ -4,8 +4,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Link } from "react-router-dom";
 
 const TravelList = ({getAsa}:{getAsa:string}) => {
-    const { data,isLoading } = useFetchTravels(getAsa);
-    const travels = data?.data
+    const { data:travelQueryData,isLoading } = useFetchTravels(getAsa);
+    const travels = travelQueryData?.data.data
     if(isLoading){
         return "loading data"
     }

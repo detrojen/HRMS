@@ -11,7 +11,7 @@ const useReviewJobApplication = () => {
         mutationFn: (payload:{review:TReivewJobApplicationRequest,jobApplicationId:number}) => reviewJobApplication(payload)
         ,onSuccess: (data) => {
             navTo("/")
-            if(data.status === "OK"){
+            if(data.data.status === "OK"){
                 queryClient.invalidateQueries({queryKey:["job-applications"]})
             }
         }

@@ -1,6 +1,6 @@
 import type { TGameType } from "@/types/apiResponseTypes/TGameType.type"
 import { Card, CardContent, CardHeader } from "../../ui/card"
-import { Link, useNavigate } from "react-router-dom"
+import {  useNavigate } from "react-router-dom"
 import { useContext } from "react"
 import { AuthContext } from "@/contexts/AuthContextProvider"
 import { Button } from "@/components/ui/button"

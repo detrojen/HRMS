@@ -8,33 +8,36 @@ import type { TUpdateGameInterest } from "@/types/apiRequestTypes/TUpdateGameInt
 import type { TGameInterest } from "@/types/apiResponseTypes/TGameInterest.type";
 import type { TGameType } from "@/types/apiResponseTypes/TGameType.type";
 import type { TCurrentGameStatusResponse } from "@/types/apiResponseTypes/TCurrentGameStatusResponse.type";
+import type { TGameSlotResponse } from "@/types/apiResponseTypes/TGameSlotResponse.type";
+import type { TSlotRequsetResponse } from "@/types/apiResponseTypes/TSlotRequsetResponse.type";
+import type { TCreateUpdateGameTypeRequest } from "@/types/apiRequestTypes/TCreateUpdateGameTypeRequest.type";
 
 export const getGameSlotByGameTypeIdOfDate = (payload:TQueryGameSlots)  => {
-    return api.get<TGlobalResponse<any>>(`/api/game-slots/${payload.gameTypeId}?slotDate=${payload.date}`).then(res=>res.data)
+    return api.get<TGlobalResponse<TGameSlotResponse[]>>(`/api/game-slots/${payload.gameTypeId}?slotDate=${payload.date}`)
 }
 
 export const getIntrestedEmployeeByNameLike = (payload:TQueryInterestedEmployeeByNameLike) => {
-    return payload.nameLike.trim() == "" ? []:api.get<TGlobalResponse<TEmployeeWithNameOnly[]>>(`/api/employee/interested-game/${payload.gameTypeId}?nameLike=${payload.nameLike.trim()}`).then(res=>res.data)
+    return api.get<TGlobalResponse<TEmployeeWithNameOnly[]>>(`/api/employee/interested-game/${payload.gameTypeId}?nameLike=${payload.nameLike.trim()}`)
 }
 
 export const requestSlot = (payload:{slotId:number,otherPlayersId:number[]}) => {
-    return api.post("/api/game-slot/book",payload).then(res=>res.data); 
+    return api.post<TGlobalResponse<any>>("/api/game-slot/book",payload)
 }
 
 export const getActiveSlots = () => {
-    return api.get("/api/game-slots/active").then(res=>res.data)
+    return api.get<TGlobalResponse<TSlotRequsetResponse[]>>("/api/game-slots/active")
 }
 
 export const cancelRequestedSlot = (slotRequestId:number) => {
-    return api.delete(`/api/game-slots/cancel/${slotRequestId}`)
+    return api.delete<TGlobalResponse<any>>(`/api/game-slots/cancel/${slotRequestId}`)
 }
 
 export const getGameInterests = () => {
-    return api.get("/api/employee-wise-game-interests").then(res=>res.data)
+    return api.get<TGlobalResponse<TGameInterest[]>>("/api/employee-wise-game-interests")
 }
 
 export const getRequestedSlotDetail = (requestId:string) => {
-    return api.get<TGlobalResponse<TRequestedSlotDetail>>(`/api/game-slots/requested/${requestId}`).then(res=>res.data)
+    return api.get<TGlobalResponse<TRequestedSlotDetail>>(`/api/game-slots/requested/${requestId}`)
 }
 
 export const updateGameInterest = (payload: TUpdateGameInterest) => {
@@ -42,20 +45,20 @@ export const updateGameInterest = (payload: TUpdateGameInterest) => {
 }
 
 export const getAllGameTypes = () => {
-    return api.get<TGameType[]>('/api/game-types').then(res=>res.data)
+    return api.get<TGlobalResponse<TGameType[]>>('/api/game-types')
 }
 export const getGameTypeById = (gameTypeId:string) => {
-    return api.get<TGameType>(`/api/game-types/${gameTypeId}`).then(res=>res.data)
+    return api.get<TGlobalResponse<TGameType>>(`/api/game-types/${gameTypeId}`)
 }
 
-export const createGameType = (payload:Omit<TGameType,"id">) => {
+export const createGameType = (payload:TCreateUpdateGameTypeRequest) => {
     
     return api.post("/api/game-types", payload)
 }
 
-export const updateGameType =  (payload:any) => {
+export const updateGameType =  (payload:TCreateUpdateGameTypeRequest) => {
     
-    return  api.put<TGameType>(`/api/game-types`,payload)
+    return  api.put<TGlobalResponse<TGameType>>(`/api/game-types`,payload)
 }
 
 export const getCurrentGameStatus = () => {

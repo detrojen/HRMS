@@ -1,6 +1,7 @@
 package com.hrms.backend.utils;
 
 import com.hrms.backend.exceptions.ServerError;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,8 +14,11 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class FileUtility {
+    @Value("${hrms.backend.uploadFolder}")
+    private static String uploadDir;
+    private static String userDir = System.getProperty("user.dir");
     private FileUtility(){}
-    private static String uploadFolderPath = System.getProperty("user.dir") + File.separator + "uploads";
+    private static String uploadFolderPath =userDir + File.separator + uploadDir;
     public static String Save(MultipartFile file, String folderName){
         UUID uuid = UUID.randomUUID();
         String fileType = Arrays.stream(file.getContentType().split("/")).toArray()[1].toString();
@@ -30,13 +34,13 @@ public class FileUtility {
     }
 
     public static Resource Get(String folderName,String fileName){
-        String absFilePath = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + folderName + File.separator + fileName;
+        String absFilePath = userDir + File.separator + uploadDir + File.separator + folderName + File.separator + fileName;
         Path filePath = Paths.get( absFilePath);
         FileSystemResource file = new FileSystemResource(new File(filePath.toUri()));
         return file;
     }
     public static byte[] readByte(String folderName,String fileName){
-        String absFilePath = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + folderName + File.separator + fileName;
+        String absFilePath = userDir + File.separator + uploadDir + File.separator + folderName + File.separator + fileName;
         Path filePath = Paths.get( absFilePath);
         try {
             InputStreamResource file = new InputStreamResource(new FileInputStream(new File(filePath.toUri())));

@@ -1,5 +1,6 @@
 import api from "@/api/api";
 import type { TSelfResponse } from "@/types/apiResponseTypes/TSelfResponse.type";
+import type { TGlobalResponse } from "@/types/TGlobalResponse.type";
 import { createContext, useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,8 +18,8 @@ const AuthContextProvider = ({children}:{children:ReactNode}) => {
     navTo("/login")
   }
     useEffect(()=>{
-        api.get("/api/employees/self").then(res=>{
-            setUser(res.data)
+        api.get<TGlobalResponse<TSelfResponse>>("/api/employees/self").then(res=>{
+            setUser(res.data.data)
         })
     },[])
     return (

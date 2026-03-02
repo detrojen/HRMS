@@ -1,12 +1,12 @@
-import useCommentMutation from "@/api/mutations/comment-mutation"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
 import type { TComment } from "@/types/apiRequestTypes/TCommentRequest.type"
+import type { TLayoutContext } from "@/types/TlayoutContext.type"
 import { useQueryClient, type UseMutationResult } from "@tanstack/react-query"
 import type { AxiosResponse } from "axios"
-import { ChartBar, Edit, MessageCircle, type LucideIcon } from "lucide-react"
+import { Edit, MessageCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { useOutletContext } from "react-router-dom"
@@ -14,20 +14,19 @@ import { useOutletContext } from "react-router-dom"
 type TCommentActionProps = {
     postId?:string|number, 
     value?:TComment,
-    icon: LucideIcon,
     mutation: ()=>UseMutationResult<AxiosResponse<any, any, {}>, Error, any, unknown>
 }
  
-const CommentAction = ({postId, value, mutation, icon}:TCommentActionProps) => {
+const CommentAction = ({postId, value, mutation}:TCommentActionProps) => {
      const [isOpen, setIsOpen] = useState<boolean>(false);
-     const {setIsLoading} = useOutletContext();
+     const {setIsLoading} = useOutletContext<TLayoutContext>();
     const commentMutation = mutation()
     const form = useForm<TComment>({
         defaultValues: value??{comment:""}
     });
     const queryClient = useQueryClient();
     const handleSubmit = form.handleSubmit((values)=>{
-        let finalValue = {...values}
+        let finalValue : TComment & {postId?: string|number}= {...values}
         if(postId!=undefined) {
             finalValue= {...finalValue,postId:postId}
         }

@@ -1,8 +1,8 @@
 import type { TPageableProps } from "@/types/propsTypes/TPageableProps.type"
 import { Button } from "./button"
 import { useSearchParams } from "react-router-dom"
+import { useState, type HtmlHTMLAttributes } from "react"
 import { Input } from "./input"
-import type { HtmlHTMLAttributes } from "react"
 
 function Pageable<T>({data,render,className}:TPageableProps<T>&HtmlHTMLAttributes<HTMLDivElement>){
     const [searchParams,setSearchparams] = useSearchParams()
@@ -19,6 +19,10 @@ function Pageable<T>({data,render,className}:TPageableProps<T>&HtmlHTMLAttribute
                     variant={"outline"} onClick={()=>{
                     setSearchparams({page: (Number(searchParams.get("page"))-1).toString()})
                 }}>previous</Button>
+                <Input type="number" className="w-fit" value={data.numberOfElements} onChange={(e)=>{
+                    searchParams.set("limit",e.target.value)
+                    setSearchparams(searchParams)
+                }}/>
                 <Button variant={"outline"}
                     disabled={data.last}
                     onClick={()=>{

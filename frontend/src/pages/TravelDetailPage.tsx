@@ -17,20 +17,20 @@ const TravelDetailPage = () => {
     const { user } = useContext(AuthContext)
     const { travelId } = useParams()
     const [searchParams,setSearchParams] = useSearchParams()
-    const { data, isLoading } = useFetchTravelById(travelId!)
-    const travelDetail = data?.data
+    const { data:travelQueryData, isLoading } = useFetchTravelById(travelId!)
+    const travelDetail = travelQueryData?.data.data
     const handleTabUpdate = (tabName:string) =>{
         searchParams.set("tab" ,tabName)
         setSearchParams(searchParams)
     }
     return <>
-        {isLoading?"Loading":<TravelDetailContext.Provider value={travelDetail}>
+        {isLoading?"Loading":<TravelDetailContext.Provider value={travelDetail!}>
             <Tabs defaultValue={`${searchParams.get("tab")??"basic-details"}`} className="w-1/1 p-3">
                 <TabsList >
                     <TabsTrigger value="basic-details" onClick={()=>handleTabUpdate("basic-details")}>Basic Details</TabsTrigger>
                     <TabsTrigger value="travel-documnets" onClick={()=>handleTabUpdate("travel-documnets")}>Travel Documnet</TabsTrigger>
                     {travelDetail?.inEmployeeList ? <TabsTrigger value="personal-documnets" onClick={()=>handleTabUpdate("personal-documnets")}>Personal Documnet</TabsTrigger> : <></>}
-                    {user.role != "Employee" ? <TabsTrigger value="employee-documnets" onClick={()=>handleTabUpdate("employee-documnets")}>Employee Document</TabsTrigger> : <></>}
+                    { <TabsTrigger value="employee-documnets" onClick={()=>handleTabUpdate("employee-documnets")}>Employee Document</TabsTrigger>}
                     {travelDetail?.inEmployeeList ? <TabsTrigger value="employee-expense" onClick={()=>handleTabUpdate("employee-expense")}>Expense</TabsTrigger> : <></>}
                     {user.role === "HR" ? <TabsTrigger value="hr-expense" onClick={()=>handleTabUpdate("hr-expense")}>Expense</TabsTrigger> : <></>}
                 </TabsList>
@@ -44,7 +44,7 @@ const TravelDetailPage = () => {
                     {travelDetail?.inEmployeeList ? <TravelPersonalDocumnetDetails />: <Card  className="p-3">OOps..! you have not assigned this travel</Card>}
                 </TabsContent>
                 <TabsContent value="employee-documnets">
-                    {user.role != "Employee" ?<TravelEmployeeDocumnetDetails />: <Card className="p-3">You have not access to this data</Card>}
+                    {<TravelEmployeeDocumnetDetails />}
                 </TabsContent>
                 <TabsContent value="employee-expense">
                     {travelDetail?.inEmployeeList ? <ExpenseTab />: <Card  className="p-3">OOps..! you have not assigned this travel</Card>}

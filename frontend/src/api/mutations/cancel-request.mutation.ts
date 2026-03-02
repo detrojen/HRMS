@@ -9,7 +9,7 @@ const useCancelSlotMutation = () => {
     {
         mutationFn: (slotRequestId:number)=>cancelRequestedSlot(slotRequestId),
         onSuccess:(data)=>{
-            if(data.status === "OK"){
+            if(data.data.status === "OK"){
                 navTo("/game")
                 queryClient.invalidateQueries({queryKey:["active-slots"]})
             }

@@ -1,11 +1,16 @@
 import { useFetchGameInterests } from "@/api/queries/game-scheduling.queries"
 import EmployeeWiseGameInterestList from "@/components/functionality/game-scheduling/employee-game-interest-list"
 import SlotHistory from "@/components/functionality/game-scheduling/slot-history"
-import { Card } from "@/components/ui/card"
+import { useAppDispatch } from "@/store/hooks"
+import { setInitialData } from "@/store/slices/game-interest-slice"
 import { Outlet } from "react-router-dom"
 
 const GameSchedulingPage = () => {
-    const {} = useFetchGameInterests()
+    const {data} = useFetchGameInterests()
+    const dispatch = useAppDispatch()
+    if(data?.data.status === "OK"){
+        dispatch(setInitialData(data.data.data))
+    }
     return (
         <>
         <div className="w-1/1 min-h-full grid grid-cols-10  gap-2 p-2 ">

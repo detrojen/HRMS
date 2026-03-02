@@ -8,7 +8,7 @@ const useCommentMutation = () => {
         {
             mutationFn: (payload: TComment & { postId: number | string }) => commentOn(payload),
             onSuccess: (data) => {
-                if(data.status === "OK"){
+                if(data.data.status === "OK"){
                     queryClient.invalidateQueries({queryKey:["posts"]})
                 }   
             }

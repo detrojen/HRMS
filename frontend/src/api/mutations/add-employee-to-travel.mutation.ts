@@ -8,7 +8,7 @@ const useAddEmployeeToTravelMutation = () => {
         {
             mutationFn: (payload:TAddEmployeeToTravelRequest) => addEmployeeToTravel(payload)
             ,onSuccess: (data) => {
-                if(data.status === "OK"){
+                if(data.data.status === "OK"){
                     queryClient.invalidateQueries({queryKey:["travel-by-id"]})
                 }
             }

@@ -1,5 +1,5 @@
 export type TPageableResponse<T> = {
-     "content": T[],
+    "content": T[],
     "pageable": {
       "pageNumber": number,
       "pageSize": number,

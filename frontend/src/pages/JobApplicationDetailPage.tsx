@@ -3,7 +3,6 @@ import EmployeeMinDetailCard from "@/components/functionality/employee-min-detai
 import ReviewCvAction from "@/components/functionality/job/review-cv-action"
 import ReviewJobApplicationAction from "@/components/functionality/job/review-job-application-action"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import DocViewer from "@/components/ui/doc-viewer"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -14,10 +13,10 @@ import { useParams } from "react-router-dom"
 const JobApplicationDetailPage = () => {
     const { user } = useContext(AuthContext)
     const { jobApplicationId } = useParams()
-    const { data, isLoading, isError } = useFetchJobApplicationById(Number(jobApplicationId))
-    const jobApplication = data?.data
-    if (data && data?.status != "OK") {
-        return <h1>You have no access to this page</h1>
+    const { data, isLoading } = useFetchJobApplicationById(Number(jobApplicationId))
+    const jobApplication = data?.data.data
+    if (data && data?.data.status != "OK") {
+        return <h1> You have no access to this page</h1>
     }
     if (isLoading) {
         return "Fetching job application details"

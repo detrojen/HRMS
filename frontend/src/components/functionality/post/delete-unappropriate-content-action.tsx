@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
 import type { TDeleteUnappropriateContent } from "@/types/apiRequestTypes/TDeleteUnappropriateContent.type"
+import type { TLayoutContext } from "@/types/TlayoutContext.type"
 import { useQueryClient, type UseMutationResult } from "@tanstack/react-query"
 import type { AxiosResponse } from "axios"
 import { Trash2 } from "lucide-react"
@@ -17,7 +18,7 @@ const DeleteUnappropriateContentAction = ({ contentId, deleteMutation }: {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const deleterMutationInstance = deleteMutation()
-    const {setIsLoading} = useOutletContext()
+    const {setIsLoading} = useOutletContext<TLayoutContext>()
     const form = useForm<TDeleteUnappropriateContent>({
         defaultValues: {
             id: contentId

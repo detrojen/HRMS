@@ -12,7 +12,7 @@ import type { TReviewCvRequest } from "@/types/apiRequestTypes/TReviewCvRequest.
 export const createJobRequest = (payload: TCreateJobRequest) => {
     const formData = new FormData()
     formData.append("jobDetail",new Blob([JSON.stringify(payload.jobDetail)], {type:"application/json"}))
-    formData.append("jobDocument",payload.jdDocument)
+    formData.append("jobDocument",payload.jdDocument!)
     return api.post<TGlobalResponse<any>>("/api/jobs",formData,{
         headers:{
             "Content-Type":"multipart/form-data"

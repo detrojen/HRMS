@@ -3,11 +3,12 @@ import GameCurrentStatusCard from "@/components/functionality/game-scheduling/ga
 
 const GameHomePage = () => {
     const {data,isLoading} = useFetchCurrentGameStatus()
+    const games=data?.data.data
     if(isLoading) return "Loading data"
     return(
-        <>
+        <> 
             <div className="grid grid-cols-1 gap-2">
-                {data?.data.map(game=><GameCurrentStatusCard key={game.gameSlot.id} {...game}/>)}
+                {games?.map(game=><GameCurrentStatusCard key={game.gameSlot.id} {...game}/>)}
             </div>
         </>
     )

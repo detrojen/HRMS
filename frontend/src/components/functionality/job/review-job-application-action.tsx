@@ -3,6 +3,7 @@ import useReviewJobApplication from "@/api/mutations/review-job-application.muta
 import { Button } from "@/components/ui/button"
 import  { DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import type { TLayoutContext } from "@/types/TlayoutContext.type"
 import { Check, Cross } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useOutletContext } from "react-router-dom"
@@ -13,7 +14,7 @@ type TReviewJobApplicationActionProps = {
 const ReviewJobApplicationAction = ({status,jobApplicationId}:TReviewJobApplicationActionProps) => {
     const inputRef = useRef<HTMLInputElement>(null)
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const{setIsLoading} = useOutletContext()
+    const{setIsLoading} = useOutletContext<TLayoutContext>()
     const reviewJobApplicationMutation = useReviewJobApplication()
     useEffect(()=>{
             
@@ -47,7 +48,7 @@ const ReviewJobApplicationAction = ({status,jobApplicationId}:TReviewJobApplicat
                                     {
                                         review: {
                                             status: status,
-                                            remark:  inputRef?.current?.value
+                                            remark:  inputRef?.current?.value??""
                                         },
                                         jobApplicationId
                                     }

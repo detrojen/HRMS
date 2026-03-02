@@ -4,17 +4,17 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import type { TReviewCvRequest } from "@/types/apiRequestTypes/TReviewCvRequest.type"
+import type { TLayoutContext } from "@/types/TlayoutContext.type"
 import cvReviewSchema from "@/validation-schema/cvReviewSchema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
-import { ThumbsUp } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { useOutletContext } from "react-router-dom"
 
 const ReviewCvAction = ({ jobApplicationId }: { jobApplicationId: number }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const { setIsLoading } = useOutletContext()
+    const { setIsLoading } = useOutletContext<TLayoutContext>()
     const reviewCvMutation = useReviewCvMutation()
     const queryClient = useQueryClient()
     const form = useForm<TReviewCvRequest>({

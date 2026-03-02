@@ -33,10 +33,10 @@ const CreatePostPage = () => {
     useEffect(()=>{
         if(postQuery?.data){
             console.log(postQuery.data)
-            form.setValue("postDetails.id",postQuery?.data.data.id)
-            form.setValue("postDetails.body",postQuery?.data.data.body)
-            form.setValue("postDetails.title",postQuery?.data.data.title)
-            form.setValue("postDetails.tags",postQuery?.data.data.tags.split(","))
+            form.setValue("postDetails.id",postQuery?.data.data.data.id)
+            form.setValue("postDetails.body",postQuery?.data.data.data.body)
+            form.setValue("postDetails.title",postQuery?.data.data.data.title)
+            form.setValue("postDetails.tags",postQuery?.data.data.data.tags.split(","))
         }
     },[postQuery?.data])
     return (
@@ -44,7 +44,7 @@ const CreatePostPage = () => {
             <Controller
                 control={form.control}
                 name="postDetails.title"
-                render={({ field, fieldstate }) => (
+                render={({ field }) => (
                     <Field>
                         <FieldLabel>Title</FieldLabel>
                         <Input {...field} />
@@ -54,7 +54,7 @@ const CreatePostPage = () => {
             <Controller
                 control={form.control}
                 name="postDetails.body"
-                render={({ field, fieldstate }) => (
+                render={({ field }) => (
                     <Field>
                         <FieldLabel>Details</FieldLabel>
                         <Input {...field} />
@@ -64,7 +64,7 @@ const CreatePostPage = () => {
             <Controller
                 control={form.control}
                 name="postDetails.tags"
-                render={({ field, fieldstate }) => (
+                render={({ field }) => (
                     <Field>
                         <FieldLabel>Tags</FieldLabel>
                         <TagsAdd form={form} field={field} placeholder="Enter tags" />
@@ -74,7 +74,7 @@ const CreatePostPage = () => {
             <Controller
                 control={form.control}
                 name="attachment"
-                render={({ field, fieldstate }) => (
+                render={({ field }) => (
                     <Field>
                         <FieldLabel>Add attachment</FieldLabel>
                         <Input type="file" onChange={(e) => {

@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import  { type TGlobalResponse } from "./types/TGlobalResponse.type";
 import { toast } from "sonner";
 

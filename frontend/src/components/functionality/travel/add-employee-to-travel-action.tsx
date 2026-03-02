@@ -2,20 +2,22 @@ import useAddEmployeeToTravelMutation from "@/api/mutations/add-employee-to-trav
 import { useGetchEmployeesByNameLike } from "@/api/queries/employee.queries";
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input";
 import Searchable from "@/components/ui/searchable";
 import { Separator } from "@/components/ui/separator";
 import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type";
+import type { TLayoutContext } from "@/types/TlayoutContext.type";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
 const AddEmployeeToTravelAction = ({travelId}:{travelId:number}) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const { setIsLoading } = useOutletContext()
-    const addEmployeeToTravelMutation = useAddEmployeeToTravelMutation()
     const [nameQuery, setNameQuery] = useState("")
+    const { setIsLoading } = useOutletContext<TLayoutContext>()
+
+    const addEmployeeToTravelMutation = useAddEmployeeToTravelMutation()
     const { data: employeesData } = useGetchEmployeesByNameLike(nameQuery);
+
     const [employees, setEmployees] = useState<TEmployeeWithNameOnly[]>([])
     useEffect(()=>{
         setIsLoading(addEmployeeToTravelMutation.isPending)
@@ -35,7 +37,7 @@ const AddEmployeeToTravelAction = ({travelId}:{travelId:number}) => {
                     <DialogTitle>Assign travel to new employee</DialogTitle>
                 </DialogHeader>
                 <Searchable
-                data={employeesData}
+                data={employeesData?.data.data??[]}
                 setQuery={setNameQuery}
                 onSelectItem={(employee) => { setNameQuery(""); setEmployees(employees => [...employees, employee]) }}
                 render={(employee) => <h1>{employee.firstName} {employee.lastName}</h1>}

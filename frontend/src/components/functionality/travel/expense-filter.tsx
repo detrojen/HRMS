@@ -5,15 +5,15 @@ import { Field, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TravelDetailContext } from "@/contexts/TravelDetailContext"
 import { format } from "date-fns"
-import React, { useEffect } from "react"
+import  { useEffect } from "react"
 import { useContext } from "react"
 import { useSearchParams } from "react-router-dom"
 
 const ExpenseFilter = () => {
     const [serachParams, setSearchparams] = useSearchParams()
     const { employees, startDate, endDate } = useContext(TravelDetailContext)
-    const { data, isLoading: isCategoryLoading } = useFetchTraveExpensecategories()
-
+    const { data } = useFetchTraveExpensecategories()
+    const categories = data?.data.data
     const handleFilterChange = (key: string, value: string) => {
         if (value === "all") {
             serachParams.delete(key)
@@ -43,7 +43,7 @@ const ExpenseFilter = () => {
                             <SelectItem value="all">All</SelectItem>
                             <SelectLabel>Category</SelectLabel>
                             {
-                                !isCategoryLoading && data && data.data.map((category) => <SelectItem key={`category-${category.id}`} value={category.category}>{category.category}</SelectItem>)
+                                categories && data && categories?.map((category) => <SelectItem key={`category-${category.id}`} value={category.category}>{category.category}</SelectItem>)
                             }
                         </SelectGroup>
                     </SelectContent>

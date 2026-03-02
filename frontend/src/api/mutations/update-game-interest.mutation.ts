@@ -8,7 +8,9 @@ const updateGameInterestMutation = () =>{
     {
         mutationFn: (payload: TUpdateGameInterest) => updateGameInterest(payload),
         onSuccess: (data)=>{
-            queryClient.invalidateQueries({queryKey:["game-interest"]})
+            if(data.data.status === "OK"){
+                queryClient.invalidateQueries({queryKey:["game-interest"]})
+            }
         }
     }
 )}

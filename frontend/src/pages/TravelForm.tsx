@@ -2,7 +2,6 @@ import useCreateTravelMutation from "@/api/mutations/create-travel.mutation"
 import useUpdateTravelMutation from "@/api/mutations/update-travel.mutation"
 import { useGetchEmployeesByNameLike } from "@/api/queries/employee.queries"
 import { useFetchTravelMinDetailsById } from "@/api/queries/travel.queries"
-import { createTravel } from "@/api/services/travel.service"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { DatePicker } from "@/components/ui/date-picker"
@@ -13,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import type { TCreateTravelRequest } from "@/types/apiRequestTypes/TcreateTravelRequest.type"
 import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type"
+import type { TLayoutContext } from "@/types/TlayoutContext.type"
 import { travelSchema } from "@/validation-schema/travel-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
@@ -21,15 +21,16 @@ import { useOutletContext, useParams } from "react-router-dom"
 
 const TravelAddEmployeesField = ({ form }: { form: UseFormReturn<TCreateTravelRequest, any, TCreateTravelRequest> }) => {
     const [nameQuery, setNameQuery] = useState("")
-    const { data } = useGetchEmployeesByNameLike(nameQuery);
+    const { data:emplyeeQueryData } = useGetchEmployeesByNameLike(nameQuery);
     const [employees, seEmployees] = useState<TEmployeeWithNameOnly[]>([])
+    const employeeSearchData =emplyeeQueryData?.data.data
     useEffect(() => {
         form.setValue("employeeIds", employees.map(employee => employee.id))
     }, [employees])
     return (
         <>
             <Searchable
-                data={data}
+                data={employeeSearchData??[]}
                 setQuery={setNameQuery}
                 onSelectItem={(employee) => { setNameQuery(""); seEmployees(employees => [...employees, employee]) }}
                 render={(employee) => <h1>{employee.firstName} {employee.lastName}</h1>}
@@ -86,7 +87,7 @@ const TravelBasicDetailFields = ({ form }: { form: UseFormReturn<TCreateTravelRe
             {watchId == undefined && <Controller
                 control={form.control}
                 name="employeeIds"
-                render={({ field, fieldState }) => (
+                render={({  fieldState }) => (
                     <Field className="col-span-2">
                         <TravelAddEmployeesField form={form} />
                         <FieldError>{fieldState.error?.message}</FieldError>
@@ -136,6 +137,7 @@ const TravelDescriptionField = ({ form }: { form: UseFormReturn<TCreateTravelReq
                 <Field className="col-span-2">
                     <FieldLabel>Description</FieldLabel>
                     <Textarea {...field} />
+                        <FieldError>{fieldState.error?.message}</FieldError>
                 </Field>
             )}
         />
@@ -144,10 +146,11 @@ const TravelDescriptionField = ({ form }: { form: UseFormReturn<TCreateTravelReq
 
 const TravelForm = () => {
     const { travelId } = useParams()
-    const { setIsLoading } = useOutletContext()
+    const { setIsLoading } = useOutletContext<TLayoutContext>()
     const createTravelMutation = useCreateTravelMutation()
     const updateTravelMutation = useUpdateTravelMutation()
     const travelQuery = useFetchTravelMinDetailsById(travelId ?? "0")
+    const travelDetails = travelQuery.data?.data.data
     const form = useForm<TCreateTravelRequest>({
 
         defaultValues: {
@@ -170,14 +173,14 @@ const TravelForm = () => {
     }, [createTravelMutation.isPending, updateTravelMutation.isPending])
     useEffect(() => {
         if (travelQuery?.isSuccess && travelQuery.data) {
-            form.setValue("id", travelQuery.data.data.id)
-            form.setValue("title", travelQuery.data.data.title)
-            form.setValue("descripton", travelQuery.data.data.descripton)
-            form.setValue("maxReimbursementAmountPerDay", travelQuery.data.data.maxReimbursementAmountPerDay)
+            form.setValue("id", travelDetails?.id)
+            form.setValue("title", travelDetails?.title??"")
+            form.setValue("descripton", travelDetails?.descripton??"")
+            form.setValue("maxReimbursementAmountPerDay", travelDetails?.maxReimbursementAmountPerDay??0)
             //    form.setValue("startDate", new Date("2026-09-08"))
-            form.setValue("startDate", travelQuery.data.data.startDate)
-            form.setValue("endDate", travelQuery.data.data.endDate)
-            form.setValue("lastDateToSubmitExpense", travelQuery.data.data.lastDateToSubmitExpense)
+            form.setValue("startDate", new Date(travelDetails?.startDate!))
+            form.setValue("endDate", new Date(travelDetails?.endDate!))
+            form.setValue("lastDateToSubmitExpense", new Date(travelDetails?.lastDateToSubmitExpense!))
         }
     }, [travelQuery?.isSuccess])
     const handleSubmit = form.handleSubmit((values) => {

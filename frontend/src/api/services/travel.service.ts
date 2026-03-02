@@ -18,7 +18,7 @@ export const updateTravel = (payload: TCreateTravelRequest) => {
     return api.patch<TGlobalResponse<any>>("/api/travels", payload)
 }
 export const fetchTravels = (getAsa: string) => {
-     return api.get<TGlobalResponse<TTravelMinDetail>>(`/api/travels/list/${getAsa}`)
+     return api.get<TGlobalResponse<TTravelMinDetail[]>>(`/api/travels/list/${getAsa}`)
 }
 // export const fetchAssignedTravels = () => {
 //     return api.get<TGlobalResponse<TTravelMinDetail>>("/api/travels/assigned-travels")
@@ -117,7 +117,7 @@ export const fetchExpenseAsHR = ({travelId,category,dateFrom,dateTo,employeeId}:
 }
 
 export const reviewExpense = (payload:TReviewExpenseRequest) => {
-    return api.patch("/api/travels/expenses",payload)
+    return api.patch<TGlobalResponse<any>>("/api/travels/expenses",payload)
 }
 
 export const addEmployeeToTravel = ({travelId,employeeIds}: TAddEmployeeToTravelRequest) => {

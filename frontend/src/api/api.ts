@@ -1,5 +1,4 @@
 import errorHandler from "@/apiErrorHandler";
-import type { TGlobalResponse } from "@/types/TGlobalResponse.type";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -15,7 +14,7 @@ axiosInstence.interceptors.request.use((config)=>{
         config.headers.Authorization = `Bearer ${authToken}`
     }
     return config
-}, (error)=>{})
+})
 
 axiosInstence.interceptors.response.use((response)=>{
     if(response.headers["authorization"]){
@@ -25,7 +24,7 @@ axiosInstence.interceptors.response.use((response)=>{
     if(response.data.message){
       toast(response.data.message)
     }
-    return response.data ;
+    return response ;
   },(error)=>{
     
     errorHandler(error.response.data);

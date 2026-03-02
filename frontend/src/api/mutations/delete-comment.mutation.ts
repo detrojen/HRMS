@@ -7,7 +7,7 @@ const useDeletePostCommentMutation = () => {
         mutationFn: (commentId: number|string) => deletePostComment(commentId),
         onSuccess:(data)=>{
             
-            if (data.status === "OK"){
+            if (data.data.status === "OK"){
                 queryclient.invalidateQueries({queryKey:["posts"]})
             }
         }

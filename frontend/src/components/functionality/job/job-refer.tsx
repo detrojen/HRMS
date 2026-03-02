@@ -1,6 +1,6 @@
 import useReferJobMutation from "@/api/mutations/refer-job-mutation"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { FormField } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"

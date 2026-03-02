@@ -8,6 +8,7 @@ const useReviewExpenseMutation = () => {
         {
             mutationFn: (payload:TReviewExpenseRequest ) => reviewExpense(payload),
             onSuccess: (data) => {
+                if(data.data.status==="OK")
                 queryClient.invalidateQueries({queryKey:["travel-expense"]})
             }
         }

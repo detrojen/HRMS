@@ -4,12 +4,13 @@ import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type"
 import type{ TEmployeeMinDetail } from "@/types/TEmployeeMinDetail.type"
 
 export const getEmployeesByNameQuery = (nameLike:string) => {
-    return nameLike.trim() == "" ? []:api.get<TGlobalResponse<TEmployeeWithNameOnly[]>>(`/api/employees?nameLike=${nameLike.trim()}`).then(res=>res.data)
+    return api.get<TGlobalResponse<TEmployeeWithNameOnly[]>>(`/api/employees?nameLike=${nameLike.trim()}`)
 }
+
 
 export const getOneLevelReportOrgChart = (employeeId : string | null) => {
     const param = employeeId != null? `?employeeId=${employeeId}`:""
-    return api.get<any>("/api/employees/one-level-report"+param)
+    return api.get<TGlobalResponse<any>>("/api/employees/one-level-report"+param)
 }
 
 export const fetchHrList = () => {

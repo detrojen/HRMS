@@ -1,6 +1,4 @@
-import { useFetchTravelById } from "@/api/queries/travel.queries";
 import type { TTravelDetails } from "@/types/apiResponseTypes/TTravelDetails.type";
-import { createContext, type PropsWithChildren } from "react";
-import { useParams } from "react-router-dom";
+import { createContext } from "react";
 
 export const TravelDetailContext = createContext<TTravelDetails>(null!)

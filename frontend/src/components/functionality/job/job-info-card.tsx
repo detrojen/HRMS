@@ -1,7 +1,5 @@
-import { Card } from "@/components/ui/card";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemHeader, ItemSeparator } from "@/components/ui/item";
 import type { TJobResponse } from "@/types/apiResponseTypes/TJobResponse.type";
-import { Share } from "lucide-react";
 import JobShare from "./job-share";
 import JobRefer from "./job-refer";
 import { Link } from "react-router-dom";

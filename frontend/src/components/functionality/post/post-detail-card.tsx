@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import type { TPostWisthCommentsAndLikeResponse } from "@/types/apiResponseTypes/TPostWisthCommentsAndLikeResponse.type"
 import EmployeeMinDetailCard from "../employee-min-detail-card"
 import { Separator } from "@/components/ui/separator"
-import { ChartBar, Edit, Heart, Trash } from "lucide-react"
+import {  Edit, Heart, Trash } from "lucide-react"
 import CommentAction from "./comment-action"
 import CommentCard from "./comment-card"
 import { useContext, useEffect, useState } from "react"
@@ -22,7 +22,7 @@ const PostDetailCard = ({ post }: { post: TPostWisthCommentsAndLikeResponse }) =
     const [isLiked, setIsLiked] = useState<boolean>(false);
     useEffect(() => {
         
-        if (postLikeUnlikeMutation.isSuccess && postLikeUnlikeMutation.data.status === "OK") {
+        if (postLikeUnlikeMutation.isSuccess && postLikeUnlikeMutation.data.data.status === "OK") {
             setIsLiked(!isLiked)
         }
     }, [postLikeUnlikeMutation.isSuccess])
@@ -63,7 +63,7 @@ const PostDetailCard = ({ post }: { post: TPostWisthCommentsAndLikeResponse }) =
                         <div>Liked by...</div>
                     </div>
                     <div>
-                        <div className="flex gap-1"><CommentAction mutation={useCommentMutation} postId={post.id} icon={ChartBar} /> {post.commentCount}</div>
+                        <div className="flex gap-1"><CommentAction mutation={useCommentMutation} postId={post.id}/> {post.commentCount}</div>
                     </div>
 
                 </div>

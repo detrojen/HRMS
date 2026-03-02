@@ -7,7 +7,7 @@ const useDeletePostMutation = () => {
         mutationFn: (postId: number|string) => deletePost(postId),
         onSuccess:(data)=>{
             
-            if (data.status === "OK"){
+            if (data.data.status === "OK"){
                 queryclient.invalidateQueries({queryKey:["posts"]})
             }
         }

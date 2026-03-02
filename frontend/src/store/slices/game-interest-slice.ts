@@ -8,7 +8,7 @@ const gameIntrestSlice = createSlice(
         name: "game-interest",
         initialState,
         reducers:{
-            setInitialData: (state, payload:PayloadAction<TGameInterest[]>)=>{
+            setInitialData: (_, payload:PayloadAction<TGameInterest[]>)=>{
                 return payload.payload
             }
         }

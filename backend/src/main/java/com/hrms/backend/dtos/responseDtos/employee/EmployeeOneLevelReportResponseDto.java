@@ -37,7 +37,7 @@ public class EmployeeOneLevelReportResponseDto {
     private EmployeeWithManager manager;
 
     public EmployeeOneLevelReportResponseDto(List<EmployeeWithManagerIdDto> employees, Long startingId){
-        oneLevelDown = employees.stream().filter(e->e.getManagerId().equals(startingId)).map(e->new EmployeeWithManagerIdDto(e.getId(),e.getFirstName(),e.getLastName(), e.getDesignation(), e.getManagerId())).toList();
+        oneLevelDown = employees.stream().filter(e->e.getManagerId()!=null &&e.getManagerId().equals(startingId)).map(e->new EmployeeWithManagerIdDto(e.getId(),e.getFirstName(),e.getLastName(), e.getDesignation(), e.getManagerId())).toList();
         EmployeeWithManagerIdDto current = employees.stream().filter(e->e.getId().equals(startingId)).findFirst().orElseThrow(()->new ItemNotFoundExpection(""));
         id = current.getId();
         firstName = current.getFirstName();

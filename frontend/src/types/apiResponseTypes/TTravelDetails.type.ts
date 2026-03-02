@@ -1,4 +1,3 @@
-import type { Locale } from "date-fns";
 import type { TEmployeeWithNameOnly } from "../TEmployeeWithNameOnly.type";
 import type { TTravelDoucmentResponse } from "./TTravelDocumnetResponse.type";
 import type { TTravelExpenseResponse } from "./TTravelExpenseResponse.type";

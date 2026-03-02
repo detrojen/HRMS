@@ -6,7 +6,7 @@ const usePostLikeUnlikeMutation = () => {
     return useMutation({
         mutationFn: (postId: number | string) => likeUnlikePost(postId),
         onSuccess: (data) => {
-            if (data.status === "OK") {
+            if (data.data.status === "OK") {
                 queryClient.invalidateQueries({
                     queryKey: ["posts"]
                 })

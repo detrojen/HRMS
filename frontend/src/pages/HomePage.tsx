@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom"
 const HomePage = () => {
     const navTo = useNavigate()
     const { data, isLoading } = useFetchDashboardData()
-    const dashboard = data?.data
+    const dashboard = data?.data.data
     if (isLoading) {
         return "Loading dashboard"
     }

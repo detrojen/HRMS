@@ -1,8 +1,6 @@
 import { useNotifications } from "@/api/queries/notification.queries"
-import EmployeeMinDetailCard from "@/components/functionality/employee-min-detail-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { AuthContext } from "@/contexts/AuthContextProvider"
 import { Bell } from "lucide-react"
 import { useContext, useEffect, useState } from "react"
@@ -20,13 +18,13 @@ const Header = () => {
     const [showNotification, setShowNotification] = useState<boolean>(false)
     useEffect(() => {
         if (isSuccess) {
-            setNotifications(data?.data)
+            setNotifications(data?.data.data)
         }
     }, [isSuccess])
     const handleRead = (notificationId:number) => {
         readNotification(notificationId).then(res => {
             debugger
-            if(res.status == "OK"){
+            if(res.data.data.status == "OK"){
                  setNotifications(notifications.filter(notification=>notification.id!=notificationId))
             }
         })
