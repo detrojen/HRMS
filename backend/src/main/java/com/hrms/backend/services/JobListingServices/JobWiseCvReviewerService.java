@@ -3,7 +3,6 @@ package com.hrms.backend.services.JobListingServices;
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.requestDto.job.CvReviewRequestDto;
 import com.hrms.backend.dtos.responseDtos.job.CvReviewResponseDto;
-import com.hrms.backend.dtos.responseDtos.job.CvReviewerWithNameOnlyDto;
 import com.hrms.backend.dtos.responseDtos.job.JobWiseCvReviewerDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.CvReview;

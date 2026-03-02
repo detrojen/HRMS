@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 
 public class TravelExpenseSpecs {
-
+    private TravelExpenseSpecs(){}
     public static Specification<TravelWiseExpense> hasTravel(Long travelId){
         return ((root, query, criteriaBuilder) -> {
             Join<TravelWiseExpense, Travel> travelJoin = root.join("travel");
@@ -18,9 +18,7 @@ public class TravelExpenseSpecs {
         });
     }
     public static Specification<TravelWiseExpense> isPending(){
-        return ((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("reviewedBy"),null);
-        });
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("reviewedBy"),null));
     }
 
     public static Specification<TravelWiseExpense> hasCategory(String category){
@@ -37,15 +35,11 @@ public class TravelExpenseSpecs {
         });
     }
     public static Specification<TravelWiseExpense> hasDateFrom(LocalDate date){
-        return ((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.greaterThanOrEqualTo(root.get("dateOfExpense"),date);
-        });
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("dateOfExpense"),date));
     }
 
     public static Specification<TravelWiseExpense> hasDateTo(LocalDate date){
-        return ((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.lessThanOrEqualTo(root.get("dateOfExpense"),date);
-        });
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("dateOfExpense"),date));
     }
 
 }

@@ -13,6 +13,7 @@ import com.hrms.backend.utils.FileUtility;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,12 @@ public class TravelController {
     private final TravelService travelService;
     private final TravelWiseExpenseService expenseService;
     private final ExpenseCategoryService expenseCategoryService;
+
+    @Value("${hrms.backend.uploads.expenses}")
+    private String travelExpenseDir;
+    @Value("${hrms.backend.uploads.travel-documents}")
+    private String travelDocumentsDir;
+
     @Autowired
     public  TravelController(TravelService travelService
             , TravelWiseExpenseService expenseService
@@ -59,7 +66,7 @@ public class TravelController {
 
     @PostMapping("/travels/{travelId}/documents")
     public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> addTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") MultipartFile file){
-        String filePath = FileUtility.Save(file,"travel-documents");
+        String filePath = FileUtility.Save(file,travelDocumentsDir);
         TravelDocumentResponseDto responseDto = travelService.addDocument(travelId,documentDetails,filePath);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto,"travel document successfully added")
@@ -68,7 +75,7 @@ public class TravelController {
     @PutMapping("/travels/{travelId}/documents")
     public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> updateTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") Optional<MultipartFile> file){
         if(file.isPresent()){
-            String filePath = FileUtility.Save(file.get(),"travel-documents");
+            String filePath = FileUtility.Save(file.get(),travelDocumentsDir);
             documentDetails.setDocumentPath(filePath);
         }
         TravelDocumentResponseDto responseDto = travelService.updateDocument(travelId,documentDetails);
@@ -79,7 +86,7 @@ public class TravelController {
 
     @PostMapping("/travels/{travelId}/employee-documents")
     public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> addEmployeeTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") MultipartFile file){
-        String filePath = FileUtility.Save(file,"travel-documents");
+        String filePath = FileUtility.Save(file,travelDocumentsDir);
         TravelDocumentResponseDto responseDto = travelService.addEmployeeDocument(travelId,documentDetails,filePath);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto)
@@ -88,7 +95,7 @@ public class TravelController {
     @PutMapping("/travels/{travelId}/employee-documents")
     public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> updateEmployeeTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") Optional<MultipartFile> file){
         if(file.isPresent()){
-            String filePath = FileUtility.Save(file.get(),"travel-documents");
+            String filePath = FileUtility.Save(file.get(),travelDocumentsDir);
             documentDetails.setDocumentPath(filePath);
         }
         TravelDocumentResponseDto responseDto = travelService.updateEmployeeDocument(travelId,documentDetails);
@@ -99,7 +106,7 @@ public class TravelController {
 
     @PostMapping("/travels/{travelId}/expenses")
     public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> addExpense(@PathVariable Long travelId, @RequestPart(value = "expenseDetails") @Valid AddUpdateTravelExpenseRequestDto expenseDetails, @RequestPart(value = "file") @NotNull(message = "Proof must be required") MultipartFile file){
-        String filePath = FileUtility.Save(file,"expenses");
+        String filePath = FileUtility.Save(file,travelExpenseDir);
         TravelExpenseResponseDto responseDto = travelService.addExpense(travelId,expenseDetails,filePath);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto)
@@ -110,7 +117,7 @@ public class TravelController {
     public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> updateExpense(@PathVariable Long travelId, @RequestPart(value = "expenseDetails") @Validated(OnUpdate.class) AddUpdateTravelExpenseRequestDto expenseDetails, @RequestPart(value = "file") Optional<MultipartFile> file){
         String filePath = expenseDetails.getReciept();
         if(file.isPresent()){
-            filePath = FileUtility.Save( file.get(),"expenses");
+            filePath = FileUtility.Save( file.get(),travelExpenseDir);
         }
         TravelExpenseResponseDto responseDto = travelService.updateExpense(travelId,expenseDetails,filePath);
         return ResponseEntity.ok().body(

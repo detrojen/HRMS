@@ -1,9 +1,7 @@
 package com.hrms.backend.dtos.requestDto.job;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import com.hrms.backend.dtos.markers.OnUpdate;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
@@ -14,11 +12,10 @@ public class ReferJobRequestDto {
     @Email
     private String applicantsEmail;
     @NotBlank(message = "applicants phone number required")
-    @Max(value = 10, message = "phone numbe must be 10 digit long")
-    @Min(value = 10, message = "phone numbe must be 10 digit long")
+    @Size(max = 10,min = 10, message = "phone number must be containing 10 digits")
     private String applicantsPhone;
     @NotBlank(message = "applicants details required")
     private String details;
-    @NotBlank(message = "cv path required on update")
+    @NotBlank(message = "cv path required on update",groups = {OnUpdate.class})
     private String cvPath;
 }

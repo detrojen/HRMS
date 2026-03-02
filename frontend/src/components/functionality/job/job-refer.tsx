@@ -23,7 +23,7 @@ const JobRefer = ({jobId}:{jobId:number}) => {
                 
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Share this job with your friend</DialogTitle>
+                        <DialogTitle>Refer your friend</DialogTitle>
                     </DialogHeader>
                     {/* <DialogDescription> */}
                             <FormField 

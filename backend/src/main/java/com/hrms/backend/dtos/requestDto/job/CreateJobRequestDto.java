@@ -20,5 +20,4 @@ public class CreateJobRequestDto {
     private Long[] reviewerIds;
     @NotNull(message = "hr owner required")
     private Long hrOwnerId;
-//    private MultipartFile jdDocument;
 }

@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class EmployeeService {
@@ -34,7 +34,7 @@ public class EmployeeService {
     }
     public List<EmployeeWithNameOnlyDto> getEmployeesByNameQuery(String nameQuery){
         Specification<Employee> hasNameSpec = EmployeeSpecs.hasName(nameQuery);
-        return employeeRepository.findAll(hasNameSpec).stream().map(employee->modelMapper.map(employee,EmployeeWithNameOnlyDto.class)).collect(Collectors.toUnmodifiableList());
+        return employeeRepository.findAll(hasNameSpec).stream().map(employee->modelMapper.map(employee,EmployeeWithNameOnlyDto.class)).toList();
     }
 
     public EmployeeOneLevelReportResponseDto getOneLevelReport(Long employeeId){
@@ -53,10 +53,10 @@ public class EmployeeService {
 
     public List<EmployeeMinDetailsDto> getBirthdayPersons(){
         List<Employee> employees = employeeRepository.findBy(EmployeeSpecs.hasBirthday(),q->q.all());
-        return employees.stream().map(employee->modelMapper.map(employee,EmployeeMinDetailsDto.class)).collect(Collectors.toUnmodifiableList());
+        return employees.stream().map(employee->modelMapper.map(employee,EmployeeMinDetailsDto.class)).toList();
     }
     public List<EmployeeMinDetailsDto> getWorkAnniversaryPersons(){
-        List<EmployeeMinDetailsDto> employees = employeeRepository.findBy(EmployeeSpecs.hasWorkAnniversary(),q->q.stream().map(employee -> modelMapper.map(employee,EmployeeMinDetailsDto.class)).collect(Collectors.toUnmodifiableList()));
+        List<EmployeeMinDetailsDto> employees = employeeRepository.findBy(EmployeeSpecs.hasWorkAnniversary(),q->q.stream().map(employee -> modelMapper.map(employee,EmployeeMinDetailsDto.class)).toList());
         return employees;
     }
 

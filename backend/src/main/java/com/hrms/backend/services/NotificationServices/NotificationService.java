@@ -7,25 +7,22 @@ import com.hrms.backend.entities.Notification.Notification;
 import com.hrms.backend.entities.Notification.NotificationTemplate;
 import com.hrms.backend.repositories.NotificatioRepositories.NotificationRepository;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class NotificationService {
     private final NotificationRepository notificationRepository;
-    private final ModelMapper modelMapper;
     private final EmployeeService employeeService;
     private final NotificationTemplateService notificationTemplateService;
     @Autowired
-    public NotificationService (NotificationRepository notificationRepository,EmployeeService employeeService, ModelMapper modelMapper, NotificationTemplateService notificationTemplateService){
+    public NotificationService (NotificationRepository notificationRepository,EmployeeService employeeService, NotificationTemplateService notificationTemplateService){
         this.notificationRepository = notificationRepository;
-        this.modelMapper = modelMapper;
         this.employeeService = employeeService;
         this.notificationTemplateService = notificationTemplateService;
     }
@@ -39,7 +36,7 @@ public class NotificationService {
                     notification.setEmployee(employeeService.getReference(id));
                     return notification;
                 }
-        ).collect(Collectors.toUnmodifiableList());
+        ).toList();
         notificationRepository.saveAll(notifications);
     }
 
@@ -52,7 +49,7 @@ public class NotificationService {
                     notification.setEmployee(employee);
                     return notification;
                 }
-        ).collect(Collectors.toUnmodifiableList());
+        ).toList();
         notificationRepository.saveAll(notifications);
     }
 

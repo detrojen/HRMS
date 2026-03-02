@@ -36,11 +36,11 @@ public class TravelDocumentService {
         return modelMapper.map(travelDocument,TravelDocumentResponseDto.class);
     }
 
-    public TravelDocumentResponseDto updateDocument(Travel travel, AddUpdateTravelDocumentRequestDto documentRequestDto){
+    public TravelDocumentResponseDto updateDocument(AddUpdateTravelDocumentRequestDto documentRequestDto){
         TravelDocument travelDocument = travelDocumentRepository.findById(documentRequestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("Document not found"));
         travelDocument.setDocumentPath(documentRequestDto.getDocumentPath());
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(jwtInfoDto.getUserId() != travelDocument.getUploadedBy().getId()){
+        if(!jwtInfoDto.getUserId().equals(travelDocument.getUploadedBy().getId())){
             throw new InvalidActionException("you can not update this document. Cause: you have not uploaded this document");
         }
         travelDocument.setDescription(documentRequestDto.getDescription());

@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 public class InterestedEmployeeSpec {
+    private InterestedEmployeeSpec(){}
     public static Specification<EmployeeWiseGameInterest> getSpecForIsInterestedAndByGameTypeIdAndNameLike(Long gameTypeId, String nameQuery){
         return ((root, query, criteriaBuilder) -> {
             Join<SlotRequestWiseEmployee, GameType> gameTypeJoin = root.join("gameType");

@@ -3,6 +3,7 @@ package com.hrms.backend.emailTemplates;
 import com.hrms.backend.entities.GameSchedulingEntities.SlotRequest;
 
 public class GameSchedulingEmailTemplate {
+    private GameSchedulingEmailTemplate(){}
     public static String forSlotRequest(SlotRequest slotRequest){
         return new StringBuilder()
                 .append("Hello all,")

@@ -10,9 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class GameSlotService {
@@ -55,7 +54,7 @@ public class GameSlotService {
 
     public List<GameSlotResponseDto> getCurrentGameSlots(){
         List<GameSlot> slots = gameSlotRepository.findAll(GameSlotSpecs.currentSlot());
-        return slots.stream().map(slot->modelMapper.map(slot,GameSlotResponseDto.class)).collect(Collectors.toUnmodifiableList());
+        return slots.stream().map(slot->modelMapper.map(slot,GameSlotResponseDto.class)).toList();
     }
 
 }

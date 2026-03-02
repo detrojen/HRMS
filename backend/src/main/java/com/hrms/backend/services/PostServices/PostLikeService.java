@@ -2,7 +2,6 @@ package com.hrms.backend.services.PostServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
-import com.hrms.backend.dtos.responseDtos.post.CommentResponseDto;
 import com.hrms.backend.entities.PostEntities.Post;
 import com.hrms.backend.entities.PostEntities.PostLike;
 import com.hrms.backend.repositories.PostRepositories.PostLikeRepository;
@@ -13,7 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class PostLikeService {
@@ -45,7 +44,7 @@ public class PostLikeService {
         List<EmployeeMinDetailsDto>  response = likes
                 .stream().limit(3)
                 .map(like->modelMapper.map(like.getLikedBy(),EmployeeMinDetailsDto.class))
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
         return response;
     }
 }

@@ -12,5 +12,4 @@ public class SlotRequsetResponseDto {
     private GameSlotResponseDto gameSlot;
     private EmployeeWithNameOnlyDto requestedBy;
     private List<SlotRequestWiseEmployeeDto> slotRequestWiseEmployee;
-//    private List<EmployeeResponseDto> otherPlayers;
 }

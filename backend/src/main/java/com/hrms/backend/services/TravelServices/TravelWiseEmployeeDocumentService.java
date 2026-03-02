@@ -7,6 +7,7 @@ import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.entities.TravelEntities.TravelWiseEmployeeWiseDocument;
 import com.hrms.backend.exceptions.InvalidActionException;
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.TravelRepositories.TravelWiseEmployeeWiseDocumentRepository;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import com.hrms.backend.specs.TravelWiseEmployeeDocumentSpecs;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class TravelWiseEmployeeDocumentService {
@@ -38,7 +39,7 @@ public class TravelWiseEmployeeDocumentService {
                 TravelWiseEmployeeDocumentSpecs.hasTravelId(travelId)
         );
         List<TravelWiseEmployeeWiseDocument> documnets = repository.findAll(specification);
-        return documnets.stream().map(documnet->modelMapper.map(documnet, TravelDocumentResponseDto.class)).collect(Collectors.toUnmodifiableList());
+        return documnets.stream().map(documnet->modelMapper.map(documnet, TravelDocumentResponseDto.class)).toList();
     }
 
     public List<TravelDocumentResponseDto> getEmployeesDocuments(Long travelId){
@@ -55,7 +56,7 @@ public class TravelWiseEmployeeDocumentService {
 
         }
         return documnets==null ? new ArrayList<>()
-                : documnets.stream().map(documnet->modelMapper.map(documnet, TravelDocumentResponseDto.class)).collect(Collectors.toUnmodifiableList());
+                : documnets.stream().map(documnet->modelMapper.map(documnet, TravelDocumentResponseDto.class)).toList();
 
     }
 
@@ -70,9 +71,9 @@ public class TravelWiseEmployeeDocumentService {
         return modelMapper.map(travelDocument,TravelDocumentResponseDto.class);
     }
     public TravelDocumentResponseDto updateDocument(Travel travel, AddUpdateTravelDocumentRequestDto documentRequestDto){
-        TravelWiseEmployeeWiseDocument travelDocument = repository.findById(documentRequestDto.getId()).orElseThrow(()->new RuntimeException("document details not found"));
+        TravelWiseEmployeeWiseDocument travelDocument = repository.findById(documentRequestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("document details not found"));
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(travelDocument.getUploadedBy().getId() != jwtInfoDto.getUserId()){
+        if(!travelDocument.getUploadedBy().getId().equals(jwtInfoDto.getUserId())){
             throw new InvalidActionException("Invalid action");
         }
         travelDocument.setDocumentPath(documentRequestDto.getDocumentPath());

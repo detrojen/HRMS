@@ -15,7 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -49,14 +49,14 @@ public class EmployeeWiseGameInterestService {
     public List<EmployeeWithNameOnlyDto> getEmployeeOfGameIntersetOf(Long gameTypeId, String nameLike){
         Specification<EmployeeWiseGameInterest> specs = InterestedEmployeeSpec.getSpecForIsInterestedAndByGameTypeIdAndNameLike(gameTypeId ,nameLike);
         List<EmployeeWiseGameInterest> employeeWiseGameInterests = employeeWiseGameInterestRepository.findAll(specs);
-        List<EmployeeWithNameOnlyDto> employees = employeeWiseGameInterests.stream().map(e->modelMapper.map(e.getEmployee(), EmployeeWithNameOnlyDto.class)).collect(Collectors.toUnmodifiableList());
+        List<EmployeeWithNameOnlyDto> employees = employeeWiseGameInterests.stream().map(e->modelMapper.map(e.getEmployee(), EmployeeWithNameOnlyDto.class)).toList();
         return employees;
     }
 
     public List<EmployeeWiseGameInterestResponseDto> getEmployeeWiseGameInterests(){
         JwtInfoDto jwtInfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<EmployeeWiseGameInterest> games = employeeWiseGameInterestRepository.findAllByEmployee_Id(jwtInfo.getUserId());
-        return games.stream().map(game->modelMapper.map(game,EmployeeWiseGameInterestResponseDto.class)).collect(Collectors.toUnmodifiableList());
+        return games.stream().map(game->modelMapper.map(game,EmployeeWiseGameInterestResponseDto.class)).toList();
     }
 
     public EmployeeWiseGameInterestResponseDto updateInterest(Long gameTypeId,boolean isInterested){

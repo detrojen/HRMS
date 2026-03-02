@@ -9,15 +9,16 @@ import com.hrms.backend.emailTemplates.JobEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.Job;
 import com.hrms.backend.entities.JobListingEntities.JobApplication;
+import com.hrms.backend.enums.JobApplicationStatus;
 import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.JobListingRepositories.JobApplicationRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import com.hrms.backend.specs.JobApplicationSpecs;
-import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,9 +27,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
-import java.util.stream.Collectors;
+
 
 @Service
 public class JobApplicationService {
@@ -36,6 +35,8 @@ public class JobApplicationService {
     private final ModelMapper modelMapper;
     private final EmployeeService employeeService;
     private final EmailService emailService;
+    @Value("${hrms.backend.uploads.cvs}")
+    private String cvsDir;
     @Autowired
     public JobApplicationService(JobApplicationRepository jobApplicationRepository, ModelMapper modelMapper, EmployeeService employeeService, EmailService emailService){
         this.jobApplicationRepository = jobApplicationRepository;
@@ -44,7 +45,7 @@ public class JobApplicationService {
         this.emailService = emailService;
     }
 
-    public JobApplication referJobTo(Job job,ReferJobRequestDto requestDto, String cvPath) throws MalformedURLException, MessagingException, FileNotFoundException {
+    public JobApplication referJobTo(Job job,ReferJobRequestDto requestDto, String cvPath)  {
         JobApplication jobApplication = modelMapper.map(requestDto,JobApplication.class);
         JwtInfoDto jwtinfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         jobApplication.setJob(job);
@@ -53,11 +54,13 @@ public class JobApplicationService {
         jobApplication.setCvPath(cvPath);
         jobApplication = jobApplicationRepository.save(jobApplication);
         String emailBody = JobEmailTemplates.referJob(jobApplication);
-        emailService.refferJob(
-                "Refering for job " + jobApplication.getJob().getTitle(),
-                new String[]{jobApplication.getJob().getHrOwner().getEmail()},
-                jobApplication.getJob().getCvReviewers().stream().map(reviewer->reviewer.getReviewer().getEmail()).collect(Collectors.toUnmodifiableList()).toArray(new String[]{}),
-                emailBody,jobApplication.getCvPath()
+        emailService.sendMail(
+                "Refering for job " + jobApplication.getJob().getTitle()
+                ,emailBody
+                ,new String[]{jobApplication.getJob().getHrOwner().getEmail()}
+                ,jobApplication.getJob().getCvReviewers().stream().map(reviewer->reviewer.getReviewer().getEmail()).toList().toArray(new String[]{})
+                ,cvsDir
+                ,jobApplication.getCvPath()
         );
         return jobApplication;
     }
@@ -97,9 +100,9 @@ public class JobApplicationService {
         if(!jwtInfoDto.getRoleTitle().equals("HR")){
             specs =specs.and(JobApplicationSpecs.hasAssignedToReview(jwtInfoDto.getUserId()));
         }
-        JobApplication application = jobApplicationRepository.findBy(specs,q->q.first()).orElseThrow(()->new InvalidActionException("Either job not found or you have no access to see details"));//.orElseThrow(()->new ItemNotFoundExpection("Job not found"));
-        if(application.getStatus().equals("pending")){
-            application.setStatus("in review");
+        JobApplication application = jobApplicationRepository.findBy(specs,q->q.first()).orElseThrow(()->new InvalidActionException("Either job not found or you have no access to see details"));
+        if(application.getStatus().equals(JobApplicationStatus.PENDING.toString())){
+            application.setStatus(JobApplicationStatus.IN_REVIEW.toString());
             jobApplicationRepository.save(application);
         }
         application.getCvReviews();

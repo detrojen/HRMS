@@ -4,7 +4,6 @@ import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Optional;
 
 @Data
 public class JobApplicationResponseDto {

@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 public class PostLikeSpecs {
+    private PostLikeSpecs(){}
     public static Specification<PostLike> hasEmployeeLikedPostId(Long employeeId,Long postId){
         return ((root, query, criteriaBuilder) -> {
             Join<PostLike, Post> postJoin= root.join("post");

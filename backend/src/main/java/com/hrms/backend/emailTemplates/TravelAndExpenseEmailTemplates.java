@@ -4,14 +4,13 @@ import com.hrms.backend.dtos.responseDtos.travel.TravelDocumentResponseDto;
 import com.hrms.backend.dtos.responseDtos.travel.TravelExpenseResponseDto;
 import com.hrms.backend.dtos.responseDtos.travel.TravelMinDetailResponseDto;
 import com.hrms.backend.entities.TravelEntities.Travel;
-import com.hrms.backend.entities.TravelEntities.TravelDocument;
-import com.hrms.backend.entities.TravelEntities.TravelWiseEmployeeWiseDocument;
 import com.hrms.backend.entities.TravelEntities.TravelWiseExpense;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
 public class TravelAndExpenseEmailTemplates {
+    private TravelAndExpenseEmailTemplates(){}
     public static String forTravelDetail(Travel travel){
         Parser parser = Parser.builder().build();
         Node document = parser.parse(travel.getDescripton());

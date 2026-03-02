@@ -11,7 +11,9 @@ import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.ExpenseCategory;
 import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.entities.TravelEntities.TravelWiseExpense;
+import com.hrms.backend.enums.TravelExpenseStatus;
 import com.hrms.backend.exceptions.InvalidActionException;
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.TravelRepositories.ExpenseCategoryRepository;
 import com.hrms.backend.repositories.TravelRepositories.TravelWiseExpenseRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
@@ -26,7 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -83,7 +85,7 @@ public class TravelWiseExpenseService {
         travelWiseExpense.setTravel(travel);
         travelWiseExpense.setEmployee(employee);
         travelWiseExpense.setReciept(recieptPath);
-        travelWiseExpense.setStatus("pending");
+        travelWiseExpense.setStatus(TravelExpenseStatus.PENDING.toString());
         ExpenseCategory category = expenseCategoryRepository.getReferenceById(requestDto.getCategoryId());
         travelWiseExpense.setCategory(category);
         travelWiseExpense = travelWiseExpenseRepository.save(travelWiseExpense);
@@ -93,9 +95,9 @@ public class TravelWiseExpenseService {
     }
 
     public TravelExpenseResponseDto updateTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String recieptPath){
-        TravelWiseExpense travelWiseExpense = travelWiseExpenseRepository.findById(requestDto.getId()).orElseThrow(()->new RuntimeException("expense not found"));
+        TravelWiseExpense travelWiseExpense = travelWiseExpenseRepository.findById(requestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("expense not found"));
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(travelWiseExpense.getStatus().equals("approved") || travelWiseExpense.getStatus().equals("rejected")){
+        if(travelWiseExpense.getStatus().equals(TravelExpenseStatus.APPROVED.toString()) || travelWiseExpense.getStatus().equals(TravelExpenseStatus.REJECTED.toString())){
             throw new InvalidActionException("you can not update expense once it reviewed");
         }
         int totalExpenseRequested = travelWiseExpenseRepository.getTotalExpenseByEmployeeByTravelByDate(jwtInfoDto.getUserId(), travel.getId(), requestDto.getDateOfExpense()).orElse(0)-travelWiseExpense.getAskedAmount();
@@ -120,40 +122,42 @@ public class TravelWiseExpenseService {
     public List<TravelExpenseResponseDto> getExpenses(Long travelId){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<TravelWiseExpense> expenses = travelWiseExpenseRepository.findAllByEmployee_IdAndTravel_Id(jwtInfoDto.getUserId(),travelId);
-        return expenses.stream().map(expense -> modelMapper.map(expense, TravelExpenseResponseDto.class)).collect(Collectors.toUnmodifiableList());
+        return expenses.stream().map(expense -> modelMapper.map(expense, TravelExpenseResponseDto.class)).toList();
     }
 
     public List<TravelExpenseResponseDto> getExpenses(Long travelId, TravelExpenseParamsDto params){
         Specification<TravelWiseExpense> specs = TravelExpenseSpecs.hasTravel(travelId);
-        if(!params.getCategory().isEmpty()){
+        if(params.getCategory().isPresent()){
             specs = specs.and(TravelExpenseSpecs.hasCategory(params.getCategory().get()));
         }
-        if(!params.getDateFrom().isEmpty()){
+        if(params.getDateFrom().isPresent()){
             specs = specs.and(TravelExpenseSpecs.hasDateFrom(params.getDateFrom().get()));
         }
-        if(!params.getDateTo().isEmpty()){
+        if(params.getDateTo().isPresent()){
             specs = specs.and(TravelExpenseSpecs.hasDateTo(params.getDateTo().get()));
         }
-        if(!params.getEmployeeId().isEmpty()){
+        if(params.getEmployeeId().isPresent()){
             specs = specs.and(TravelExpenseSpecs.hasEmployee(params.getEmployeeId().get()));
         }
         List<TravelWiseExpense> expenses = travelWiseExpenseRepository.findAll(specs);
-        return expenses.stream().map(expense->modelMapper.map(expense,TravelExpenseResponseDto.class)).collect(Collectors.toUnmodifiableList());
+        return expenses.stream().map(expense->modelMapper.map(expense,TravelExpenseResponseDto.class)).toList();
     }
 
     public TravelExpenseResponseDto reviewExpense(ReviewTravelExpenseRequestDto requestDto){
-        TravelWiseExpense expense = travelWiseExpenseRepository.findById(requestDto.getId()).orElseThrow(()->new RuntimeException("not found expense"));
+        TravelWiseExpense expense = travelWiseExpenseRepository.findById(requestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("not found expense"));
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(requestDto.getAprrovedAmount() > expense.getAskedAmount()){
-            log.error("Invalid action: can to aprrove greater then asked");
-            throw new RuntimeException("Invalid action: can to aprrove greater then asked");
+            throw new InvalidActionException("Invalid action: can to aprrove greater then asked");
+        }
+        else if(expense.getEmployee().getId().equals(jwtInfoDto.getUserId())){
+            throw new InvalidActionException("You can not review your expense. It should be reviewed by other hr");
         }
         int oldAmount = expense.getAprrovedAmount();
-        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Employee employee = employeeService.getReference(jwtInfoDto.getUserId());
         expense.setAprrovedAmount(requestDto.getAprrovedAmount());
         expense.setRemark(requestDto.getRemark());
         expense.setReviewedBy(employee);
-        expense.setStatus(expense.getAprrovedAmount() == 0?"rejected":"reviewed");
+        expense.setStatus(expense.getAprrovedAmount() == 0?TravelExpenseStatus.REJECTED.toString():TravelExpenseStatus.APPROVED.toString());
         expense = travelWiseExpenseRepository.save(expense);
         travelWiseEmployeeDetailService.updateReimbursedAmount(expense.getTravel().getId(),expense.getEmployee().getId(),oldAmount,expense.getAprrovedAmount());
         List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
@@ -161,7 +165,7 @@ public class TravelWiseExpenseService {
                 "Reviewed Expense"
                 ,TravelAndExpenseEmailTemplates.forReviewExpense(expense)
                 ,new String[]{expense.getEmployee().getEmail()}
-                ,hrs.stream().map(hr->hr.getEmail()).collect(Collectors.toUnmodifiableList()).toArray(new String[]{})
+                ,hrs.stream().map(hr->hr.getEmail()).toList().toArray(new String[]{})
         );
         notificationService.notify("Expense reviewed ","Expense",new Long[]{expense.getEmployee().getId()});
         return modelMapper.map(expense, TravelExpenseResponseDto.class);

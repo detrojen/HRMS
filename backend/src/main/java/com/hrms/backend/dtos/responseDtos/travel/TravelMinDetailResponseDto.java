@@ -1,11 +1,6 @@
 package com.hrms.backend.dtos.responseDtos.travel;
 
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
-import com.hrms.backend.entities.EmployeeEntities.Employee;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.Data;
 
 import java.time.LocalDate;
 

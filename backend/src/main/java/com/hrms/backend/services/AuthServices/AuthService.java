@@ -12,29 +12,28 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class AuthService {
-    private final EmployeeRepository _employeeRepository;
-    private final JwtService _jwtService;
+    private final EmployeeRepository employeeRepository;
+    private final JwtService jwtService;
     @Autowired
     public AuthService(EmployeeRepository employeeRepository, JwtService jwtService){
-        _employeeRepository = employeeRepository;
-        _jwtService = jwtService;
+        this.employeeRepository = employeeRepository;
+        this.jwtService = jwtService;
     }
 
     public String login(String email, String password){
-        Specification<Employee> loginSpec = LoginSpecs.getUserByEmailAndPassword(email,password);
-        Employee employee = _employeeRepository.getEmployeeByEmailAndPassword(email,password).orElse(null);
+        Employee employee = employeeRepository.getEmployeeByEmailAndPassword(email,password).orElse(null);
         if(employee == null){
             throw new InvalidCredentialsException();
         }
         log.info("{}has logged in.", employee.getFullName());
-        return _jwtService.generateToken(employee.getId(),employee.getEmail(),employee.getRole().getRoleTitle(),employee.getFullName());
+        return jwtService.generateToken(employee.getId(),employee.getEmail(),employee.getRole().getRoleTitle(),employee.getFullName());
     }
     public String login(String email){
-        Employee employee = _employeeRepository.getEmployeeByEmail(email).orElse(null);
+        Employee employee = employeeRepository.getEmployeeByEmail(email).orElse(null);
         if(employee == null){
             throw new InvalidCredentialsException();
         }
         log.info("{} has been reauthenticate by refresh token");
-        return _jwtService.generateToken(employee.getId(),employee.getEmail(),employee.getRole().getRoleTitle(),employee.getFullName());
+        return jwtService.generateToken(employee.getId(),employee.getEmail(),employee.getRole().getRoleTitle(),employee.getFullName());
     }
 }

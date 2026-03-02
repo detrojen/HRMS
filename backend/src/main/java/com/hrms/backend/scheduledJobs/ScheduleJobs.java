@@ -23,7 +23,6 @@ public class ScheduleJobs {
     }
     @Scheduled(cron = "0 0 5 * * 7")
     public void initialiseSlots(){
-        System.out.println("hello");
         gameSlotService.createSlots(7);
     }
     @Scheduled(cron = "0 1 0 * * *")

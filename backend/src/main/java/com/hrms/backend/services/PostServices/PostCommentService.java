@@ -20,7 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class PostCommentService {
@@ -40,7 +40,7 @@ public class PostCommentService {
         List<CommentResponseDto>  response = comments
                 .stream()
                 .map(comment->modelMapper.map(comment,CommentResponseDto.class))
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
         return response;
     }
 
@@ -73,7 +73,7 @@ public class PostCommentService {
         return true;
     }
     public Post deletePostComment(Long id){
-        PostComment comment = postCommentRepository.findById(id).orElseThrow(()->new PostNotFound());
+        PostComment comment = postCommentRepository.findById(id).orElseThrow(PostNotFound::new);
         JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Employee employee = employeeService.getEmployeeById(jwtInfo.getUserId());
         if(!comment.getCommentedBy().getId().equals(employee.getId())){
@@ -88,7 +88,7 @@ public class PostCommentService {
     public CommentResponseDto updateComment(CreateUpdateCommentRequestDto requestDto){
         PostComment comment = postCommentRepository.findById(requestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("Comment not found"));
         JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(comment.getCommentedBy().getId() != jwtInfo.getUserId()){
+        if(!comment.getCommentedBy().getId().equals( jwtInfo.getUserId())){
             throw  new InvalidActionException("You can not update others comment.");
         }
         comment.setComment(requestDto.getComment());

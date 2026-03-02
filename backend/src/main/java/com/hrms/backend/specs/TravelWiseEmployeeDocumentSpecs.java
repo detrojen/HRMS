@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 public class TravelWiseEmployeeDocumentSpecs {
+    private TravelWiseEmployeeDocumentSpecs(){}
     public static Specification<TravelWiseEmployeeWiseDocument> hasDocumnetUplodedBy(Long employeeId){
         return ((root, query, criteriaBuilder) ->{
             Join<TravelWiseEmployeeWiseDocument, Employee> employeeJoin = root.join("uploadedBy");

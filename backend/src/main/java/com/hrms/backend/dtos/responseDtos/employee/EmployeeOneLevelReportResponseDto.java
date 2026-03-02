@@ -1,9 +1,10 @@
 package com.hrms.backend.dtos.responseDtos.employee;
 
+import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import lombok.Data;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Data
 public class EmployeeOneLevelReportResponseDto {
@@ -16,7 +17,7 @@ public class EmployeeOneLevelReportResponseDto {
         private EmployeeWithManager manager;
 
         public EmployeeWithManager(List<EmployeeWithManagerIdDto> employees, Long currentEmployeeId){
-            EmployeeWithManagerIdDto current = employees.stream().filter(e->e.getId() == currentEmployeeId).findFirst().orElseThrow(()->new RuntimeException());
+            EmployeeWithManagerIdDto current = employees.stream().filter(e->e.getId().equals(currentEmployeeId)).findFirst().orElseThrow(()->new ItemNotFoundExpection("employee not found"));
             this.id = current.getId();
             this.firstName = current.getFirstName();
             this.lastName = current.getLastName();
@@ -36,8 +37,8 @@ public class EmployeeOneLevelReportResponseDto {
     private EmployeeWithManager manager;
 
     public EmployeeOneLevelReportResponseDto(List<EmployeeWithManagerIdDto> employees, Long startingId){
-        oneLevelDown = employees.stream().filter(e->e.getManagerId()==startingId).map(e->new EmployeeWithManagerIdDto(e.getId(),e.getFirstName(),e.getLastName(), e.getDesignation(), e.getManagerId())).collect(Collectors.toUnmodifiableList());
-        EmployeeWithManagerIdDto current = employees.stream().filter(e->e.getId() == startingId).findFirst().orElseThrow(()->new RuntimeException());
+        oneLevelDown = employees.stream().filter(e->e.getManagerId().equals(startingId)).map(e->new EmployeeWithManagerIdDto(e.getId(),e.getFirstName(),e.getLastName(), e.getDesignation(), e.getManagerId())).toList();
+        EmployeeWithManagerIdDto current = employees.stream().filter(e->e.getId().equals(startingId)).findFirst().orElseThrow(()->new ItemNotFoundExpection(""));
         id = current.getId();
         firstName = current.getFirstName();
         lastName = current.getLastName();

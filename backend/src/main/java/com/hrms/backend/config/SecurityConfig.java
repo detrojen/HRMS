@@ -44,8 +44,8 @@ public class SecurityConfig {
 
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(exceptionFilter,UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-//                .addFilterAfter(httpRequestLoggingFilter,JwtAuthfilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(httpRequestLoggingFilter,JwtAuthfilter.class);
 
         return http.build();
     }

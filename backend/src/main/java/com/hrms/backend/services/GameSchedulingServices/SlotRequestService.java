@@ -11,6 +11,8 @@ import com.hrms.backend.entities.GameSchedulingEntities.GameSlot;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
 import com.hrms.backend.entities.GameSchedulingEntities.SlotRequest;
 import com.hrms.backend.entities.GameSchedulingEntities.SlotRequestWiseEmployee;
+import com.hrms.backend.enums.NotificationType;
+import com.hrms.backend.enums.SlotRequestStatus;
 import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.exceptions.SlotCanNotBeBookedException;
@@ -19,28 +21,19 @@ import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import com.hrms.backend.services.NotificationServices.NotificationService;
 import com.hrms.backend.specs.SlotRequestSpecs;
-import com.hrms.backend.tasks.SlotRequestEvaluteTask;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.scheduling.config.CronTask;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -85,7 +78,7 @@ public class SlotRequestService {
         JwtInfoDto jwtInfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Specification<SlotRequest> specs =  SlotRequestSpecs.getActiveSlotsSpecs(jwtInfo.getUserId());
         List<SlotRequest> requests = slotRequestRepository.findAll(specs);
-        return requests.stream().map(request->modelMapper.map(request,SlotRequsetResponseDto.class)).collect(Collectors.toUnmodifiableList());
+        return requests.stream().map(request->modelMapper.map(request,SlotRequsetResponseDto.class)).toList();
     }
 
     public SlotRequsetResponseDto getSlotRequestDetail(Long id){
@@ -94,7 +87,7 @@ public class SlotRequestService {
     }
 
     public SlotRequest getConfirmRequest(Long slotId){
-        return slotRequestRepository.findByGameSlot_IdAndStatus(slotId, "Confirm");
+        return slotRequestRepository.findByGameSlot_IdAndStatus(slotId, SlotRequestStatus.CONFIRM.toString());
     }
 
     public void validateSlotRequest( GameType gameTypeDetails,GameSlot slot,List<Long> otherPlayerIds){
@@ -113,7 +106,7 @@ public class SlotRequestService {
         if( LocalDate.now().isAfter(slot.getSlotDate()) || LocalDate.now().isEqual(slot.getSlotDate()) && (LocalTime.now().isAfter(slot.getStartsFrom()))){
             throw new SlotCanNotBeBookedException("booking slot in past not allowed");
         }
-        if(otherPlayerIds.stream().map(id->employeeWiseGameInterestService.getEmployyeGameUsage(id,gameTypeDetails.getId()).isInterested()).toList().stream().anyMatch(flag->flag==false)){
+        if(otherPlayerIds.stream().map(id->employeeWiseGameInterestService.getEmployyeGameUsage(id,gameTypeDetails.getId()).isInterested()).toList().stream().anyMatch(flag->!flag)){
             throw new SlotCanNotBeBookedException("One of the player is not interested in this game.");
         }
     }
@@ -139,20 +132,16 @@ public class SlotRequestService {
 
         if(slotDetails.isAvailable()){
             gameSlotService.makeSlotUnavailable(slot);
-            slotRequest.setStatus("Confirm");
-            otherPlayerIds.iterator().forEachRemaining(id->{
-                employeeWiseGameInterestService.addConsumedSlotCount(id,slotDetails.getGameTypeId());
-            });
+            slotRequest.setStatus(SlotRequestStatus.CONFIRM.toString());
+            otherPlayerIds.iterator().forEachRemaining(id-> employeeWiseGameInterestService.addConsumedSlotCount(id,slotDetails.getGameTypeId()));
         }else{
             SlotRequest confirmedSlotRequest = getConfirmRequest(slotId);
             if(hasHighPriorityThen(jwtInfo.getUserId(),confirmedSlotRequest.getRequestedBy().getId(), gameTypeDetails.getId())){
-                confirmToCancelOrOnHold(confirmedSlotRequest,"On hold");
-                slotRequest.setStatus("Confirm");
-                otherPlayerIds.iterator().forEachRemaining(id->{
-                    employeeWiseGameInterestService.addConsumedSlotCount(id,slotDetails.getGameTypeId());
-                });
+                confirmToCancelOrOnHold(confirmedSlotRequest,SlotRequestStatus.ON_HOLD.toString());
+                slotRequest.setStatus(SlotRequestStatus.CONFIRM.toString());
+                otherPlayerIds.iterator().forEachRemaining(id-> employeeWiseGameInterestService.addConsumedSlotCount(id,slotDetails.getGameTypeId()));
             }else {
-                slotRequest.setStatus("On Hold");
+                slotRequest.setStatus(SlotRequestStatus.ON_HOLD.toString());
             }
         }
 
@@ -160,7 +149,7 @@ public class SlotRequestService {
         SlotRequest finalSlotRequest = slotRequest;
 
 
-        List<SlotRequestWiseEmployee> mappedEmployees = otherPlayerIds.stream().map(id->slotRequestWiseemployeeService.mapSlotsToEmployee(id,finalSlotRequest)).collect(Collectors.toUnmodifiableList());
+        List<SlotRequestWiseEmployee> mappedEmployees = otherPlayerIds.stream().map(id->slotRequestWiseemployeeService.mapSlotsToEmployee(id,finalSlotRequest)).toList();
 
         slotRequest.setSlotRequestWiseEmployee(mappedEmployees);
         notifyAndShareEmail(slotRequest);
@@ -169,9 +158,8 @@ public class SlotRequestService {
     }
 
     public SlotRequsetResponseDto cancelConfirmRequest(SlotRequest slotRequest){
-//        SlotRequest slotRequest = slotRequestRepository.findById(requestId).orElseThrow(()->new ItemNotFoundExpection("slot request with this id does not exist"));
         SlotRequest topCandidate = slotRequestRepository.getTopCandidate(slotRequest.getGameSlot().getId(),slotRequest.getGameSlot().getGameType().getId());
-        confirmToCancelOrOnHold(slotRequest,"Cancel");
+        confirmToCancelOrOnHold(slotRequest,SlotRequestStatus.CANCEL.toString());
         if(topCandidate == null){
             gameSlotService.makeSlotAvailable(slotRequest.getGameSlot());
         }else{
@@ -187,10 +175,10 @@ public class SlotRequestService {
             throw new InvalidActionException("You  can not cancel slot after slot starts or ended");
         }
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(jwtInfoDto.getUserId() != slotRequest.getRequestedBy().getId()){
+        if(!jwtInfoDto.getUserId().equals(slotRequest.getRequestedBy().getId())){
             throw new InvalidActionException("slot only can be cancelled by who has reqyested");
         }
-        if(slotRequest.getStatus().equals("Confirm")){
+        if(slotRequest.getStatus().equals(SlotRequestStatus.CONFIRM.toString())){
             return cancelConfirmRequest(slotRequest);
         }
         SlotRequest sr = onHoldToCancel(slotRequest);
@@ -204,7 +192,7 @@ public class SlotRequestService {
     }
 
     private SlotRequest onHoldToConfirm(SlotRequest slotRequest){
-        slotRequest.setStatus("Confirm");
+        slotRequest.setStatus(SlotRequestStatus.CONFIRM.toString());
         var employees = slotRequest.getSlotRequestWiseEmployee();
         employees.stream().iterator().forEachRemaining(e-> employeeWiseGameInterestService.addConsumedSlotCount(e.getEmployee().getId(),slotRequest.getGameSlot().getGameType().getId()));
         notifyAndShareEmail(slotRequest);
@@ -220,7 +208,7 @@ public class SlotRequestService {
     }
 
     private SlotRequest onHoldToCancel(SlotRequest slotRequest){
-        slotRequest.setStatus("Cancel");
+        slotRequest.setStatus(SlotRequestStatus.CANCEL.toString());
         notifyAndShareEmail(slotRequest);
         return slotRequestRepository.save(slotRequest);
     }
@@ -234,14 +222,14 @@ public class SlotRequestService {
         );
         notificationService.notify(
                 "Slot reuqested for " + slotRequest.getGameSlot().getGameType().getGame() + " on " + slotRequest.getGameSlot().getSlotDate() + " from "  + slotRequest.getGameSlot().getStartsFrom() + " to "  +slotRequest.getGameSlot().getEndsAt()
-            ,"Game"
+            , NotificationType.GAMES.toString()
                 ,slotRequest.getSlotRequestWiseEmployee().stream().map(e->e.getEmployee().getId()).toList().toArray(new Long[]{})
         );
     }
 
     private List<EmployeeMinDetailsDto> getPlayers(Long slotId){
-        SlotRequest slotRequest = slotRequestRepository.findByGameSlot_IdAndStatus(slotId,"Confirm");
-        return slotRequest.getSlotRequestWiseEmployee().stream().map(slotWiseEmp->modelMapper.map(slotWiseEmp.getEmployee(),EmployeeMinDetailsDto.class)).collect(Collectors.toUnmodifiableList());
+        SlotRequest slotRequest = slotRequestRepository.findByGameSlot_IdAndStatus(slotId,SlotRequestStatus.CONFIRM.toString());
+        return slotRequest.getSlotRequestWiseEmployee().stream().map(slotWiseEmp->modelMapper.map(slotWiseEmp.getEmployee(),EmployeeMinDetailsDto.class)).toList();
     }
 
     public List<CurrentGameStatusResponse> getCurrentGameStatus(){

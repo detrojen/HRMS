@@ -1,7 +1,6 @@
 package com.hrms.backend.dtos.requestDto.travel;
 
 import com.hrms.backend.dtos.markers.OnUpdate;
-import com.hrms.backend.entities.TravelEntities.ExpenseCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

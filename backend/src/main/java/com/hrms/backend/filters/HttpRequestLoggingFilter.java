@@ -24,5 +24,6 @@ public class HttpRequestLoggingFilter extends OncePerRequestFilter {
         }
         log.info(logMessage);
         doFilter(request,response,filterChain);
+        log.info("{}",response.getStatus());
     }
 }

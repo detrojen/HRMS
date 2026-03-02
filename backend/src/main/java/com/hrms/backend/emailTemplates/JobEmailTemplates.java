@@ -4,6 +4,7 @@ import com.hrms.backend.entities.JobListingEntities.Job;
 import com.hrms.backend.entities.JobListingEntities.JobApplication;
 
 public class JobEmailTemplates {
+    private JobEmailTemplates(){}
     public static String shareJob(Job job) {
 
         return "Job title :- " + job.getTitle() + "\n\nJob description :- \n" + job.getDescription()

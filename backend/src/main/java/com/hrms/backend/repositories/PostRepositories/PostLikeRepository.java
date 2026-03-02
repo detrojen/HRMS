@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface PostLikeRepository extends JpaRepository<PostLike,Long> , JpaSpecificationExecutor<PostLike> {
-    PostLike findByLikedBy_IdAndPost_Id(Long employeeId,Long PostId);
+    PostLike findByLikedBy_IdAndPost_Id(Long employeeId,Long postId);
     List<PostLike> findAllByPost_Id(Long postId, Sort sort);
 }

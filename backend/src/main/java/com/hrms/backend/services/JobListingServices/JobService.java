@@ -5,21 +5,21 @@ import com.hrms.backend.dtos.globalDtos.PageableDto;
 import com.hrms.backend.dtos.requestDto.job.ReferJobRequestDto;
 import com.hrms.backend.dtos.requestDto.job.ShareJobRequestDto;
 import com.hrms.backend.dtos.responseDtos.job.CreateJobResponseDto;
-import com.hrms.backend.dtos.responseDtos.job.CvReviewerWithNameOnlyDto;
 import com.hrms.backend.dtos.responseDtos.job.JobWiseCvReviewerDto;
 import com.hrms.backend.emailTemplates.JobEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.JobListingEntities.Job;
 import com.hrms.backend.entities.JobListingEntities.JobApplication;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
+import com.hrms.backend.exceptions.ServerError;
 import com.hrms.backend.repositories.JobListingRepositories.JobRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import com.hrms.backend.specs.JobSpecs;
-import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,10 +27,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
 import java.util.Arrays;
-import java.util.stream.Collectors;
+
 
 @Service
 public class JobService {
@@ -40,6 +38,8 @@ public class JobService {
     private final JobWiseCvReviewerService jobWiseCvReviewerService;
     private final EmailService emailService;
     private final JobApplicationService jobApplicationService;
+    @Value("${hrms.backend.uploads.jds}")
+    private String jdsDir;
     @Autowired
     public JobService(JobRepository jobRepository, ModelMapper modelMapper, EmployeeService employeeService,JobWiseCvReviewerService jobWiseCvReviewerService, EmailService emailService, JobApplicationService jobApplicationService){
         this.jobRepository = jobRepository;
@@ -54,13 +54,13 @@ public class JobService {
     public CreateJobResponseDto createJob(CreateJobRequestDto requestDto,String jdPath){
         Job job = modelMapper.map(requestDto,Job.class);
         job.setStatus("Hiring");
-        job.setSkills( Arrays.stream(requestDto.getSkills()).reduce((val,next)->val + "," +next).orElseThrow(()->new RuntimeException("server error while concating skills")));
+        job.setSkills( Arrays.stream(requestDto.getSkills()).reduce((val,next)->val + "," +next).orElseThrow(()->new ServerError("server error while concating skills")));
         job.setJdPath(jdPath);
         Employee hrOwner = employeeService.getReference(requestDto.getHrOwnerId());
         job.setHrOwner(hrOwner);
         Job savedJob = jobRepository.save(job);
         CreateJobResponseDto jobResponseDto = modelMapper.map(savedJob,CreateJobResponseDto.class);
-        JobWiseCvReviewerDto[] reviewers = Arrays.stream(requestDto.getReviewerIds()).map(reviewerId->jobWiseCvReviewerService.assignJobToReviewer(reviewerId, savedJob)).collect(Collectors.toUnmodifiableList()).toArray(new JobWiseCvReviewerDto[]{});
+        JobWiseCvReviewerDto[] reviewers = Arrays.stream(requestDto.getReviewerIds()).map(reviewerId->jobWiseCvReviewerService.assignJobToReviewer(reviewerId, savedJob)).toList().toArray(new JobWiseCvReviewerDto[]{});
         jobResponseDto.setReviewers(reviewers);
         return jobResponseDto;
     }
@@ -81,14 +81,13 @@ public class JobService {
         return modelMapper.map(job,CreateJobResponseDto.class);
     }
 
-    public void shareJob(Long jobId, ShareJobRequestDto requestDto) throws MessagingException, MalformedURLException, FileNotFoundException {
+    public void shareJob(Long jobId, ShareJobRequestDto requestDto)  {
         Job job = jobRepository.findById(jobId).orElseThrow(()->new ItemNotFoundExpection("job not found"));
         String emailBody = JobEmailTemplates.shareJob(job);
-        System.out.println(emailBody);
-        emailService.shareJob("Job opening",requestDto.getEmail(),emailBody, job.getJdPath());
+        emailService.sendMail("Job opening", emailBody, new String[]{requestDto.getEmail()},new String[]{}, jdsDir,job.getJdPath());
     }
 
-    public JobApplication referJobTo(Long jobId, ReferJobRequestDto requestDto, String cvPath) throws MalformedURLException, MessagingException, FileNotFoundException {
+    public JobApplication referJobTo(Long jobId, ReferJobRequestDto requestDto, String cvPath)  {
         return jobApplicationService.referJobTo(jobRepository.findById(jobId).orElseThrow(()->new ItemNotFoundExpection("Job Not found")), requestDto,cvPath);
     }
 }

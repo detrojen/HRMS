@@ -29,6 +29,7 @@ public class GlobalExceptionHandler {
                 .body(new GlobalResponseDto<>(errors,"Invalid credential",HttpStatus.BAD_REQUEST));
 
     }
+
     @ExceptionHandler(InvalidActionException.class)
     public ResponseEntity<GlobalResponseDto<?>> handleInvalidActionException(InvalidActionException e){
         List<Map<String,String>> errors= new ArrayList<>(){};

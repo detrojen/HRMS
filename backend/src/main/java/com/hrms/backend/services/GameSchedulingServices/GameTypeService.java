@@ -1,7 +1,5 @@
 package com.hrms.backend.services.GameSchedulingServices;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.backend.dtos.requestDto.gameScheduling.CreateUpdateGameTypeRequestDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.UpdateGameTypeResponseDto;
 import com.hrms.backend.entities.GameSchedulingEntities.GameType;
@@ -14,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -56,17 +54,12 @@ public class GameTypeService {
         gameType.setSlotDuration(requestDto.getSlotDuration());
         gameType.setSlotCanBeBookedBefore(requestDto.getSlotCanBeBookedBefore());
         gameType = gameTypeRepository.save(gameType);
-//        try {
-////            log.info("{}", objectMapper.writeValueAsString(requestDto));
-//        } catch (JsonProcessingException e) {
-////            log.error("json parsing error , \n {}",e.getMessage());
-//        }
         return modelMapper.map(gameType, UpdateGameTypeResponseDto.class);
     }
 
     public UpdateGameTypeResponseDto getGameTypeById(Long id){
         GameType gameType = gameTypeRepository.findById(id).orElseThrow(()->new ItemNotFoundExpection("Game type with this id not found"));
-        int count = gameType.getEmployeeWiseGameInterests().stream().filter(e->e.isInterested()).collect(Collectors.toUnmodifiableList()).size();
+        int count = gameType.getEmployeeWiseGameInterests().stream().filter(e->e.isInterested()).toList().size();
         UpdateGameTypeResponseDto dto = modelMapper.map(gameType, UpdateGameTypeResponseDto.class);
         dto.setNoOfInteretedEmployees(count);
         return dto;
@@ -75,11 +68,11 @@ public class GameTypeService {
     public List<UpdateGameTypeResponseDto> getAllGameTypes(){
         List<GameType> gameTypes = gameTypeRepository.findAll();
         return gameTypes.stream().map(gameType -> {
-            int count = gameType.getEmployeeWiseGameInterests().stream().filter(e->e.isInterested()).collect(Collectors.toUnmodifiableList()).size();
+            int count = gameType.getEmployeeWiseGameInterests().stream().filter(e->e.isInterested()).toList().size();
             UpdateGameTypeResponseDto dto = modelMapper.map(gameType, UpdateGameTypeResponseDto.class);
             dto.setNoOfInteretedEmployees(count);
             return dto;
-        }).collect(Collectors.toUnmodifiableList());
+        }).toList();
     }
 
     public void sp_resetCurrentCycleOfGameType(){

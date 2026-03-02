@@ -12,9 +12,9 @@ import com.hrms.backend.services.JobListingServices.JobWiseCvReviewerService;
 import com.hrms.backend.utils.FileUtility;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +29,10 @@ public class JobController {
     private final JobService jobService;
     private final JobApplicationService jobApplicationService;
     private final JobWiseCvReviewerService jobWiseCvReviewerService;
+    @Value("${hrms.backend.uploads.cvs}")
+    private String cvsDir;
+    @Value("${hrms.backend.uploads.jds}")
+    private String jdsDir;
     @Autowired
     public JobController(JobService jobService, JobApplicationService jobApplicationService, JobWiseCvReviewerService jobWiseCvReviewerService){
         this.jobService = jobService;
@@ -38,7 +42,7 @@ public class JobController {
 
     @PostMapping(value = "/jobs")
     public ResponseEntity<GlobalResponseDto<CreateJobResponseDto>> createJob(@RequestPart(value = "jobDocument") MultipartFile jobDocument , @RequestPart(value = "jobDetail") @Valid CreateJobRequestDto jobDetail ){
-        String jdPath = FileUtility.Save(jobDocument, "jds");
+        String jdPath = FileUtility.Save(jobDocument, jdsDir);
         CreateJobResponseDto responseDto = jobService.createJob(jobDetail,jdPath);
         return  ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto)
@@ -89,16 +93,16 @@ public class JobController {
 
 
     @PostMapping("/jobs/{jobId}/refer")
-    public ResponseEntity<GlobalResponseDto<?>> referJob(@PathVariable Long jobId, @RequestPart @Valid ReferJobRequestDto applicantsDetail, @NotNull(message = "cv must be uploaded") @RequestPart MultipartFile cv) throws MalformedURLException, MessagingException, FileNotFoundException {
-        String cvpath = FileUtility.Save(cv, "cvs");
+    public ResponseEntity<GlobalResponseDto<Boolean>> referJob(@PathVariable Long jobId, @RequestPart @Valid ReferJobRequestDto applicantsDetail, @NotNull(message = "cv must be uploaded") @RequestPart MultipartFile cv) throws MalformedURLException, MessagingException, FileNotFoundException {
+        String cvpath = FileUtility.Save(cv, cvsDir);
         jobService.referJobTo(jobId,applicantsDetail,cvpath);
-        return ResponseEntity.ok().body(new GlobalResponseDto<>(null, "Job refered successfull.",HttpStatus.OK));
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(true, "Job refered successfull.",HttpStatus.OK));
 
     }
     @PostMapping("/jobs/{jobId}/share")
-    public ResponseEntity<GlobalResponseDto<?>> shareJob(@PathVariable Long jobId, @RequestBody @Valid ShareJobRequestDto requestDto) throws MessagingException, MalformedURLException, FileNotFoundException {
+    public ResponseEntity<GlobalResponseDto<Boolean>> shareJob(@PathVariable Long jobId, @RequestBody @Valid ShareJobRequestDto requestDto) throws MessagingException, MalformedURLException, FileNotFoundException {
         jobService.shareJob(jobId,requestDto);
-        return ResponseEntity.ok().body(new GlobalResponseDto<>(null, "Job refered successfull.",HttpStatus.OK));
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(true, "Job refered successfull.",HttpStatus.OK));
 
     }
 

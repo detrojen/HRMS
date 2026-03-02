@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,17 +20,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 
 @Component
 public class JwtAuthfilter extends OncePerRequestFilter{
 
-    private final JwtService _jwtService;
+    private final JwtService jwtService;
     private final AuthService authService;
     @Autowired
     public JwtAuthfilter(JwtService jwtService,AuthService authService) {
-        _jwtService = jwtService;
+        this.jwtService = jwtService;
         this.authService = authService;
     }
 
@@ -58,11 +56,11 @@ public class JwtAuthfilter extends OncePerRequestFilter{
         if(authHeader != null && authHeader.startsWith("Bearer ")){
             token = authHeader.substring(7);
             try {
-                email = _jwtService.extractEmail(token);
-                jwtInfo = _jwtService.getJwtInfo(token);
+                email = jwtService.extractEmail(token);
+                jwtInfo = jwtService.getJwtInfo(token);
             }catch (ExpiredJwtException e){
-                if(refreshToken!= null && !_jwtService.isTokenExpired(refreshToken)){
-                    email = _jwtService.extractEmail(refreshToken);
+                if(refreshToken!= null && !jwtService.isTokenExpired(refreshToken)){
+                    email = jwtService.extractEmail(refreshToken);
                     token = authService.login(email);
                     response.addHeader(HttpHeaders.AUTHORIZATION,token);
                 }else{
@@ -70,8 +68,8 @@ public class JwtAuthfilter extends OncePerRequestFilter{
                 }
 
             }finally {
-                email = _jwtService.extractEmail(token);
-                jwtInfo = _jwtService.getJwtInfo(token);
+                email = jwtService.extractEmail(token);
+                jwtInfo = jwtService.getJwtInfo(token);
             }
         }
 
@@ -79,7 +77,7 @@ public class JwtAuthfilter extends OncePerRequestFilter{
 
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (token!=null) {
+
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(jwtInfo.getRoleTitle());
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         jwtInfo,
@@ -88,7 +86,6 @@ public class JwtAuthfilter extends OncePerRequestFilter{
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
         }
         filterChain.doFilter(request, response);
     }

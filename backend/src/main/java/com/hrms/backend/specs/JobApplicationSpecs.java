@@ -6,6 +6,7 @@ import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 public class JobApplicationSpecs {
+    private JobApplicationSpecs(){}
     public static Specification<JobApplication> hasAssignedToReview(Long employeeId){
         return ((root, query, criteriaBuilder) -> {
             Join<JobApplication,Employee> reviewerJoin= root.join("job").join("cvReviewers").join("reviewer");
@@ -23,9 +24,7 @@ public class JobApplicationSpecs {
     }
 
     public static Specification<JobApplication> hasId(Long id){
-        return ((root, query, criteriaBuilder) -> {
-           return criteriaBuilder.equal(root.get("id"),id);
-        });
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("id"),id));
     }
 
 }

@@ -33,31 +33,28 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 @Slf4j
 @Service
 public class PostService {
-    private final PostRepository _postRepository;
-    private final EmployeeService _employeeService;
-    private final ModelMapper _modelMapper;
+    private final PostRepository postRepository;
+    private final EmployeeService employeeService;
+    private final ModelMapper modelMapper;
     private final PostCommentService postCommentService;
     private final PostLikeService postLikeService;
     private final EmailService emailService;
     @Autowired
     public PostService(PostRepository postRepository,PostCommentService postCommentService,EmployeeService employeeService,ModelMapper modelMapper, PostLikeService postLikeService, EmailService emailService){
-        _postRepository = postRepository;
-        _employeeService = employeeService;
-        _modelMapper = modelMapper;
+        this.postRepository = postRepository;
+        this.employeeService = employeeService;
+        this.modelMapper = modelMapper;
         this.postCommentService = postCommentService;
         this.postLikeService = postLikeService;
         this.emailService = emailService;
     }
 
     public Page<PostWithCommentsAndLikesDto> getPosts(PostQueryParamsDto params){
-        Specification<Post> specs = ((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.and(criteriaBuilder.isFalse(root.get("isDeleted")),criteriaBuilder.isFalse(root.get("isDeletedByHr")),criteriaBuilder.like(root.get("tags"),"%"+params.getQuery()+"%"));
-        });
+        Specification<Post> specs = ((root, query, criteriaBuilder) -> criteriaBuilder.and(criteriaBuilder.isFalse(root.get("isDeleted")),criteriaBuilder.isFalse(root.get("isDeletedByHr")),criteriaBuilder.like(root.get("tags"),"%"+params.getQuery()+"%")));
         if(params.getPostTo() != null){
             specs = specs.and(
                     PostSpecs.postedBefore(params.getPostTo())
@@ -70,10 +67,10 @@ public class PostService {
         }
         Pageable pageable = PageRequest.of(params.getPageNumber(),params.getLimit(), Sort.by("createdAt").descending());
 
-        Page<Post> posts = _postRepository.findAll(specs,pageable);
+        Page<Post> posts = postRepository.findAll(specs,pageable);
         log.info("read the post data");
         return posts.map(post->{
-            PostWithCommentsAndLikesDto dto = _modelMapper.map(post,PostWithCommentsAndLikesDto.class);
+            PostWithCommentsAndLikesDto dto = modelMapper.map(post,PostWithCommentsAndLikesDto.class);
             dto.setRecentComments(postCommentService.getRecentComments(post.getId()));
             dto.setRecentLikedBy(postLikeService.getRecentLikes(post.getId()));
             return dto;
@@ -84,59 +81,59 @@ public class PostService {
         Post post = new Post();
         post.setBody(postRequestDto.getBody());
         post.setTitle(postRequestDto.getTitle());
-        post.setTags(Arrays.stream(postRequestDto.getTags()).reduce((acc,tag)->acc+ ","+tag).get());
+        post.setTags(Arrays.stream(postRequestDto.getTags()).reduce((acc,tag)->acc+ ","+tag).orElse(""));
         post.setAttachmentPath(attachmentpath);
         JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Employee employee = _employeeService.getEmployeeById(jwtInfo.getUserId());
+        Employee employee = employeeService.getEmployeeById(jwtInfo.getUserId());
         post.setCreatedBy(employee);
-        post = _postRepository.save(post);
-        return _modelMapper.map(post,PostResponseDto.class);
+        post = postRepository.save(post);
+        return modelMapper.map(post,PostResponseDto.class);
     }
 
     public PostResponseDto getPostById(Long postId){
-        Post post = _postRepository.findById(postId).orElseThrow(()->new ItemNotFoundExpection("post not found"));
-        return _modelMapper.map(post,PostResponseDto.class);
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFound::new);
+        return modelMapper.map(post,PostResponseDto.class);
     }
 
     public PostResponseDto updatePost(CreateUpdatePostRequestDto postRequestDto, String attachmentpath){
-        Post post = _postRepository.findById(postRequestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("Post not found"));
+        Post post = postRepository.findById(postRequestDto.getId()).orElseThrow(PostNotFound::new);
         JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(post.getCreatedBy().getId() != jwtInfo.getUserId()){
+        if(!post.getCreatedBy().getId().equals(jwtInfo.getUserId())){
             throw new InvalidActionException("You can not update others post");
         }
         post.setBody(postRequestDto.getBody());
         post.setTitle(postRequestDto.getTitle());
-        post.setTags(Arrays.stream(postRequestDto.getTags()).reduce((acc,tag)->acc+ ","+tag).get());
+        post.setTags(Arrays.stream(postRequestDto.getTags()).reduce((acc,tag)->acc+ ","+tag).orElse(""));
         if(attachmentpath != null){
             post.setAttachmentPath(attachmentpath);
         }
 
-        post = _postRepository.save(post);
-        return _modelMapper.map(post,PostResponseDto.class);
+        post = postRepository.save(post);
+        return modelMapper.map(post,PostResponseDto.class);
     }
 
     public DeletePostResponseDto deletePost(Long id){
-        Post post = _postRepository.findById(id).orElseThrow(()->new PostNotFound());
+        Post post = postRepository.findById(id).orElseThrow(PostNotFound::new);
         JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Employee employee = _employeeService.getEmployeeById(jwtInfo.getUserId());
+        Employee employee = employeeService.getEmployeeById(jwtInfo.getUserId());
         if(!post.getCreatedBy().getId().equals(employee.getId())){
             throw new InvalidDeleteAction();
         }
         post.setDeletedBy(employee);
         post.setDeleted(true);
-        _postRepository.save(post);
-        return _modelMapper.map(post,DeletePostResponseDto.class);
+        postRepository.save(post);
+        return modelMapper.map(post,DeletePostResponseDto.class);
     }
 
     public boolean deleteUnappropriatedPost(DeleteUnappropriatedContentRequestDto requestDto){
-        Post post = _postRepository.findById(requestDto.getId()).orElseThrow(()->new PostNotFound());
+        Post post = postRepository.findById(requestDto.getId()).orElseThrow(PostNotFound::new);
         JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Employee employee = _employeeService.getEmployeeById(jwtInfo.getUserId());
+        Employee employee = employeeService.getEmployeeById(jwtInfo.getUserId());
         post.setDeletedBy(employee);
         post.setRemarkForDelete(requestDto.getRemark());
         post.setDeleted(true);
         post.setDeletedByHr(true);
-        post = _postRepository.save(post);
+        post = postRepository.save(post);
         this.emailService.sendMail(
                 "Warning: unapropriate post",
                 "post conent\n"+post.getBody() + "\n\nremark for delete: \n"+requestDto.getRemark()
@@ -147,33 +144,33 @@ public class PostService {
     }
     @Transactional
     public CommentResponseDto comment(Long postId, CreateUpdateCommentRequestDto requestDto){
-        Post post = _postRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+        Post post = postRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
         CommentResponseDto comment =  postCommentService.commentOn(post,requestDto);
         post.setCommentCount(post.getCommentCount()+1);
-        _postRepository.save(post);
+        postRepository.save(post);
         return comment;
     }
 
     public boolean likeUnlike(Long postId){
-        Post post = _postRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+        Post post = postRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
         boolean flag =  postLikeService.likeUnlike(post);
         if(flag){
             post.setLikeCount(post.getLikeCount() + 1);
         }else{
             post.setLikeCount(post.getLikeCount() - 1);
         }
-        _postRepository.save(post);
+        postRepository.save(post);
         return flag;
     }
 
     public boolean deletePostComment(Long commentId){
         Post post = postCommentService.deletePostComment(commentId);
         post.setCommentCount(post.getCommentCount() - 1);
-        _postRepository.save(post);
+        postRepository.save(post);
         return true;
     }
     public void genrateBirthdayAndWorkAniversaryPost(){
-        _postRepository.sp_birthdayAndOrkAniversary();
+        postRepository.sp_birthdayAndOrkAniversary();
     }
     public Page<PostWithCommentsAndLikesDto> getPostUploadedBySelf(PostQueryParamsDto params){
         JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -183,9 +180,9 @@ public class PostService {
             return criteriaBuilder.and(criteriaBuilder.isFalse(root.get("isDeleted")),criteriaBuilder.isFalse(root.get("isDeletedByHr")),criteriaBuilder.like(root.get("tags"),"%"+params.getQuery()+"%"),criteriaBuilder.equal(employeeJoin.get("id"), jwtInfo.getUserId()));
         });
         Pageable pageable = PageRequest.of(params.getPageNumber(),params.getLimit(), Sort.by("createdAt").descending());
-        Page<Post> posts = _postRepository.findAll(specs,pageable);
+        Page<Post> posts = postRepository.findAll(specs,pageable);
         Page<PostWithCommentsAndLikesDto> response= posts.map(post->{
-            PostWithCommentsAndLikesDto dto = _modelMapper.map(post,PostWithCommentsAndLikesDto.class);
+            PostWithCommentsAndLikesDto dto = modelMapper.map(post,PostWithCommentsAndLikesDto.class);
             dto.setRecentComments(postCommentService.getRecentComments(post.getId()));
             dto.setRecentLikedBy(postLikeService.getRecentLikes(post.getId()));
             return dto;

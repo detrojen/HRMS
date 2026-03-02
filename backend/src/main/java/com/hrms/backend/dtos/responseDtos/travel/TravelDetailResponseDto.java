@@ -26,6 +26,6 @@ public class TravelDetailResponseDto {
     private List<TravelExpenseResponseDto> expensesMadeByMe;
     public void setEmployees(List<EmployeeMinDetailsDto> employees,Long employeeId){
         this.employees = employees;
-        this.isInEmployeeList = employees.stream().anyMatch(employee->employee.getId() == employeeId);
+        this.isInEmployeeList = employees.stream().anyMatch(employee->employee.getId().equals(employeeId));
     }
 }
