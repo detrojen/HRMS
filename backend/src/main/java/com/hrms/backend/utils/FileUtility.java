@@ -3,6 +3,7 @@ package com.hrms.backend.utils;
 import com.hrms.backend.exceptions.ServerError;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.*;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -12,10 +13,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.UUID;
-
+@Component
 public class FileUtility {
-    @Value("${hrms.backend.uploadFolder}")
-    private static String uploadDir;
+    private static String uploadDir = "uploads";
     private static String userDir = System.getProperty("user.dir");
     private FileUtility(){}
     private static String uploadFolderPath =userDir + File.separator + uploadDir;

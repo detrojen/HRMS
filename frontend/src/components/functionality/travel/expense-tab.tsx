@@ -2,13 +2,13 @@ import useUpdateExpenseMutation from "@/api/mutations/update-expense.mutation"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import AddUpdateExpenseAction from "./add-update-expense-action"
-import DocViewer from "@/components/ui/doc-viewer"
 import { useContext } from "react"
 import { TravelDetailContext } from "@/contexts/TravelDetailContext"
 import { Home } from "lucide-react"
 import useAddExpenseMutation from "@/api/mutations/add-expense.mutation"
 import { Badge } from "@/components/ui/badge"
 import type { TTravelExpenseResponse } from "@/types/apiResponseTypes/TTravelExpenseResponse.type"
+import ViewExpenseProofAction from "./view-expense-proof-action"
 type TReducedExpense = {
     askedAmount: number
     approvedAmount: number
@@ -70,7 +70,8 @@ const ExpenseTab = () => {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="flex gap-2">
-                                        <DocViewer url={`/api/resource/expenses/${expense.reciept}`} />
+                                        {/* <DocViewer url={`/api/resource/expenses/${expense.reciept}`} /> */}
+                                        <ViewExpenseProofAction expenseId={expense.id} proofs={expense.proofs}/>
 
                                         <AddUpdateExpenseAction title="update" icon={Home} travelId={travelId}
                                             expense={{

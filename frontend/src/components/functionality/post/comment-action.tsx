@@ -45,7 +45,7 @@ const CommentAction = ({postId, value, mutation}:TCommentActionProps) => {
     },[commentMutation.isSuccess,commentMutation.isPending])
     return(
         <Dialog open={isOpen} onOpenChange={() => { setIsOpen(!isOpen) }}>
-            <DialogTrigger>
+            <DialogTrigger className="my-1">
                 {
                     value?.id ? <Edit/>:<MessageCircle/>
                 }

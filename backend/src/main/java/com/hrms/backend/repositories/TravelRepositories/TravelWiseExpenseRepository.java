@@ -13,4 +13,5 @@ public interface TravelWiseExpenseRepository extends JpaRepository<TravelWiseExp
     List<TravelWiseExpense> findAllByEmployee_IdAndTravel_Id(Long employeeId, Long travelId);
     @Query(value = "select SUM(twe.askedAmount) from TravelWiseExpense twe join twe.employee emp join twe.travel travel where emp.id=:employeeId and travel.id = :travelId and twe.dateOfExpense =:dateOfExpense")
     Optional<Integer> getTotalExpenseByEmployeeByTravelByDate(Long employeeId, Long travelId, LocalDate dateOfExpense);
+    Optional<TravelWiseExpense> getByIdAndEmployee_IdAndProofs_Id(Long expenseId, Long employeeId, Long expenseDocumentId);
 }

@@ -10,6 +10,7 @@ import type { TTravelExpenseQueryParams } from "@/types/apiRequestTypes/TTravelE
 import type { TReviewExpenseRequest } from "@/types/apiRequestTypes/TReviewExpenesRequest.type";
 import type { TAddEmployeeToTravelRequest } from "@/types/apiRequestTypes/TAddEmployeeToTravelRequest.type";
 import type { TCategory } from "@/types/apiResponseTypes/TCategory.type";
+import type { TDeleteExpenseProofRequest } from "@/types/apiRequestTypes/TDeleteExpenseProofRequest";
 
 export const createTravel = (payload: TCreateTravelRequest) => {
     return api.post<TGlobalResponse<any>>("/api/travels", payload)
@@ -18,7 +19,7 @@ export const updateTravel = (payload: TCreateTravelRequest) => {
     return api.patch<TGlobalResponse<any>>("/api/travels", payload)
 }
 export const fetchTravels = (getAsa: string) => {
-     return api.get<TGlobalResponse<TTravelMinDetail[]>>(`/api/travels/list/${getAsa}`)
+    return api.get<TGlobalResponse<TTravelMinDetail[]>>(`/api/travels/list/${getAsa}`)
 }
 // export const fetchAssignedTravels = () => {
 //     return api.get<TGlobalResponse<TTravelMinDetail>>("/api/travels/assigned-travels")
@@ -49,7 +50,7 @@ export const uploadTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
 export const updateTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
     const formData = new FormData()
     formData.append("documentDetails", new Blob([JSON.stringify(payload.documentDetails)], { type: "application/json" }))
-     if(payload.file){
+    if (payload.file) {
         formData.append("file", payload.file)
     }
 
@@ -63,7 +64,7 @@ export const updateTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
 
 export const uploadEmployeeTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
     const formData = new FormData()
-    
+
     formData.append("documentDetails", new Blob([JSON.stringify(payload.documentDetails)], { type: "application/json" }))
     formData.append("file", payload.file!)
 
@@ -74,10 +75,10 @@ export const uploadEmployeeTraveldocumnet = (payload: TUploadTravelDocumnetReque
     })
 }
 export const updateEmployeeTraveldocumnet = (payload: TUploadTravelDocumnetRequest) => {
-    
+
     const formData = new FormData()
     formData.append("documentDetails", new Blob([JSON.stringify(payload.documentDetails)], { type: "application/json" }))
-    if(payload.file){
+    if (payload.file) {
         formData.append("file", payload.file)
     }
 
@@ -91,7 +92,10 @@ export const updateEmployeeTraveldocumnet = (payload: TUploadTravelDocumnetReque
 export const addExpense = (payload: TAddUpdateExpense & { travelId: string | number }) => {
     const formData = new FormData()
     formData.append("expenseDetails", new Blob([JSON.stringify(payload.expenseDetails)], { type: "application/json" }))
-    formData.append("file", payload.file!)
+
+    for (let i = 0; i < payload.file?.length!; i++) {
+        formData.append("files", payload.file?.item(i)!)
+    }
 
     return api.post(`/api/travels/${payload.travelId}/expenses`, formData, {
         headers: {
@@ -102,7 +106,11 @@ export const addExpense = (payload: TAddUpdateExpense & { travelId: string | num
 export const updateExpense = (payload: TAddUpdateExpense & { travelId: string | number }) => {
     const formData = new FormData()
     formData.append("expenseDetails", new Blob([JSON.stringify(payload.expenseDetails)], { type: "application/json" }))
-    if (payload.file) { formData.append("file", payload.file??null) }
+    if (payload.file) {
+        for (let i = 0; i < payload.file?.length!; i++) {
+            formData.append("files", payload.file?.item(i)!)
+        }
+    }
 
     return api.put(`/api/travels/${payload.travelId}/expenses`, formData, {
         headers: {
@@ -111,19 +119,23 @@ export const updateExpense = (payload: TAddUpdateExpense & { travelId: string | 
     })
 }
 
-export const fetchExpenseAsHR = ({travelId,category,dateFrom,dateTo,employeeId}:TTravelExpenseQueryParams) => {
-    var queryString = "".concat(category?`category=${category}&`:"").concat(employeeId?`employeeId=${employeeId}&`:"").concat(dateFrom?`dateFrom=${dateFrom}&`:"").concat(dateTo?`dateTo=${dateTo}&`:"")
+export const fetchExpenseAsHR = ({ travelId, category, dateFrom, dateTo, employeeId }: TTravelExpenseQueryParams) => {
+    var queryString = "".concat(category ? `category=${category}&` : "").concat(employeeId ? `employeeId=${employeeId}&` : "").concat(dateFrom ? `dateFrom=${dateFrom}&` : "").concat(dateTo ? `dateTo=${dateTo}&` : "")
     return api.get<TGlobalResponse<TTravelExpenseResponse[]>>(`/api/travels/${travelId}/expenses?${queryString}`)
 }
 
-export const reviewExpense = (payload:TReviewExpenseRequest) => {
-    return api.patch<TGlobalResponse<any>>("/api/travels/expenses",payload)
+export const reviewExpense = (payload: TReviewExpenseRequest) => {
+    return api.patch<TGlobalResponse<any>>("/api/travels/expenses", payload)
 }
 
-export const addEmployeeToTravel = ({travelId,employeeIds}: TAddEmployeeToTravelRequest) => {
-    return api.patch(`/api/travels/${travelId}/add-employees`,{employeeIds})
+export const addEmployeeToTravel = ({ travelId, employeeIds }: TAddEmployeeToTravelRequest) => {
+    return api.patch(`/api/travels/${travelId}/add-employees`, { employeeIds })
 }
 
 export const fetchTraveExpensecategories = () => {
     return api.get<TGlobalResponse<TCategory[]>>("/api/travels/expenses/categories")
+}
+
+export const deleteExpenseDocument = (payload:TDeleteExpenseProofRequest) => {
+    return api.delete<TGlobalResponse<boolean>>(`/api/travels/expenses/${payload.expenseId}/proofs/${payload.documentId}`)
 }

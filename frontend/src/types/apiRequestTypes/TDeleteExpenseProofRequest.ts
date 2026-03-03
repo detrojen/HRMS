@@ -1,0 +1,1 @@
+export type TDeleteExpenseProofRequest = { expenseId: number, documentId: number }

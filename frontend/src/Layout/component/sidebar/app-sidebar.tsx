@@ -6,7 +6,7 @@ import {
   Command,
   Computer, GalleryVerticalEnd,
   Gamepad2,
-  HomeIcon, Plane
+  HomeIcon, Image, Plane
 } from "lucide-react"
 
 import { NavMain } from "@/Layout/component/sidebar/nav-main"
@@ -133,6 +133,7 @@ const data = {
     {
       title: "post",
       url: "/posts",
+      icon: Image,
       items: [
         {
           title: "post",

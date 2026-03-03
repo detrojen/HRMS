@@ -24,7 +24,7 @@ const Header = () => {
     }, [isSuccess])
     const handleRead = (notificationId: number) => {
         readNotification(notificationId).then(res => {
-            if (res.data.data.status == "OK") {
+            if (res.data.status == "OK") {
                 setNotifications(notifications.filter(notification => notification.id != notificationId))
             }
         })

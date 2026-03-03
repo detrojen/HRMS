@@ -9,17 +9,20 @@ import com.hrms.backend.dtos.responseDtos.travel.TravelExpenseResponseDto;
 import com.hrms.backend.emailTemplates.TravelAndExpenseEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.ExpenseCategory;
+import com.hrms.backend.entities.TravelEntities.ExpenseWiseDocument;
 import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.entities.TravelEntities.TravelWiseExpense;
 import com.hrms.backend.enums.TravelExpenseStatus;
 import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.TravelRepositories.ExpenseCategoryRepository;
+import com.hrms.backend.repositories.TravelRepositories.ExpenseWiseDocumentRepository;
 import com.hrms.backend.repositories.TravelRepositories.TravelWiseExpenseRepository;
 import com.hrms.backend.services.EmailServices.EmailService;
 import com.hrms.backend.services.EmployeeServices.EmployeeService;
 import com.hrms.backend.services.NotificationServices.NotificationService;
 import com.hrms.backend.specs.TravelExpenseSpecs;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,6 +30,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -35,6 +39,7 @@ import java.util.List;
 public class TravelWiseExpenseService {
     private final TravelWiseExpenseRepository travelWiseExpenseRepository;
     private final ExpenseCategoryRepository expenseCategoryRepository;
+    private final ExpenseWiseDocumentRepository expenseWiseDocumentRepository;
     private final ModelMapper modelMapper;
     private final EmployeeService employeeService;
     private final EmailService emailService;
@@ -49,6 +54,7 @@ public class TravelWiseExpenseService {
             ,NotificationService notificationService
             ,EmailService emailService
             ,TravelWiseEmployeeDetailService travelWiseEmployeeDetailService
+            ,ExpenseWiseDocumentRepository expenseWiseDocumentRepository
     ){
         this.expenseCategoryRepository = expenseCategoryRepository;
         this.travelWiseExpenseRepository = travelWiseExpenseRepository;
@@ -57,9 +63,10 @@ public class TravelWiseExpenseService {
         this.notificationService = notificationService;
         this.emailService = emailService;
         this.travelWiseEmployeeDetailService = travelWiseEmployeeDetailService;
+        this.expenseWiseDocumentRepository = expenseWiseDocumentRepository;
     }
 
-    public TravelExpenseResponseDto createTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String recieptPath){
+    public TravelExpenseResponseDto createTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String[] proofs){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(travel.getLastDateToSubmitExpense().isBefore(LocalDate.now())){
             throw new InvalidActionException("you can not submit new expenses");
@@ -84,20 +91,23 @@ public class TravelWiseExpenseService {
         TravelWiseExpense travelWiseExpense = modelMapper.map(requestDto,TravelWiseExpense.class);
         travelWiseExpense.setTravel(travel);
         travelWiseExpense.setEmployee(employee);
-        travelWiseExpense.setReciept(recieptPath);
+        travelWiseExpense.setReciept("");
         travelWiseExpense.setStatus(TravelExpenseStatus.PENDING.toString());
         ExpenseCategory category = expenseCategoryRepository.getReferenceById(requestDto.getCategoryId());
         travelWiseExpense.setCategory(category);
         travelWiseExpense = travelWiseExpenseRepository.save(travelWiseExpense);
         travelWiseEmployeeDetailService.addAskedAmount(travel.getId(), requestDto.getAskedAmount());
-
+        TravelWiseExpense finalTravelWiseExpense = travelWiseExpense;
+        List<ExpenseWiseDocument> expenseWiseDocuments = Arrays.stream(proofs).map(proof->new ExpenseWiseDocument(proof, finalTravelWiseExpense)).toList();
+        expenseWiseDocuments = expenseWiseDocumentRepository.saveAll(expenseWiseDocuments);
+        travelWiseExpense.setProofs(expenseWiseDocuments);
         return modelMapper.map(travelWiseExpense, TravelExpenseResponseDto.class);
     }
 
-    public TravelExpenseResponseDto updateTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String recieptPath){
+    public TravelExpenseResponseDto updateTravelExpense(Travel travel, AddUpdateTravelExpenseRequestDto requestDto, String[] proofs){
         TravelWiseExpense travelWiseExpense = travelWiseExpenseRepository.findById(requestDto.getId()).orElseThrow(()->new ItemNotFoundExpection("expense not found"));
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(travelWiseExpense.getStatus().equals(TravelExpenseStatus.APPROVED.toString()) || travelWiseExpense.getStatus().equals(TravelExpenseStatus.REJECTED.toString())){
+        if(travelWiseExpense.getStatus().equals(TravelExpenseStatus.APPROVED.toString()) || travelWiseExpense.getStatus().equals(TravelExpenseStatus.REJECTED.toString())) {
             throw new InvalidActionException("you can not update expense once it reviewed");
         }
         int totalExpenseRequested = travelWiseExpenseRepository.getTotalExpenseByEmployeeByTravelByDate(jwtInfoDto.getUserId(), travel.getId(), requestDto.getDateOfExpense()).orElse(0)-travelWiseExpense.getAskedAmount();
@@ -110,15 +120,31 @@ public class TravelWiseExpenseService {
         int oldAskedAmount = travelWiseExpense.getAskedAmount();
         ExpenseCategory category = expenseCategoryRepository.getReferenceById(requestDto.getCategoryId());
         travelWiseExpense.setCategory(category);
-        travelWiseExpense.setReciept(recieptPath);
         travelWiseExpense.setAskedAmount(requestDto.getAskedAmount());
         travelWiseExpense.setDateOfExpense(requestDto.getDateOfExpense());
         travelWiseExpense.setDescription(requestDto.getDescription());
         travelWiseExpense = travelWiseExpenseRepository.save(travelWiseExpense);
         travelWiseEmployeeDetailService.updateAskedAmount(travel.getId(),oldAskedAmount, requestDto.getAskedAmount());
+        TravelWiseExpense finalTravelWiseExpense = travelWiseExpense;
+        List<ExpenseWiseDocument> expenseWiseDocuments = Arrays.stream(proofs).map(proof->new ExpenseWiseDocument(proof, finalTravelWiseExpense)).toList();
+        expenseWiseDocuments = expenseWiseDocumentRepository.saveAll(expenseWiseDocuments);
+        travelWiseExpense.setProofs(expenseWiseDocuments);
         return modelMapper.map(travelWiseExpense, TravelExpenseResponseDto.class);
     }
 
+    public boolean deleteExpenseProofById(Long travelExpenseId, Long expenseDocumentId){
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        TravelWiseExpense expense = travelWiseExpenseRepository.getByIdAndEmployee_IdAndProofs_Id(travelExpenseId, jwtInfoDto.getUserId(), expenseDocumentId).orElseThrow(()->new InvalidActionException("You can not delete this record"));
+        if(expense.getTravel().getLastDateToSubmitExpense().isBefore(LocalDate.now())){
+            throw new InvalidActionException("you can not delete or update proof");
+        }else if (expense.getProofs().size() == 1) {
+            throw new InvalidActionException("Each expense needs at least one proof for review . you can not delete");
+        }
+        expenseWiseDocumentRepository.deleteById(expenseDocumentId);
+        return true;
+    }
+
+    @Transactional
     public List<TravelExpenseResponseDto> getExpenses(Long travelId){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<TravelWiseExpense> expenses = travelWiseExpenseRepository.findAllByEmployee_IdAndTravel_Id(jwtInfoDto.getUserId(),travelId);

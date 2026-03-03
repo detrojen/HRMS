@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {  updateExpense } from "../services/travel.service";
+import {   updateExpense } from "../services/travel.service";
 import type { TAddUpdateExpense } from "@/types/apiRequestTypes/TAddUpdateExpense.type";
 
 const useUpdateExpenseMutation = () => {

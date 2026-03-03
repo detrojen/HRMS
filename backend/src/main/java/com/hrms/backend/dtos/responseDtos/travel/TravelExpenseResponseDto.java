@@ -4,6 +4,7 @@ import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class TravelExpenseResponseDto {
@@ -18,4 +19,6 @@ public class TravelExpenseResponseDto {
     private int aprrovedAmount;
     private String remark;
     private String status;
+
+    private List<ExpenseDocumentResponseDto> proofs;
 }

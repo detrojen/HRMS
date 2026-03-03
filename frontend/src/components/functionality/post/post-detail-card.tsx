@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import type { TPostWisthCommentsAndLikeResponse } from "@/types/apiResponseTypes/TPostWisthCommentsAndLikeResponse.type"
 import EmployeeMinDetailCard from "../employee-min-detail-card"
 import { Separator } from "@/components/ui/separator"
-import {  Edit, Heart, Trash } from "lucide-react"
+import { Edit, Heart, Trash } from "lucide-react"
 import CommentAction from "./comment-action"
 import CommentCard from "./comment-card"
 import { useContext, useEffect, useState } from "react"
@@ -14,6 +14,7 @@ import usePostLikeUnlikeMutation from "@/api/mutations/post-like-unlike.mutation
 import useDeletePostMutation from "@/api/mutations/delete-post.mutation"
 import useCommentMutation from "@/api/mutations/comment-mutation"
 import { Link } from "react-router-dom"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 const PostDetailCard = ({ post }: { post: TPostWisthCommentsAndLikeResponse }) => {
     const { user } = useContext(AuthContext);
@@ -21,7 +22,7 @@ const PostDetailCard = ({ post }: { post: TPostWisthCommentsAndLikeResponse }) =
     const deletePostMutation = useDeletePostMutation()
     const [isLiked, setIsLiked] = useState<boolean>(false);
     useEffect(() => {
-        
+
         if (postLikeUnlikeMutation.isSuccess && postLikeUnlikeMutation.data.data.status === "OK") {
             setIsLiked(!isLiked)
         }
@@ -35,10 +36,26 @@ const PostDetailCard = ({ post }: { post: TPostWisthCommentsAndLikeResponse }) =
                 </div>
                 <div>
                     <div className="flex gap-1">
-                        
+
                         {post.createdBy && user.id === post.createdBy.id && <>
-                        <Link to={"/posts/update/"+post.id}><Edit /></Link>
-                            <Trash onClick={() => { deletePostMutation.mutate(post.id) }} />
+                            <Tooltip>
+                                <TooltipTrigger>
+                                    <Link to={"/posts/update/" + post.id}>
+                                        <Edit />
+                                    </Link>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Update post</p>
+                                </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                                <TooltipTrigger>
+                                    <Trash onClick={() => { deletePostMutation.mutate(post.id) }} />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Delete post</p>
+                                </TooltipContent>
+                            </Tooltip>
                         </>}
                         {user.role === "HR" && <DeleteUnappropriateContentAction contentId={post.id} deleteMutation={useDeleteUnappropriatePostMutation} />}
 
@@ -63,7 +80,7 @@ const PostDetailCard = ({ post }: { post: TPostWisthCommentsAndLikeResponse }) =
                         <div>Liked by...</div>
                     </div>
                     <div>
-                        <div className="flex gap-1"><CommentAction mutation={useCommentMutation} postId={post.id}/> {post.commentCount}</div>
+                        <div className="flex gap-1"><CommentAction mutation={useCommentMutation} postId={post.id} /> {post.commentCount}</div>
                     </div>
 
                 </div>

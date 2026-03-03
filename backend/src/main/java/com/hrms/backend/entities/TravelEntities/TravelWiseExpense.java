@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -27,14 +28,16 @@ public class TravelWiseExpense {
     private String reciept;
     private LocalDate dateOfExpense;
     private String status;
-    @ManyToOne
-    @JoinColumn()
+    @ManyToOne(fetch = FetchType.LAZY)
     private Employee employee;
-    @ManyToOne
-    @JoinColumn()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
     private Employee reviewedBy;
-    @ManyToOne
-    @JoinColumn()
+
+    @OneToMany(mappedBy = "expense")
+    private List<ExpenseWiseDocument> proofs;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Travel travel;
     @CreatedDate
     private Date createdAt;

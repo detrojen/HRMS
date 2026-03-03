@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import DocViewer from "@/components/ui/doc-viewer"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import ExpenseFilter from "./expense-filter"
 import { TravelDetailContext } from "@/contexts/TravelDetailContext"
@@ -8,6 +7,7 @@ import { useContext } from "react"
 import { useFetchExpenseAsHR } from "@/api/queries/travel.queries"
 import ReviewExpenseAction from "./review-expense-action"
 import { Badge } from "@/components/ui/badge"
+import ViewExpenseProofAction from "./view-expense-proof-action"
 
 
 const HrExpenseListView = () => {
@@ -65,7 +65,7 @@ const HrExpenseListView = () => {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <DocViewer url={`/api/resource/expenses/${expense.reciept}`} />
+                                        <ViewExpenseProofAction proofs={expense.proofs}/>
                                         <ReviewExpenseAction {...expense} />
 
                                     </TableCell>

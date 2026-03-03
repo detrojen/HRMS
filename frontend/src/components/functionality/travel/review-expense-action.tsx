@@ -1,7 +1,6 @@
 import useReviewExpenseMutation from "@/api/mutations/review-expense.mutation";
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import DocViewer from "@/components/ui/doc-viewer";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,9 +10,11 @@ import { FileSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useOutletContext } from "react-router-dom";
+import ViewExpenseProofAction from "./view-expense-proof-action";
+import type { TExpenseDocument } from "@/types/apiResponseTypes/TExpenseDocument.type";
 
 type TReviewExpenseActionProps = {
-    reciept: string,
+    proofs:TExpenseDocument[]
     id: number,
     askedAmount : number,
     remark: string,
@@ -47,7 +48,7 @@ const ReviewExpenseAction = (props:TReviewExpenseActionProps) => {
 
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Upload travel documnet</DialogTitle>
+                    <DialogTitle>Review expense</DialogTitle>
                 </DialogHeader>
                 <p>Asked amount:- {props.askedAmount}</p>
                 <Controller
@@ -72,7 +73,7 @@ const ReviewExpenseAction = (props:TReviewExpenseActionProps) => {
                         </Field>
                     )}
                 />
-                <DocViewer url={`/api/resource/expenses/${props.reciept}`} />
+                <ViewExpenseProofAction proofs={props.proofs} />
                 <Button className="mt-2" onClick={()=>handleSubmit()}>Save</Button>
 
             </DialogContent>

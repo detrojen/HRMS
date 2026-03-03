@@ -66,11 +66,11 @@ export function NavMain({
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
-                    ) : <></>)}
+                    ) : <span key={subItem.title}></span>)}
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </SidebarMenuItem>
-            </Collapsible> : <> <SidebarMenuButton tooltip={item.title}>
+            </Collapsible> : <> <SidebarMenuButton key={item.url} tooltip={item.title}>
               {item.icon && <item.icon />}
               <span><Link to={item.url}>{item.title}</Link></span>
             </SidebarMenuButton> </>

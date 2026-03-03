@@ -16,8 +16,6 @@ public class AddUpdateTravelExpenseRequestDto {
     private Long categoryId;
     @NotNull
     private int askedAmount;
-    @NotBlank(message = "reciept should be provided in update request",groups = {OnUpdate.class})
-    private String reciept;
     @NotNull
     private LocalDate dateOfExpense;
 }

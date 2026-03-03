@@ -1,5 +1,6 @@
 import type { TEmployeeWithNameOnly } from "../TEmployeeWithNameOnly.type"
 import type { TCategory } from "./TCategory.type"
+import type { TExpenseDocument } from "./TExpenseDocument.type"
 
 export type TTravelExpenseResponse = {
     id:  number
@@ -13,4 +14,5 @@ export type TTravelExpenseResponse = {
     aprrovedAmount: number
     remark: string
     status: "approved" | "pending" | "rejected"
+    proofs: TExpenseDocument[]
 }

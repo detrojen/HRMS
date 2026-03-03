@@ -19,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,21 +106,21 @@ public class TravelController {
     }
 
     @PostMapping("/travels/{travelId}/expenses")
-    public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> addExpense(@PathVariable Long travelId, @RequestPart(value = "expenseDetails") @Valid AddUpdateTravelExpenseRequestDto expenseDetails, @RequestPart(value = "file") @NotNull(message = "Proof must be required") MultipartFile file){
-        String filePath = FileUtility.Save(file,travelExpenseDir);
-        TravelExpenseResponseDto responseDto = travelService.addExpense(travelId,expenseDetails,filePath);
+    public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> addExpense(@PathVariable Long travelId, @RequestPart(value = "expenseDetails") @Valid AddUpdateTravelExpenseRequestDto expenseDetails, @RequestPart(value = "files") @NotNull(message = "Proof must be required") MultipartFile[] files){
+        String[] proofs = Arrays.stream(files).map(file->FileUtility.Save(file,travelExpenseDir)).toList().toArray(new String[]{});
+        TravelExpenseResponseDto responseDto = travelService.addExpense(travelId,expenseDetails,proofs);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto)
         );
     }
 
     @PutMapping("/travels/{travelId}/expenses")
-    public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> updateExpense(@PathVariable Long travelId, @RequestPart(value = "expenseDetails") @Validated(OnUpdate.class) AddUpdateTravelExpenseRequestDto expenseDetails, @RequestPart(value = "file") Optional<MultipartFile> file){
-        String filePath = expenseDetails.getReciept();
-        if(file.isPresent()){
-            filePath = FileUtility.Save( file.get(),travelExpenseDir);
+    public ResponseEntity<GlobalResponseDto<TravelExpenseResponseDto>> updateExpense(@PathVariable Long travelId, @RequestPart(value = "expenseDetails") @Validated(OnUpdate.class) AddUpdateTravelExpenseRequestDto expenseDetails, @RequestPart(value = "files") Optional<MultipartFile[]> files){
+        String[] proofs = new String[]{};
+        if(files.isPresent()){
+            proofs = Arrays.stream(files.get()).map(file->FileUtility.Save(file,travelExpenseDir)).toList().toArray(new String[]{});
         }
-        TravelExpenseResponseDto responseDto = travelService.updateExpense(travelId,expenseDetails,filePath);
+        TravelExpenseResponseDto responseDto = travelService.updateExpense(travelId,expenseDetails,proofs);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto)
         );
@@ -169,5 +170,11 @@ public class TravelController {
                         expenseCategoryService.getExpenseCategories()
                 )
         );
+    }
+
+    @DeleteMapping("/travels/expenses/{expenseId}/proofs/{documentId}")
+    public ResponseEntity<GlobalResponseDto<Boolean>> deleteExpenseProof(@PathVariable Long expenseId,@PathVariable Long documentId){
+        expenseService.deleteExpenseProofById(expenseId, documentId);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(true));
     }
 }

@@ -53,7 +53,7 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense }: TAddUpdateExpen
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>, field: ControllerRenderProps<TAddUpdateExpense, "file">) => {
         if (e.target.files != null && e.target.files.length > 0) {
-            form.setValue(field.name!, e.target.files[0]);
+            form.setValue(field.name!, e.target.files);
         }
     }
     const handleSubmit = form.handleSubmit((values) => {
@@ -64,7 +64,7 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense }: TAddUpdateExpen
         <Dialog open={isOpen} onOpenChange={() => { setIsOpen(!isOpen) }}>
             <DialogTrigger className="flex gap-0.5">{expense != undefined ? <Edit /> : <PlusCircle />}</DialogTrigger>
 
-            <DialogContent>
+            <DialogContent className="overflow-y-scroll h-7/8">
                 <DialogHeader>
                     <DialogTitle>Expense</DialogTitle>
                 </DialogHeader>
@@ -136,11 +136,13 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense }: TAddUpdateExpen
                             <FieldLabel>File</FieldLabel>
                             <Input type="file" onChange={(e) => {
                                 handleFileChange(e, field)
-                            }} />
+                            }} multiple/>
                             <FieldError>{fieldState?.error?.message}</FieldError>
                         </Field>
                     )}
                 />
+                {form.getValues("file")===undefined?"Yes":"no"}
+                {JSON.stringify(form.formState.errors)}
                 <Button className="mt-2" onClick={() => handleSubmit()}>Save</Button>
 
             </DialogContent>

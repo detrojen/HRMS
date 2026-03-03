@@ -246,7 +246,7 @@ public class TravelService {
         );
         return  documentResponseDto;
     }
-
+    @Transactional
     public TravelDetailResponseDto getTravelDetail(Long travelId){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(!travelRepository.existsByIdAndTravelWiseEmployees_Employee_Manager_IdOrTravelWiseEmployees_Employee_Id(travelId, jwtInfoDto.getUserId(),jwtInfoDto.getUserId())){
@@ -285,7 +285,7 @@ public class TravelService {
 
 
     @Transactional
-    public TravelExpenseResponseDto addExpense(Long travelId, AddUpdateTravelExpenseRequestDto requestDto, String filePath){
+    public TravelExpenseResponseDto addExpense(Long travelId, AddUpdateTravelExpenseRequestDto requestDto, String[] proofs){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
         if(travel.getLastDateToSubmitExpense().isBefore(LocalDate.now())){
             throw new InvalidActionException("Can not submit or update expense now");
@@ -293,7 +293,7 @@ public class TravelService {
         if(travel.getEndDate().isBefore(requestDto.getDateOfExpense())){
             throw new InvalidActionException("invalid date of expense now");
         }
-        TravelExpenseResponseDto expense = travelWiseExpenseService.createTravelExpense(travel,requestDto,filePath);
+        TravelExpenseResponseDto expense = travelWiseExpenseService.createTravelExpense(travel,requestDto,proofs);
         List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
         emailService.sendMail(
                 "Expense requested for reimbursement"
@@ -311,7 +311,7 @@ public class TravelService {
         return expense;
     }
 
-    public TravelExpenseResponseDto updateExpense(Long travelId, AddUpdateTravelExpenseRequestDto requestDto, String filePath){
+    public TravelExpenseResponseDto updateExpense(Long travelId, AddUpdateTravelExpenseRequestDto requestDto, String[] proofs){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
         if(travel.getLastDateToSubmitExpense().isBefore(LocalDate.now())){
             throw new InvalidActionException("Can not submit or update expense now");
@@ -319,7 +319,7 @@ public class TravelService {
         if(travel.getEndDate().isBefore(requestDto.getDateOfExpense())){
             throw new InvalidActionException("invalid date of expense now");
         }
-        TravelExpenseResponseDto expense = travelWiseExpenseService.updateTravelExpense(travel,requestDto,filePath);
+        TravelExpenseResponseDto expense = travelWiseExpenseService.updateTravelExpense(travel,requestDto,proofs);
         List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
         emailService.sendMail(
                 "Expense request updated:- "
