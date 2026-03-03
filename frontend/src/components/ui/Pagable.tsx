@@ -1,7 +1,7 @@
 import type { TPageableProps } from "@/types/propsTypes/TPageableProps.type"
 import { Button } from "./button"
 import { useSearchParams } from "react-router-dom"
-import { useState, type HtmlHTMLAttributes } from "react"
+import {  type HtmlHTMLAttributes } from "react"
 import { Input } from "./input"
 
 function Pageable<T>({data,render,className}:TPageableProps<T>&HtmlHTMLAttributes<HTMLDivElement>){

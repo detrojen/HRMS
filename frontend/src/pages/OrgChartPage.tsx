@@ -1,9 +1,10 @@
 import { useFetchOrgChart, useGetchEmployeesByNameLike } from "@/api/queries/employee.queries"
-import EmployeeMinDetailCard from "@/components/functionality/employee-min-detail-card"
+import EmployeeMinDetailCard, { EmployeeMinDetailSkeletonCard } from "@/components/functionality/employee-min-detail-card"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader } from "@/components/ui/card"
 import Searchable from "@/components/ui/searchable"
 import { Separator } from "@/components/ui/separator"
+import SkeletonList from "@/components/ui/SkeletonList"
 import { AuthContext } from "@/contexts/AuthContextProvider"
 import { ArrowDown } from "lucide-react"
 import { useContext, useState } from "react"
@@ -51,25 +52,34 @@ const OrgChartPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const orgChartQuery = useFetchOrgChart(searchParams.get("employeeId"))
     const [nameQuery, setNameQuery] = useState("")
-    const { data:employeeSearchQueryData } = useGetchEmployeesByNameLike(nameQuery);
-    const orgChartData = orgChartQuery.data?.data.data    
+    const { data: employeeSearchQueryData } = useGetchEmployeesByNameLike(nameQuery);
+    const orgChartData = orgChartQuery.data?.data.data
+    if (orgChartQuery.isLoading) {
+        return <div className="flex flex-col w-1/2 mx-auto gap-2 p-2 justify-center content-cente">
+
+            <EmployeeMinDetailSkeletonCard />
+            <EmployeeMinDetailSkeletonCard />
+            <Separator />
+            <SkeletonList className="grid grid-cols-2 gap-2"  items={5} render={()=><div className="overflow-hidden"><EmployeeMinDetailSkeletonCard/></div>} />
+        </div>
+    }
     return <>
         <div className="flex flex-col w-1/1">
-            <Searchable 
-                data={employeeSearchQueryData?.data.data??[]}
+            <Searchable
+                data={employeeSearchQueryData?.data.data ?? []}
                 setQuery={setNameQuery}
-                render={(item)=><h1>{item.firstName} {item.lastName}</h1>}
-                onSelectItem={(item)=>{
+                render={(item) => <h1>{item.firstName} {item.lastName}</h1>}
+                onSelectItem={(item) => {
                     setNameQuery("")
-                    setSearchParams({ "employeeId": item.id.toString()})
+                    setSearchParams({ "employeeId": item.id.toString() })
                 }}
             >
                 <Button>
                     Serach Employee
                 </Button>
             </Searchable>
-            
-           
+
+
             {orgChartQuery.data || !orgChartQuery.isLoading ?
                 <div className="flex flex-col w-1/2 mx-auto gap-2 p-2 justify-center content-center">
                     <RecursiveComp emp={orgChartData} />
