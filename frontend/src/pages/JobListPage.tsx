@@ -10,11 +10,11 @@ const JobListPage = () => {
     const [searchParams] = useSearchParams()
     const { data,isLoading } = useFetchJobs(Number(searchParams.get("page")), Number(searchParams.get("limit")))
     const jobs = data?.data.data
-    // if(isLoading && true){
-    // }
+    if(isLoading){
+        <SkeletonList className="flex flex-col gap-2 px-2" items={5} render={()=><JonInfoSkeletonCard />}/>
+    }
     return (
         <Card className="w-1/1 " >
-             <SkeletonList className="flex flex-col gap-2 px-2" items={5} render={()=><JonInfoSkeletonCard />}/>
             {jobs && <Pageable className="flex flex-col gap-2 px-2" data={jobs} render={(job)=><JobInfoCard key={job.id} job={job}/>}/>}
         </Card>
     )

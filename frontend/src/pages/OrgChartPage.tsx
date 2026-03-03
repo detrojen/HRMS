@@ -1,5 +1,5 @@
 import { useFetchOrgChart, useGetchEmployeesByNameLike } from "@/api/queries/employee.queries"
-import EmployeeMinDetailCard, { EmployeeMinDetailSkeletonCard } from "@/components/functionality/employee-min-detail-card"
+import EmployeeMinDetailCard from "@/components/functionality/employee-min-detail-card"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader } from "@/components/ui/card"
 import Searchable from "@/components/ui/searchable"
@@ -9,6 +9,7 @@ import { AuthContext } from "@/contexts/AuthContextProvider"
 import { ArrowDown } from "lucide-react"
 import { useContext, useState } from "react"
 import { useSearchParams } from "react-router-dom"
+import EmployeeMinDetailSkeletonCard from "@/components/ui/skeleton-cards/employee-min-detail-skeleton-card"
 type TEmp = {
     oneLevelDown?: TEmp[],
     id: number,

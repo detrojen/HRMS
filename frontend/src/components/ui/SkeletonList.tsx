@@ -3,7 +3,7 @@ const SkeletonList = ({ items, render , className}: { items: number,render:()=>R
     return (
         <>
         <div className={className}>
-            {Array(items).fill(0).map((_,idx)=>render()
+            {Array(items).fill(0).map((_,idx)=><div key={idx}>{render()}</div>
         )}
         </div>
         
