@@ -10,9 +10,8 @@ export const expenseSchema = z.object({
     }),
     file: z.instanceof(FileList).optional()
 }).refine(data => {
-    debugger
-    return (data.expenseDetails.id == undefined && data.file != undefined)
+    return (data.expenseDetails.id!=undefined || data.expenseDetails.id == undefined && data.file != undefined)
 
 }, {
-    error:"At least one should be select to submit expense",path:["description"]
+    error:"At least one should be select to submit expense",path:["file"]
 })

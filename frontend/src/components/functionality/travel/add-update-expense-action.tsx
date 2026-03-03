@@ -141,8 +141,7 @@ const AddUpdateExpenseAction = ({ travelId, mutation, expense }: TAddUpdateExpen
                         </Field>
                     )}
                 />
-                {form.getValues("file")===undefined?"Yes":"no"}
-                {JSON.stringify(form.formState.errors)}
+                
                 <Button className="mt-2" onClick={() => handleSubmit()}>Save</Button>
 
             </DialogContent>

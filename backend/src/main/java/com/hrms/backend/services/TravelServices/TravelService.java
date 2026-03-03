@@ -293,6 +293,9 @@ public class TravelService {
         if(travel.getEndDate().isBefore(requestDto.getDateOfExpense())){
             throw new InvalidActionException("invalid date of expense now");
         }
+        if(proofs.length == 0){
+            throw new InvalidActionException("Attach minimum 1 proof with expense");
+        }
         TravelExpenseResponseDto expense = travelWiseExpenseService.createTravelExpense(travel,requestDto,proofs);
         List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
         emailService.sendMail(
