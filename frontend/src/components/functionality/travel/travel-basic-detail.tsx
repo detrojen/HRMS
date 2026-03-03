@@ -14,7 +14,7 @@ const TravelBasicDetail = () => {
         <Card>
             <CardHeader className="flex gap-3 justify-between">
                 <h1>{title}</h1>
-                <Link to={"/travels/update/" + id}><Edit /></Link>
+                {user.role === "HR" && <Link to={"/travels/update/" + id}><Edit /></Link>}
             </CardHeader>
             <CardContent>
                 <div className="flex flex-col gap-1 ">
