@@ -249,13 +249,16 @@ public class TravelService {
 
     public TravelDetailResponseDto getTravelDetail(Long travelId){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!travelRepository.existsByIdAndTravelWiseEmployees_Employee_Manager_IdOrTravelWiseEmployees_Employee_Id(travelId, jwtInfoDto.getUserId(),jwtInfoDto.getUserId())){
+            throw new InvalidActionException("You can not access this page");
+        }
         Travel travel = travelRepository.findById(travelId).orElseThrow(()->new ItemNotFoundExpection("travel detail not found"));
         TravelDetailResponseDto responseDto = modelMapper.map(travel, TravelDetailResponseDto.class);
 
         responseDto.setEmployees(travel.getTravelWiseEmployees().stream().map(travelWiseEmployee -> modelMapper.map(travelWiseEmployee.getEmployee(), EmployeeMinDetailsDto.class)).toList(),jwtInfoDto.getUserId());
-        List<TravelDocumentResponseDto> personalDocumnets = travelWiseEmployeeDocumentService.getPersonalDocumnets(travelId);
+        List<TravelDocumentResponseDto> personalDocuments = travelWiseEmployeeDocumentService.getPersonalDocumnets(travelId);
         List<TravelDocumentResponseDto> employeeDocuments = travelWiseEmployeeDocumentService.getEmployeesDocuments(travelId);
-        responseDto.setPersonalDocumnets(personalDocumnets);
+        responseDto.setPersonalDocumnets(personalDocuments);
         responseDto.setEmployeeDocuments(employeeDocuments);
         if(responseDto.isInEmployeeList()){
             responseDto.setExpensesMadeByMe(travelWiseExpenseService.getExpenses(travelId));

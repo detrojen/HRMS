@@ -1,5 +1,6 @@
 package com.hrms.backend.services.AuthServices;
 
+import com.hrms.backend.dtos.responseDtos.employee.SelfDetailResponseDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.exceptions.InvalidCredentialsException;
 import com.hrms.backend.repositories.EmployeeRepositories.EmployeeRepository;
@@ -25,15 +26,19 @@ public class AuthService {
         if(employee == null){
             throw new InvalidCredentialsException();
         }
-        log.info("{}has logged in.", employee.getFullName());
-        return jwtService.generateToken(employee.getId(),employee.getEmail(),employee.getRole().getRoleTitle(),employee.getFullName());
+        log.info("{} has logged in.", employee.getFullName());
+        return jwtService.generateToken(employee.getId(),employee.getEmail(),employee.getRole().get(0).getRoleTitle(),employee.getFullName());
     }
-    public String login(String email){
+    public String reLogin(String email,String role){
         Employee employee = employeeRepository.getEmployeeByEmail(email).orElse(null);
         if(employee == null){
             throw new InvalidCredentialsException();
         }
-        log.info("{} has been reauthenticate by refresh token");
-        return jwtService.generateToken(employee.getId(),employee.getEmail(),employee.getRole().getRoleTitle(),employee.getFullName());
+        log.info("{} has been reauthenticate by refresh token",employee.getFullName());
+        return jwtService.generateToken(employee.getId(),employee.getEmail(),role,employee.getFullName());
+    }
+
+    public String login(SelfDetailResponseDto dto){
+        return jwtService.generateToken(dto.getId(),dto.getEmail(),dto.getRole(),dto.getFirstName()+ " " + dto.getLastName());
     }
 }

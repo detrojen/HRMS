@@ -2,6 +2,7 @@ package com.hrms.backend.repositories.EmployeeRepositories;
 
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithManagerIdDto;
+import com.hrms.backend.dtos.responseDtos.employee.RoleResponseDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -19,5 +20,9 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>, JpaSpe
     @Query(value = "select new com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto(e.id,e.firstName,e.lastName,e.email,e.designation) from Employee e join e.role r where r.roleTitle = 'HR'", nativeQuery = false)
     List<EmployeeMinDetailsDto> getEmployeeWhoHr();
     Optional<Employee> getEmployeeByEmail(String email);
+
+    @Query(value = "select new com.hrms.backend.dtos.responseDtos.employee.RoleResponseDto(role.id,role.roleTitle) from Employee e join e.role role where e.id=:employeeId")
+    List<RoleResponseDto> getRolesOfEmployee(Long employeeId);
+    boolean existsByIdAndRole_Id(Long employeeId, Long roleId);
 
 }

@@ -46,8 +46,13 @@ public class EmployeeService {
     public SelfDetailResponseDto getSelfDetails(){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Employee employee = employeeRepository.findById(jwtInfoDto.getUserId()).orElseThrow(()->new ItemNotFoundExpection("user not found"));
-        SelfDetailResponseDto responseDto = modelMapper.map(employee,SelfDetailResponseDto.class);
-        responseDto.setRole(employee.getRole().getRoleTitle());
+        SelfDetailResponseDto responseDto = new SelfDetailResponseDto();//modelMapper.map(employee,SelfDetailResponseDto.class);
+        responseDto.setFirstName(employee.getFirstName());
+        responseDto.setLastName(employee.getLastName());
+        responseDto.setEmail(employee.getEmail());
+        responseDto.setId(employee.getId());
+        responseDto.setRole(jwtInfoDto.getRoleTitle());
+        responseDto.setRoles(employeeRepository.getRolesOfEmployee(jwtInfoDto.getUserId()));
         return responseDto;
     }
 
@@ -64,4 +69,24 @@ public class EmployeeService {
         return employeeRepository.getEmployeeWhoHr();
     }
 
+    public SelfDetailResponseDto switchRole(Long roleId){
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        employeeRepository.existsByIdAndRole_Id(jwtInfoDto.getUserId(),roleId);
+        Employee employee = employeeRepository.findById(jwtInfoDto.getUserId()).orElseThrow(()->new ItemNotFoundExpection("user not found"));
+        SelfDetailResponseDto responseDto = new SelfDetailResponseDto();//modelMapper.map(employee,SelfDetailResponseDto.class);
+        responseDto.setFirstName(employee.getFirstName());
+        responseDto.setLastName(employee.getLastName());
+        responseDto.setEmail(employee.getEmail());
+        responseDto.setId(employee.getId());
+        List<RoleResponseDto> roles = employeeRepository.getRolesOfEmployee(jwtInfoDto.getUserId());
+
+        for(RoleResponseDto role : roles){
+            if(role.getId().equals(roleId)){
+                responseDto.setRole(role.getRoleTitle());
+                break;
+            }
+        }
+        responseDto.setRoles(roles);
+        return responseDto;
+    }
 }

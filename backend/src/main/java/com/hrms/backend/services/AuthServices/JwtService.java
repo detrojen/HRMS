@@ -2,6 +2,7 @@ package com.hrms.backend.services.AuthServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -37,7 +38,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -82,6 +83,20 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
     }
+    public Claims extractAllClaimsForce(String token) {
+        try {
+
+            return Jwts.parser()
+                    .setSigningKey(SECRET)
+                    .parseClaimsJws(token)
+                    .getBody();
+
+        } catch (ExpiredJwtException e) {
+
+            return e.getClaims();
+        }
+    }
+
 
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());

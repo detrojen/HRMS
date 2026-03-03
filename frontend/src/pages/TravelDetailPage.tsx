@@ -1,4 +1,5 @@
 import { useFetchTravelById } from "@/api/queries/travel.queries"
+import RoleCheck from "@/components/functionality/role-check"
 import ExpenseTab from "@/components/functionality/travel/expense-tab"
 import HrExpenseListView from "@/components/functionality/travel/hr-expense-list-view"
 import TravelBasicDetail from "@/components/functionality/travel/travel-basic-detail"
@@ -31,7 +32,7 @@ const TravelDetailPage = () => {
                     <TabsTrigger value="travel-documnets" onClick={()=>handleTabUpdate("travel-documnets")}>Travel Documnet</TabsTrigger>
                     {travelDetail?.inEmployeeList ? <TabsTrigger value="personal-documnets" onClick={()=>handleTabUpdate("personal-documnets")}>Personal Documnet</TabsTrigger> : <></>}
                     { <TabsTrigger value="employee-documnets" onClick={()=>handleTabUpdate("employee-documnets")}>Employee Document</TabsTrigger>}
-                    {travelDetail?.inEmployeeList ? <TabsTrigger value="employee-expense" onClick={()=>handleTabUpdate("employee-expense")}>Expense</TabsTrigger> : <></>}
+                    {user.role!="HR" && travelDetail?.inEmployeeList ? <TabsTrigger value="employee-expense" onClick={()=>handleTabUpdate("employee-expense")}>Expense</TabsTrigger> : <></>}
                     {user.role === "HR" ? <TabsTrigger value="hr-expense" onClick={()=>handleTabUpdate("hr-expense")}>Expense</TabsTrigger> : <></>}
                 </TabsList>
                 <TabsContent value="basic-details">
@@ -50,7 +51,9 @@ const TravelDetailPage = () => {
                     {travelDetail?.inEmployeeList ? <ExpenseTab />: <Card  className="p-3">OOps..! you have not assigned this travel</Card>}
                 </TabsContent>
                 <TabsContent value="hr-expense">
-                    <HrExpenseListView />
+                    <RoleCheck roles={["HR"]}>
+                        <HrExpenseListView />
+                    </RoleCheck>
                 </TabsContent>
             </Tabs>
         </TravelDetailContext.Provider>}

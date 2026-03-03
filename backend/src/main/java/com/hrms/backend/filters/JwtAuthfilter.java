@@ -61,13 +61,14 @@ public class JwtAuthfilter extends OncePerRequestFilter{
             }catch (ExpiredJwtException e){
                 if(refreshToken!= null && !jwtService.isTokenExpired(refreshToken)){
                     email = jwtService.extractEmail(refreshToken);
-                    token = authService.login(email);
+                    token = authService.reLogin(email, jwtService.extractAllClaimsForce(token).get("roleTitle",String.class));
                     response.addHeader(HttpHeaders.AUTHORIZATION,token);
                 }else{
                     throw e;
                 }
 
-            }finally {
+            }
+            finally {
                 email = jwtService.extractEmail(token);
                 jwtInfo = jwtService.getJwtInfo(token);
             }

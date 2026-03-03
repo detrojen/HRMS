@@ -39,18 +39,19 @@ public class Employee {
     private Employee manager;
     private String designation;
 
-    @ManyToOne
-    @JoinColumn(name = "roleId")
-    private Role role;
+    @ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name = "EmployeeWiseRole")
+    @JsonIgnore
+    private List<Role> role;
     private String email;
     @JsonIgnore
     private String password;
 
-    @OneToMany(mappedBy = "createdBy")
+    @OneToMany(mappedBy = "createdBy",fetch=FetchType.LAZY)
     @JsonIgnore
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee",fetch=FetchType.LAZY)
     @JsonIgnore
     private List<EmployeeWiseGameInterest> interestedGames;
 
@@ -59,7 +60,7 @@ public class Employee {
     @LastModifiedDate
     private  Date updatedAt;
 
-    @OneToMany(mappedBy = "requestedBy")
+    @OneToMany(mappedBy = "requestedBy",fetch=FetchType.LAZY)
     @JsonIgnore
     private Collection<SlotRequest> requestedSlots;
 
@@ -67,61 +68,61 @@ public class Employee {
         return firstName + " " + lastName;
     }
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee",fetch=FetchType.LAZY)
     @JsonIgnore
     private Collection<SlotRequestWiseEmployee> slotRequestWiseEmployee;
 
-    @OneToMany(mappedBy = "reviewer")
+    @OneToMany(mappedBy = "reviewer",fetch=FetchType.LAZY)
     private Collection<JobWiseCvReviewer> jobsToReview;
 
-    @OneToMany(mappedBy = "referedBy")
+    @OneToMany(mappedBy = "referedBy",fetch=FetchType.LAZY)
     private Collection<JobApplication> referedJobApplication;
 
 
-    @OneToMany(mappedBy = "reviewedBy")
+    @OneToMany(mappedBy = "reviewedBy",fetch=FetchType.LAZY)
     private Collection<JobApplication> reviewedJobApplication;
 
-    @OneToMany(mappedBy = "hrOwner")
+    @OneToMany(mappedBy = "hrOwner",fetch=FetchType.LAZY)
     private Collection<Job> ownedJobs;
 
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee",fetch=FetchType.LAZY)
     @JsonIgnore
     private Collection<Notification> notifications;
 
-    @OneToMany(mappedBy = "initiatedBy")
+    @OneToMany(mappedBy = "initiatedBy",fetch=FetchType.LAZY)
     @JsonIgnore
     private Collection<Travel> initatedTravels;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee",fetch=FetchType.LAZY)
     @JsonIgnore
     private Collection<TravelWiseEmployee> travelDetails;
 
-    @OneToMany(mappedBy = "reviewedBy")
+    @OneToMany(mappedBy = "reviewedBy",fetch=FetchType.LAZY)
     @JsonIgnore
     private Collection<TravelWiseExpense> aprrovedExpenses;
 
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee",fetch=FetchType.LAZY)
     @JsonIgnore
     private Collection<TravelWiseExpense> travelExpenses;
 
-    @OneToMany(mappedBy = "uploadedBy")
+    @OneToMany(mappedBy = "uploadedBy",fetch=FetchType.LAZY)
     @JsonIgnore
     private Collection<TravelDocument> travelDocuments;
 
-    @OneToMany(mappedBy = "uploadedBy")
+    @OneToMany(mappedBy = "uploadedBy",fetch=FetchType.LAZY)
     @JsonIgnore
     private Collection<TravelWiseEmployeeWiseDocument> travelWisePesonalDocuments;
 
-    @OneToMany(mappedBy = "likedBy")
+    @OneToMany(mappedBy = "likedBy",fetch=FetchType.LAZY)
     @JsonIgnore
     private Collection<PostLike> likedPosts;
 
-    @OneToMany(mappedBy = "commentedBy")
+    @OneToMany(mappedBy = "commentedBy",fetch=FetchType.LAZY)
     private Collection<PostComment> comments;
 
-    @OneToMany(mappedBy = "DeletedBy")
+    @OneToMany(mappedBy = "DeletedBy",fetch=FetchType.LAZY)
     private Collection<PostComment> deletedComments;
 
 }
