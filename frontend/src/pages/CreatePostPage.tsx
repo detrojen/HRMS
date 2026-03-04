@@ -36,6 +36,7 @@ const CreatePostPage = () => {
             form.setValue("postDetails.id",postQuery?.data.data.data.id)
             form.setValue("postDetails.body",postQuery?.data.data.data.body)
             form.setValue("postDetails.title",postQuery?.data.data.data.title)
+            form.setValue("postDetails.attachmentPath",postQuery?.data.data.data.attachmentPath)
             form.setValue("postDetails.tags",postQuery?.data.data.data.tags.split(","))
         }
     },[postQuery?.data])

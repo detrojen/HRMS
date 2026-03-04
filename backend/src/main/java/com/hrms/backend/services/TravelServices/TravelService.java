@@ -143,6 +143,9 @@ public class TravelService {
     @Transactional
     public TravelDocumentResponseDto addDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto, String filePath){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
+        if(travel.getEndDate().isBefore(LocalDate.now())){
+            throw new InvalidActionException("travel has been completed");
+        }
         TravelDocumentResponseDto documentResponseDto = travelDocumentService.addDocument(travel,requestDto,filePath);
         emailService.sendMail(
                 "Travel Document uploaded"
@@ -163,7 +166,9 @@ public class TravelService {
     @Transactional
     public TravelDocumentResponseDto updateDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
-
+        if(travel.getEndDate().isBefore(LocalDate.now())){
+            throw new InvalidActionException("travel has been completed");
+        }
         TravelDocumentResponseDto documentResponseDto = travelDocumentService.updateDocument(requestDto);
         emailService.sendMail(
                 "Travel Document updated"
@@ -181,9 +186,30 @@ public class TravelService {
         return  documentResponseDto;
     }
 
+    public String deleteDocument(Long travelId,Long documentId){
+        Travel travel = travelRepository.getByIdAndTravelDocuments_Id(travelId,documentId).orElseThrow(()->new ItemNotFoundExpection("Travel with associated this document not found"));
+        if(travel.getEndDate().isBefore(LocalDate.now())){
+            throw new InvalidActionException("travel has been completed");
+        }
+        return travelDocumentService.deleteDocument(documentId);
+    }
+
+    public String deleteEmployeeDocument(Long travelId,Long documentId){
+        Travel travel = travelRepository.getByIdAndTravelDocuments_Id(travelId,documentId).orElseThrow(()->new ItemNotFoundExpection("Travel with associated this document not found"));
+        if(travel.getEndDate().isBefore(LocalDate.now())){
+            throw new InvalidActionException("travel has been completed");
+        }
+        return travelWiseEmployeeDocumentService.deleteDocument(documentId);
+    }
+
     public TravelMinDetailResponseDto addEmployeesToTravel(Long travelId, AddEmployeesToTravelRequestDto requestDto){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
-
+        if(travel.getEndDate().isBefore(LocalDate.now())){
+            throw new InvalidActionException("travel has been completed");
+        }
+        if(travel.getStartDate().isBefore(LocalDate.now())){
+            throw new InvalidActionException("Travel has began , now you can not delete any document");
+        }
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Long> assignedEmployeeId = travel.getTravelWiseEmployees().stream().map(emp->emp.getEmployee().getId()).toList();
         requestDto.getEmployeeIds().removeAll(assignedEmployeeId);
@@ -206,14 +232,17 @@ public class TravelService {
     @Transactional
     public TravelDocumentResponseDto addEmployeeDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto, String filePath){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
-        if(travel == null){
-            throw new TravelNotFoundException();
+        if(travel.getEndDate().isBefore(LocalDate.now())){
+            throw new InvalidActionException("travel has been completed");
+        }
+        if(travel.getStartDate().isBefore(LocalDate.now())){
+            throw new InvalidActionException("Travel has began , now you can not delete any document");
         }
         TravelDocumentResponseDto documentResponseDto = travelWiseEmployeeDocumentService.addDocument(travel,requestDto,filePath);
         List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
 
         emailService.sendMail(
-                "Travel Documnet uploaded"
+                "Travel Document uploaded"
                 , TravelAndExpenseEmailTemplates.forEmployeeDocumnetUpload(documentResponseDto,modelMapper.map(travel,TravelMinDetailResponseDto.class))
                 ,hrs.stream().map(hr->hr.getEmail()).toList().toArray(new String[]{})
                 ,new String[]{}
@@ -229,6 +258,10 @@ public class TravelService {
     }
     public TravelDocumentResponseDto updateEmployeeDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
+        if(travel.getEndDate().isBefore(LocalDate.now())){
+            throw new InvalidActionException("travel has been completed");
+        }
+
         TravelDocumentResponseDto documentResponseDto = travelWiseEmployeeDocumentService.updateDocument(travel,requestDto);
         List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
         emailService.sendMail(

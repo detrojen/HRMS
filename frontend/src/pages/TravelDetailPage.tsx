@@ -32,8 +32,8 @@ const TravelDetailPage = () => {
                     <TabsTrigger value="travel-documnets" onClick={()=>handleTabUpdate("travel-documnets")}>Travel Documnet</TabsTrigger>
                     {travelDetail?.inEmployeeList ? <TabsTrigger value="personal-documnets" onClick={()=>handleTabUpdate("personal-documnets")}>Personal Documnet</TabsTrigger> : <></>}
                     { <TabsTrigger value="employee-documnets" onClick={()=>handleTabUpdate("employee-documnets")}>Employee Document</TabsTrigger>}
-                    {user.role!="HR" && travelDetail?.inEmployeeList ? <TabsTrigger value="employee-expense" onClick={()=>handleTabUpdate("employee-expense")}>Expense</TabsTrigger> : <></>}
-                    {user.role === "HR" ? <TabsTrigger value="hr-expense" onClick={()=>handleTabUpdate("hr-expense")}>Expense</TabsTrigger> : <></>}
+                    {user.role!="HR" && travelDetail?.inEmployeeList ? <TabsTrigger value="employee-expense" onClick={()=>handleTabUpdate("employee-expense")}>Personal Expense</TabsTrigger> : <></>}
+                    {user.role === "HR" ? <TabsTrigger value="hr-expense" onClick={()=>handleTabUpdate("hr-expense")}>Review Expense</TabsTrigger> : <></>}
                 </TabsList>
                 <TabsContent value="basic-details">
                     <TravelBasicDetail />

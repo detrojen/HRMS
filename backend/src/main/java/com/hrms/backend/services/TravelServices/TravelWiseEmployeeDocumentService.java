@@ -5,6 +5,7 @@ import com.hrms.backend.dtos.requestDto.travel.AddUpdateTravelDocumentRequestDto
 import com.hrms.backend.dtos.responseDtos.travel.TravelDocumentResponseDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.Travel;
+import com.hrms.backend.entities.TravelEntities.TravelDocument;
 import com.hrms.backend.entities.TravelEntities.TravelWiseEmployeeWiseDocument;
 import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
@@ -82,4 +83,11 @@ public class TravelWiseEmployeeDocumentService {
         travelDocument = repository.save(travelDocument);
         return modelMapper.map(travelDocument,TravelDocumentResponseDto.class);
     }
+    public String deleteDocument(Long documentId){
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        TravelWiseEmployeeWiseDocument document = repository.getByIdAndUploadedBy_Id(documentId,jwtInfoDto.getUserId()).orElseThrow(()->new ItemNotFoundExpection("Document not found"));
+        repository.delete(document);
+        return document.getDocumentPath();
+    }
+
 }

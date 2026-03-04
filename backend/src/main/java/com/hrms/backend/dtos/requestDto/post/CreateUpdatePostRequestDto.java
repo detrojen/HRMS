@@ -10,5 +10,6 @@ public class CreateUpdatePostRequestDto {
     private String title;
     @NotBlank(message = "post body is mandatory")
     private String body;
+    private String attachmentPath;
     private String[] tags;
 }

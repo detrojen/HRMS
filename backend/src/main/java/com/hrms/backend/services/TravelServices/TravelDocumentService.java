@@ -49,4 +49,11 @@ public class TravelDocumentService {
         travelDocument = travelDocumentRepository.save(travelDocument);
         return modelMapper.map(travelDocument,TravelDocumentResponseDto.class);
     }
+
+    public String deleteDocument(Long documentId){
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        TravelDocument document = travelDocumentRepository.getByIdAndUploadedBy_Id(documentId,jwtInfoDto.getUserId()).orElseThrow(()->new ItemNotFoundExpection("Document not found"));
+        travelDocumentRepository.delete(document);
+        return document.getDocumentPath();
+    }
 }

@@ -75,11 +75,15 @@ public class TravelController {
     }
     @PutMapping("/travels/{travelId}/documents")
     public ResponseEntity<GlobalResponseDto<TravelDocumentResponseDto>> updateTravelDocument(@PathVariable Long travelId, @RequestPart(value = "documentDetails") AddUpdateTravelDocumentRequestDto documentDetails, @RequestPart(value = "file") Optional<MultipartFile> file){
+        String oldFileName = documentDetails.getDocumentPath();
         if(file.isPresent()){
             String filePath = FileUtility.Save(file.get(),travelDocumentsDir);
             documentDetails.setDocumentPath(filePath);
         }
         TravelDocumentResponseDto responseDto = travelService.updateDocument(travelId,documentDetails);
+        if(!oldFileName.equals(responseDto.getDocumentPath())){
+            FileUtility.delete(travelDocumentsDir,oldFileName);
+        }
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(responseDto, "travel document successfully updated")
         );
@@ -174,7 +178,21 @@ public class TravelController {
 
     @DeleteMapping("/travels/expenses/{expenseId}/proofs/{documentId}")
     public ResponseEntity<GlobalResponseDto<Boolean>> deleteExpenseProof(@PathVariable Long expenseId,@PathVariable Long documentId){
-        expenseService.deleteExpenseProofById(expenseId, documentId);
+        String filePath = expenseService.deleteExpenseProofById(expenseId, documentId);
+        FileUtility.delete(travelExpenseDir,filePath);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(true));
+    }
+
+    @DeleteMapping("/travels/{travelId}/documents/{documentId}")
+    public ResponseEntity<GlobalResponseDto<Boolean>> deleteTravelDocument(@PathVariable Long travelId,@PathVariable Long documentId){
+        String filePath = travelService.deleteDocument(travelId, documentId);
+        FileUtility.delete(travelExpenseDir,filePath);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(true));
+    }
+    @DeleteMapping("/travels/{travelId}/employee-documents/{documentId}")
+    public ResponseEntity<GlobalResponseDto<Boolean>> deleteTravelEmployeeDocument(@PathVariable Long travelId,@PathVariable Long documentId) {
+        String filePath = travelService.deleteEmployeeDocument(travelId, documentId);
+        FileUtility.delete(travelExpenseDir, filePath);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(true));
     }
 }

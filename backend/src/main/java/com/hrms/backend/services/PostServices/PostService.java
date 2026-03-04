@@ -77,12 +77,12 @@ public class PostService {
         });
     }
 
-    public PostResponseDto createPost(CreateUpdatePostRequestDto postRequestDto, String attachmentpath){
+    public PostResponseDto createPost(CreateUpdatePostRequestDto postRequestDto){
         Post post = new Post();
         post.setBody(postRequestDto.getBody());
         post.setTitle(postRequestDto.getTitle());
         post.setTags(Arrays.stream(postRequestDto.getTags()).reduce((acc,tag)->acc+ ","+tag).orElse(""));
-        post.setAttachmentPath(attachmentpath);
+        post.setAttachmentPath(postRequestDto.getAttachmentPath());
         JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Employee employee = employeeService.getEmployeeById(jwtInfo.getUserId());
         post.setCreatedBy(employee);
@@ -95,7 +95,7 @@ public class PostService {
         return modelMapper.map(post,PostResponseDto.class);
     }
 
-    public PostResponseDto updatePost(CreateUpdatePostRequestDto postRequestDto, String attachmentpath){
+    public PostResponseDto updatePost(CreateUpdatePostRequestDto postRequestDto){
         Post post = postRepository.findById(postRequestDto.getId()).orElseThrow(PostNotFound::new);
         JwtInfoDto jwtInfo = (JwtInfoDto)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(!post.getCreatedBy().getId().equals(jwtInfo.getUserId())){
@@ -104,9 +104,7 @@ public class PostService {
         post.setBody(postRequestDto.getBody());
         post.setTitle(postRequestDto.getTitle());
         post.setTags(Arrays.stream(postRequestDto.getTags()).reduce((acc,tag)->acc+ ","+tag).orElse(""));
-        if(attachmentpath != null){
-            post.setAttachmentPath(attachmentpath);
-        }
+        post.setAttachmentPath(postRequestDto.getAttachmentPath());
 
         post = postRepository.save(post);
         return modelMapper.map(post,PostResponseDto.class);

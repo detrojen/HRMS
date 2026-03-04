@@ -39,13 +39,26 @@ public class FileUtility {
         FileSystemResource file = new FileSystemResource(new File(filePath.toUri()));
         return file;
     }
-    public static byte[] readByte(String folderName,String fileName){
+    public static boolean delete(String folderName, String fileName){
+        String absFilePath = userDir + File.separator + uploadDir + File.separator + folderName + File.separator + fileName;
+        File file = new File(absFilePath);
+        boolean flag = false;
+        if(file.exists()){
+            flag = file.delete();
+        }
+        return flag;
+    }
+    public static byte[] readByte(String folderName,String fileName) throws IOException {
         String absFilePath = userDir + File.separator + uploadDir + File.separator + folderName + File.separator + fileName;
         Path filePath = Paths.get( absFilePath);
+        FileInputStream file = null;
         try {
-            InputStreamResource file = new InputStreamResource(new FileInputStream(new File(filePath.toUri())));
-            return file.getInputStream().readAllBytes();
+            file = new FileInputStream((new File(filePath.toUri())));
+            byte[] bytes = file.readAllBytes();
+            file.close();
+            return bytes;
         }catch (Exception e){
+            file.close();
             return new byte[]{};
         }
     }

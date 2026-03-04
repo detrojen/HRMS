@@ -132,16 +132,21 @@ public class TravelWiseExpenseService {
         return modelMapper.map(travelWiseExpense, TravelExpenseResponseDto.class);
     }
 
-    public boolean deleteExpenseProofById(Long travelExpenseId, Long expenseDocumentId){
+    public String deleteExpenseProofById(Long travelExpenseId, Long expenseDocumentId){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         TravelWiseExpense expense = travelWiseExpenseRepository.getByIdAndEmployee_IdAndProofs_Id(travelExpenseId, jwtInfoDto.getUserId(), expenseDocumentId).orElseThrow(()->new InvalidActionException("You can not delete this record"));
+        if(expense.getStatus().equals(TravelExpenseStatus.APPROVED.toString()) || expense.getStatus().equals(TravelExpenseStatus.REJECTED.toString())) {
+            throw new InvalidActionException("you can not update expense once it reviewed");
+        }
         if(expense.getTravel().getLastDateToSubmitExpense().isBefore(LocalDate.now())){
             throw new InvalidActionException("you can not delete or update proof");
         }else if (expense.getProofs().size() == 1) {
             throw new InvalidActionException("Each expense needs at least one proof for review . you can not delete");
         }
+        String filePath = (expenseWiseDocumentRepository.findById(expenseDocumentId).orElseThrow(()->new ItemNotFoundExpection("Expense document not found")))
+                .getDocumentPath();
         expenseWiseDocumentRepository.deleteById(expenseDocumentId);
-        return true;
+        return filePath;
     }
 
     @Transactional

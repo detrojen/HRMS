@@ -7,7 +7,7 @@ import type { TDeleteUnappropriateContent } from "@/types/apiRequestTypes/TDelet
 import type { TLayoutContext } from "@/types/TlayoutContext.type"
 import { useQueryClient, type UseMutationResult } from "@tanstack/react-query"
 import type { AxiosResponse } from "axios"
-import { Delete, Trash2 } from "lucide-react"
+import { Delete } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { useOutletContext } from "react-router-dom"

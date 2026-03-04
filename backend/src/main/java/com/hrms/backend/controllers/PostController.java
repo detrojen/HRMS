@@ -38,17 +38,22 @@ public class PostController {
     @PostMapping("/posts")
     public ResponseEntity<GlobalResponseDto<PostResponseDto>> createPost(@RequestPart() @Valid CreateUpdatePostRequestDto postDetails, @RequestPart @NotNull(message = "attchemnet must be requried") MultipartFile attachment){
         String attachmentPath = FileUtility.Save(attachment,postsDir);
-        PostResponseDto post = postService.createPost(postDetails, attachmentPath);
+        postDetails.setAttachmentPath(attachmentPath);
+        PostResponseDto post = postService.createPost(postDetails);
         return  ResponseEntity.ok().body(new GlobalResponseDto<>(post,"Post created"));
     }
 
     @PutMapping("/posts")
     public ResponseEntity<GlobalResponseDto<PostResponseDto>> updatePost(@RequestPart() @Valid CreateUpdatePostRequestDto postDetails, @RequestPart  Optional<MultipartFile> attachment){
-        String attachmentPath = null;
+        String oldAttachmentPath = postDetails.getAttachmentPath();
         if(attachment.isPresent()){
-            attachmentPath= FileUtility.Save(attachment.get(),postsDir);
+            String attachmentPath = FileUtility.Save(attachment.get(),postsDir);
+            postDetails.setAttachmentPath(attachmentPath);
         }
-        PostResponseDto post = postService.updatePost(postDetails, attachmentPath);
+        PostResponseDto post = postService.updatePost(postDetails);
+        if(!oldAttachmentPath.equals(post.getAttachmentPath())){
+            FileUtility.delete(postsDir,oldAttachmentPath);
+        }
         return  ResponseEntity.ok().body(new GlobalResponseDto<>(post,"Post updated"));
     }
 

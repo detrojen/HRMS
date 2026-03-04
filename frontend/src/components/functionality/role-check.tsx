@@ -18,5 +18,4 @@ const RoleCheck = ({roles, children}:TRoleCheckProps & PropsWithChildren) => {
         </Card>
     )
 }
-
 export default RoleCheck

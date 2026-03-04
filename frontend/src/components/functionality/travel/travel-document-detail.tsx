@@ -7,6 +7,7 @@ import { TravelDetailContext } from "@/contexts/TravelDetailContext";
 import useUploadTravelDocumentMutation from "@/api/mutations/upload-travel-document.mutation";
 import { Plus } from "lucide-react";
 import useUpdateTravelDocumentMutation from "@/api/mutations/update-travel-document.mutation";
+import useDeleteTravelDocumnetMutation from "@/api/mutations/delete-travel-documnet.mutation";
 
 const TravelDocumnetDetails = () => {
     const { user } = useContext(AuthContext);
@@ -17,7 +18,7 @@ const TravelDocumnetDetails = () => {
                 {user.role == "HR" ? <div className="w-1/1 flex justify-end ">
                     <AddUpdateTravelDocumnetAction travelId={travelId} mutation={useUploadTravelDocumentMutation} Actionicon={Plus} />
                 </div> : <></>}
-                <TravelDocumentTable updateMutation={useUpdateTravelDocumentMutation} documents={documents} canUpdate={user.role == "HR"} />
+                <TravelDocumentTable deleteMutation={useDeleteTravelDocumnetMutation} updateMutation={useUpdateTravelDocumentMutation} documents={documents} canUpdate={user.role == "HR"} />
             </CardContent>
         </Card>
     )

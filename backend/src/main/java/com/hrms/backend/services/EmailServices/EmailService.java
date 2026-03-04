@@ -34,7 +34,7 @@ public class EmailService {
             mimeMessageHelper.setText(body,true);
             mimeMessageHelper.setTo(recieptants);
             mimeMessageHelper.setCc(ccs);
-            mailSender.send(mailMessage);
+//            mailSender.send(mailMessage);
         }catch (MessagingException e){
             log.error("at mail service :- "+ e.getMessage());
         }
@@ -50,7 +50,7 @@ public class EmailService {
             mimeMessageHelper.setCc(ccs);
             Resource file = FileUtility.Get(attachmentFolderName, attachementFileName);
             mimeMessageHelper.addAttachment(attachementFileName, file);
-            mailSender.send(mailMessage);
+//            mailSender.send(mailMessage);
         } catch (MessagingException e) {
             log.warn("at mail service :- " + e.getMessage());
         }

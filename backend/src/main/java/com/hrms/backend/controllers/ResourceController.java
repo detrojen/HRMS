@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import java.io.IOException;
+
 
 @RestController
 public class ResourceController {
     @GetMapping("/resource/{foldername}/{filename}")
-    public ResponseEntity<byte[]> getResource(@PathVariable String foldername, @PathVariable String filename, ServletWebRequest request) {
+    public ResponseEntity<byte[]> getResource(@PathVariable String foldername, @PathVariable String filename, ServletWebRequest request) throws IOException {
         byte[] file = FileUtility.readByte(foldername,filename);
         MediaType contentType = filename.indexOf(".pdf") == -1 ? MediaType.IMAGE_PNG :MediaType.APPLICATION_PDF;
         HttpHeaders headers = new HttpHeaders();

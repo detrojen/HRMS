@@ -7,5 +7,6 @@ type TPostDetails ={
     id?:number
     title: string,
     body : string,
+    attachmentPath?:string
     tags: string[]
 }

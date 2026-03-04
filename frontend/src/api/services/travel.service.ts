@@ -11,6 +11,7 @@ import type { TReviewExpenseRequest } from "@/types/apiRequestTypes/TReviewExpen
 import type { TAddEmployeeToTravelRequest } from "@/types/apiRequestTypes/TAddEmployeeToTravelRequest.type";
 import type { TCategory } from "@/types/apiResponseTypes/TCategory.type";
 import type { TDeleteExpenseProofRequest } from "@/types/apiRequestTypes/TDeleteExpenseProofRequest";
+import type { TTDeleteTravelDocumnetRequest } from "@/types/apiRequestTypes/TTDeleteTravelDocumnetRequest.type";
 
 export const createTravel = (payload: TCreateTravelRequest) => {
     return api.post<TGlobalResponse<any>>("/api/travels", payload)
@@ -138,4 +139,10 @@ export const fetchTraveExpensecategories = () => {
 
 export const deleteExpenseDocument = (payload:TDeleteExpenseProofRequest) => {
     return api.delete<TGlobalResponse<boolean>>(`/api/travels/expenses/${payload.expenseId}/proofs/${payload.documentId}`)
+}
+export const deleteTravelDocument = (payload:TTDeleteTravelDocumnetRequest) => {
+    return api.delete<TGlobalResponse<boolean>>(`/api/travels/${payload.travelId}/documents/${payload.documentId}`)
+}
+export const deleteTravelEmployeeDocument = (payload:TTDeleteTravelDocumnetRequest) => {
+    return api.delete<TGlobalResponse<boolean>>(`/api/travels/${payload.travelId}/employee-documents/${payload.documentId}`)
 }
