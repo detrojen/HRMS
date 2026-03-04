@@ -10,6 +10,7 @@ import { ArrowDown } from "lucide-react"
 import { useContext, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import EmployeeMinDetailSkeletonCard from "@/components/ui/skeleton-cards/employee-min-detail-skeleton-card"
+import useDebounce from "@/hooks/use-debounce"
 type TEmp = {
     oneLevelDown?: TEmp[],
     id: number,
@@ -53,7 +54,8 @@ const OrgChartPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const orgChartQuery = useFetchOrgChart(searchParams.get("employeeId"))
     const [nameQuery, setNameQuery] = useState("")
-    const { data: employeeSearchQueryData } = useGetchEmployeesByNameLike(nameQuery);
+    const debouncedNameQuery = useDebounce(nameQuery,500)
+    const { data: employeeSearchQueryData } = useGetchEmployeesByNameLike(debouncedNameQuery);
     const orgChartData = orgChartQuery.data?.data.data
     if (orgChartQuery.isLoading) {
         return <div className="flex flex-col w-1/2 mx-auto gap-2 p-2 justify-center content-cente">
@@ -61,13 +63,13 @@ const OrgChartPage = () => {
             <EmployeeMinDetailSkeletonCard />
             <EmployeeMinDetailSkeletonCard />
             <Separator />
-            <SkeletonList className="grid grid-cols-2 gap-2"  items={5} render={()=><div className="overflow-hidden"><EmployeeMinDetailSkeletonCard/></div>} />
+            <SkeletonList className="grid grid-cols-2 gap-2" items={5} render={() => <div className="overflow-hidden"><EmployeeMinDetailSkeletonCard /></div>} />
         </div>
     }
     return <>
         <div className="flex flex-col w-1/1">
             <Searchable
-                data={employeeSearchQueryData?.data.data ?? []}
+                data={employeeSearchQueryData && employeeSearchQueryData == null ? [] : employeeSearchQueryData?.data.data ?? []}
                 setQuery={setNameQuery}
                 render={(item) => <h1>{item.firstName} {item.lastName}</h1>}
                 onSelectItem={(item) => {

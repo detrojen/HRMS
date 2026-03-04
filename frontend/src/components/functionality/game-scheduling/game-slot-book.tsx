@@ -11,6 +11,7 @@ import { useAppSelector } from "@/store/hooks"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { format } from "date-fns"
 import Searchable from "@/components/ui/searchable"
+import useDebounce from "@/hooks/use-debounce"
 function getSlotAppearnceClass(slotStatus: boolean) {
   return slotStatus ? "available-slot" : "unavailable-slot"
 }
@@ -19,10 +20,11 @@ const GameSlotBook = () => {
   const gameId = searchParams.get("game-id")
   const [selectedSlot, setSelectedSlot] = useState(0)
   const [nameQuery, setNameQuery] = useState("")
+  const debouncedNameQuery = useDebounce(nameQuery,500)
   const [plyers, setPlayers] = useState<TEmployeeWithNameOnly[]>([]);
 
   const { data:slotQueryData } = useQueryGameSlots({ gameTypeId: gameId ?? "0", date: searchParams.get("slotDate") ?? (new Date()).toLocaleDateString('en-CA') })
-  const { data: interestedEmployeesQueryData } = useFetchInterestedEmployeeByNameLike({ gameTypeId: gameId ?? "0", nameLike: nameQuery })
+  const { data: interestedEmployeesQueryData } = useFetchInterestedEmployeeByNameLike({ gameTypeId: gameId ?? "0", nameLike: debouncedNameQuery })
   const requestSlotMutation = useRequestSlotMutation()
   const games = useAppSelector((state) => state.gameInterest.filter(item => item.interested).map((item) => {
     return { id: item.gameTypeId, game: item.gameType }

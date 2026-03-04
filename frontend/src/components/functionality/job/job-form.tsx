@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type ControllerRenderProps, type UseFormReturn } from "react-hook-form";
 import { jobCreateSchema } from "@/validation-schema/job-schema";
 import Searchable from "@/components/ui/searchable";
+import useDebounce from "@/hooks/use-debounce";
 
 const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
     const { data: hrListQueryData } = useFetchHrList()
@@ -160,8 +161,9 @@ const JobDocumentUploadForm = ({ form }: { form: UseFormReturn<TCreateJobRequest
 const JobAddCvReviewrersForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
     const [nameQuery, setNameQuery] = useState("")
     const [reviewers, setReviewers] = useState<TEmployeeWithNameOnly[]>([])
-    const { data:employeeQueryData } = useGetchEmployeesByNameLike(nameQuery);
-    const employees = employeeQueryData?.data.data
+    const debouncedNameQuery = useDebounce(nameQuery,500)
+    const { data:employeeQueryData } = useGetchEmployeesByNameLike(debouncedNameQuery);
+    const employees = employeeQueryData&& employeeQueryData==null?[]:employeeQueryData?.data.data
     useEffect(() => {
         form.setValue("jobDetail.reviewerIds", reviewers.map(reviewer => reviewer.id))
     }, [reviewers])

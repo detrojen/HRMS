@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import Searchable from "@/components/ui/searchable"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
+import useDebounce from "@/hooks/use-debounce"
 import type { TCreateTravelRequest } from "@/types/apiRequestTypes/TcreateTravelRequest.type"
 import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type"
 import type { TLayoutContext } from "@/types/TlayoutContext.type"
@@ -21,23 +22,24 @@ import { useOutletContext, useParams } from "react-router-dom"
 
 const TravelAddEmployeesField = ({ form }: { form: UseFormReturn<TCreateTravelRequest, any, TCreateTravelRequest> }) => {
     const [nameQuery, setNameQuery] = useState("")
-    const { data:emplyeeQueryData } = useGetchEmployeesByNameLike(nameQuery);
+    const debouncedNameQuery = useDebounce(nameQuery,500)
+    const { data: emplyeeQueryData } = useGetchEmployeesByNameLike(debouncedNameQuery);
     const [employees, seEmployees] = useState<TEmployeeWithNameOnly[]>([])
-    const employeeSearchData =emplyeeQueryData?.data.data
+    const employeeSearchData = emplyeeQueryData == null ? [] : emplyeeQueryData?.data.data
     useEffect(() => {
         form.setValue("employeeIds", employees.map(employee => employee.id))
     }, [employees])
     return (
         <>
             <Searchable
-                data={employeeSearchData??[]}
+                data={employeeSearchData ?? []}
                 setQuery={setNameQuery}
                 onSelectItem={(employee) => { setNameQuery(""); seEmployees(employees => [...employees, employee]) }}
                 render={(employee) => <h1>{employee.firstName} {employee.lastName}</h1>}
-              >
+            >
                 <Button type="button">Add Employees</Button>
-              </Searchable>
-           
+            </Searchable>
+
             <Separator></Separator>
             {
                 employees.map(employee => <div key={`reviewer-${employee.id}`} className="flex gap-5">
@@ -87,7 +89,7 @@ const TravelBasicDetailFields = ({ form }: { form: UseFormReturn<TCreateTravelRe
             {watchId == undefined && <Controller
                 control={form.control}
                 name="employeeIds"
-                render={({  fieldState }) => (
+                render={({ fieldState }) => (
                     <Field className="col-span-2">
                         <TravelAddEmployeesField form={form} />
                         <FieldError>{fieldState.error?.message}</FieldError>
@@ -137,7 +139,7 @@ const TravelDescriptionField = ({ form }: { form: UseFormReturn<TCreateTravelReq
                 <Field className="col-span-2">
                     <FieldLabel>Description</FieldLabel>
                     <Textarea {...field} />
-                        <FieldError>{fieldState.error?.message}</FieldError>
+                    <FieldError>{fieldState.error?.message}</FieldError>
                 </Field>
             )}
         />
@@ -174,9 +176,9 @@ const TravelForm = () => {
     useEffect(() => {
         if (travelQuery?.isSuccess && travelQuery.data) {
             form.setValue("id", travelDetails?.id)
-            form.setValue("title", travelDetails?.title??"")
-            form.setValue("descripton", travelDetails?.descripton??"")
-            form.setValue("maxReimbursementAmountPerDay", travelDetails?.maxReimbursementAmountPerDay??0)
+            form.setValue("title", travelDetails?.title ?? "")
+            form.setValue("descripton", travelDetails?.descripton ?? "")
+            form.setValue("maxReimbursementAmountPerDay", travelDetails?.maxReimbursementAmountPerDay ?? 0)
             //    form.setValue("startDate", new Date("2026-09-08"))
             form.setValue("startDate", new Date(travelDetails?.startDate!))
             form.setValue("endDate", new Date(travelDetails?.endDate!))

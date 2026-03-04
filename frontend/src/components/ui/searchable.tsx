@@ -1,6 +1,7 @@
 import { Input } from "./input"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover"
 import { useState, type PropsWithChildren, type ReactNode } from "react"
+import { ScrollArea } from "./scroll-area"
 type TSearchableProps<T> = {
     data: T[],
     setQuery: (value: string) => void
@@ -20,7 +21,7 @@ function Searchable<T>({ data, setQuery, render, onSelectItem, children, classNa
                 </div>
                    
                 </PopoverTrigger>
-            <PopoverContent className="overflow-scroll max-h-100 top-500 w-100" align="start">
+            <PopoverContent className="top-500 w-100" align="start">
             
                 <Input
                     id="search-player"
@@ -28,12 +29,15 @@ function Searchable<T>({ data, setQuery, render, onSelectItem, children, classNa
                     placeholder="search employee ...."
                     onChange={(e) => { setQuery(e.target.value) }}
                 />
-                {
-                    data?.map((item, i) => <div key={`item-${i}`} onClick={() => {
-                        setOpen(false)
-                        onSelectItem(item)
-                    }}>{render(item)}</div>)
-                }
+                 <ScrollArea className="overflow-y-scroll max-h-100">
+                    {
+                        data?.map((item, i) => <div key={`item-${i}`} onClick={() => {
+                            setOpen(false)
+                            onSelectItem(item)
+                        }}>{render(item)}</div>)
+                    }
+
+                </ScrollArea>
             </PopoverContent>
         </Popover>
     )

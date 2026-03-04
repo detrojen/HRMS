@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import Searchable from "@/components/ui/searchable";
 import { Separator } from "@/components/ui/separator";
+import useDebounce from "@/hooks/use-debounce";
 import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type";
 import type { TLayoutContext } from "@/types/TlayoutContext.type";
 import { PlusCircle } from "lucide-react";
@@ -16,7 +17,8 @@ const AddEmployeeToTravelAction = ({travelId}:{travelId:number}) => {
     const { setIsLoading } = useOutletContext<TLayoutContext>()
 
     const addEmployeeToTravelMutation = useAddEmployeeToTravelMutation()
-    const { data: employeesData } = useGetchEmployeesByNameLike(nameQuery);
+    const debouncedNameQuery = useDebounce(nameQuery,500)
+    const { data: employeesData } = useGetchEmployeesByNameLike(debouncedNameQuery);
 
     const [employees, setEmployees] = useState<TEmployeeWithNameOnly[]>([])
     useEffect(()=>{
@@ -37,7 +39,7 @@ const AddEmployeeToTravelAction = ({travelId}:{travelId:number}) => {
                     <DialogTitle>Assign travel to new employee</DialogTitle>
                 </DialogHeader>
                 <Searchable
-                data={employeesData?.data.data??[]}
+                data={employeesData && employeesData!=null? employeesData.data.data : []}
                 setQuery={setNameQuery}
                 onSelectItem={(employee) => { setNameQuery(""); setEmployees(employees => [...employees, employee]) }}
                 render={(employee) => <h1>{employee.firstName} {employee.lastName}</h1>}
