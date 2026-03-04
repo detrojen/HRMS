@@ -1,6 +1,6 @@
 export type TGameSlotResponse = {
         id: number,
-        slotDate: Date,
+        slotDate: string,
         startsFrom: string,
         endsAt: string,
         gameTypeId: number,

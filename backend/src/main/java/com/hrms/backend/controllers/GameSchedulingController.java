@@ -7,10 +7,7 @@ import com.hrms.backend.dtos.requestDto.gameScheduling.UpdateGameInterestRequest
 import com.hrms.backend.dtos.responseDtos.*;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.*;
-import com.hrms.backend.services.GameSchedulingServices.EmployeeWiseGameInterestService;
-import com.hrms.backend.services.GameSchedulingServices.GameSlotService;
-import com.hrms.backend.services.GameSchedulingServices.GameTypeService;
-import com.hrms.backend.services.GameSchedulingServices.SlotRequestService;
+import com.hrms.backend.services.GameSchedulingServices.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -92,7 +89,6 @@ public class GameSchedulingController {
                 new GlobalResponseDto<>(updated)
         );
     }
-
 
     @GetMapping("/game-types")
     public ResponseEntity<GlobalResponseDto<List<UpdateGameTypeResponseDto>>> getGameTypes(){

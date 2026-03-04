@@ -26,7 +26,7 @@ const RequestedSlotDetail = () => {
                     <div className="flex flex-col gap-1">
                         <ul className="mb-1 ml-6 list-disc [&>li]:mt-2">
                             <li>Game:- {slotDetail?.gameSlot.gameType}</li>
-                            <li>Slot date:- {slotDetail?.gameSlot.slotDate.toDateString()}</li>
+                            <li>Slot date:- {slotDetail?.gameSlot.slotDate}</li>
                             <li>Slot Time:- {slotDetail?.gameSlot.startsFrom} to {slotDetail?.gameSlot.endsAt}</li>
                         </ul>
                         <p>Players:-</p>
@@ -44,7 +44,7 @@ const RequestedSlotDetail = () => {
                     </div>
                 </CardContent>
                 <CardAction>
-                    {slotDetail?.status && slotDetail?.status == "Confirm" && slotDetail?.requestedBy.id == user.id && <Button variant={"destructive"} onClick={() => cancelRequestMutation.mutate(slotDetail.id)}>Cancel</Button>}
+                    {slotDetail?.status && slotDetail?.status != "Cancel" && slotDetail?.requestedBy.id == user.id && <Button variant={"destructive"} onClick={() => cancelRequestMutation.mutate(slotDetail.id)}>Cancel</Button>}
                 </CardAction>
             </Card>}
         </>

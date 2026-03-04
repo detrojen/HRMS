@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -22,6 +23,9 @@ public interface SlotRequestRepository extends JpaRepository<SlotRequest,Long>, 
 
     List<SlotRequest> findAllByGameSlot_IdAndStatusOrderByCreatedAt(Long slotId,String status);
 
-    @Query(value = "select top 1 SlotRequest.*, EmployeeWiseGameInterest.gameType_id from SlotRequest join EmployeeWiseGameInterest on EmployeeWiseGameInterest.employee_id = SlotRequest.requestedBy_id and gameType_id = :gameTypeId where gameSlot_id = :slotId and gameType_id = 1 and SlotRequest.status = 'On hold' order by SlotRequest.createdAt asc, EmployeeWiseGameInterest.currentCyclesSlotConsumed asc", nativeQuery = true)
-    SlotRequest getTopCandidate(Long slotId, Long gameTypeId);
+    @Query(value = "exec sp_getTopCandidate :gameSlotID",nativeQuery = true)
+    SlotRequest getTopCandidate(Long gameSlotID);
+
+    @Query(value = "exec sp_hasHighPriority :newRequestId , :confirmRequestId",nativeQuery = true)
+    int hasHighPriority(Long newRequestId, Long confirmRequestId);
 }
