@@ -28,7 +28,7 @@ public class AuthService {
     public String login(String email, String password){
         Employee employee = employeeRepository.getEmployeeByEmail(email).orElseThrow(()-> new InvalidCredentialsException());
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        if(passwordEncoder.matches(password,employee.getPassword())){
+        if(!passwordEncoder.matches(password,employee.getPassword())){
             throw new InvalidCredentialsException();
         }
         log.info("{} has logged in.", employee.getFullName());
