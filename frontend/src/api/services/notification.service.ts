@@ -7,5 +7,5 @@ export const fetchNotifications = () => {
 }
 
 export const readNotification = (notificationTemplateId:number) =>{
-    return api.patch(`/api/notifications/read/${notificationTemplateId}`)
+    return api.patch<TGlobalResponse<boolean>>(`/api/notifications/read/${notificationTemplateId}`)
 }

@@ -7,5 +7,6 @@ export const useNotifications = () => useQuery(
         queryFn:()=> fetchNotifications(),
         staleTime:0,
         refetchInterval: 60* 1000 * 5,
+        select: (data) => data.data.data
     }
 )

@@ -13,6 +13,7 @@ import type { TCategory } from "@/types/apiResponseTypes/TCategory.type";
 import type { TDeleteExpenseProofRequest } from "@/types/apiRequestTypes/TDeleteExpenseProofRequest";
 import type { TTDeleteTravelDocumnetRequest } from "@/types/apiRequestTypes/TTDeleteTravelDocumnetRequest.type";
 import paramsBuilder from "@/utils/query-parameter-builder";
+import type { TEmployeeMinDetail } from "@/types/TEmployeeMinDetail.type";
 
 export const createTravel = (payload: TCreateTravelRequest) => {
     return api.post<TGlobalResponse<TTravelDetails>>("/api/travels", payload)
@@ -133,7 +134,7 @@ export const reviewExpense = (payload: TReviewExpenseRequest) => {
 }
 
 export const addEmployeeToTravel = ({ travelId, employeeIds }: TAddEmployeeToTravelRequest) => {
-    return api.patch(`/api/travels/${travelId}/add-employees`, { employeeIds })
+    return api.patch<TGlobalResponse<TEmployeeMinDetail[]>>(`/api/travels/${travelId}/add-employees`, { employeeIds })
 }
 
 export const fetchTraveExpensecategories = () => {

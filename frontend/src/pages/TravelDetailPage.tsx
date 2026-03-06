@@ -18,14 +18,14 @@ const TravelDetailPage = () => {
     const { user } = useContext(AuthContext)
     const { travelId } = useParams()
     const [searchParams,setSearchParams] = useSearchParams()
-    const { data:travelQueryData, isLoading } = useFetchTravelById(travelId!)
+    const { data:travelQueryData,isFetching} = useFetchTravelById(travelId!)
     const travelDetail = travelQueryData?.data.data
     const handleTabUpdate = (tabName:string) =>{
         searchParams.set("tab" ,tabName)
         setSearchParams(searchParams)
     }
     return <>
-        {isLoading?"Loading":<TravelDetailContext.Provider value={travelDetail!}>
+        {isFetching?"Loading":<TravelDetailContext.Provider value={travelDetail!}>
             <Tabs defaultValue={`${searchParams.get("tab")??"basic-details"}`} className="w-1/1 p-3">
                 <TabsList >
                     <TabsTrigger value="basic-details" onClick={()=>handleTabUpdate("basic-details")}>Basic Details</TabsTrigger>

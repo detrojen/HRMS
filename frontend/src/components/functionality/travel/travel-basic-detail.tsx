@@ -6,8 +6,6 @@ import { Edit } from "lucide-react"
 import { Link } from "react-router-dom"
 import AddEmployeeToTravelAction from "./add-employee-to-travel-action"
 import { AuthContext } from "@/contexts/AuthContextProvider"
-import RoleCheck from "../role-check"
-
 const TravelBasicDetail = () => {
     const { descripton, startDate, endDate, lastDateToSubmitExpense, title, employees, id, stats } = useContext(TravelDetailContext)
     const { user } = useContext(AuthContext)

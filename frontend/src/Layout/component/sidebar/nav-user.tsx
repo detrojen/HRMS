@@ -23,7 +23,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import Notification from "./notification"
 import { useNavigate } from "react-router-dom"
 
 export function NavUser({
@@ -80,12 +79,7 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {/* <DropdownMenuItem> */}
-                <Notification />
-              {/* </DropdownMenuItem> */}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            
             <DropdownMenuItem onClick={logout}>
               <LogOut />
               Log out

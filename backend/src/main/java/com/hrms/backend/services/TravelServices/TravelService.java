@@ -200,7 +200,7 @@ public class TravelService {
         return travelWiseEmployeeDocumentService.deleteDocument(documentId);
     }
 
-    public TravelMinDetailResponseDto addEmployeesToTravel(Long travelId, AddEmployeesToTravelRequestDto requestDto){
+    public List<EmployeeMinDetailsDto> addEmployeesToTravel(Long travelId, AddEmployeesToTravelRequestDto requestDto){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
         if(travel.getEndDate().isBefore(LocalDate.now())){
             throw new InvalidActionException("travel has been completed");
@@ -224,7 +224,7 @@ public class TravelService {
                 ,NotificationType.TRAVEL.toString()
                 , requestDto.getEmployeeIds().toArray(new Long[]{})
                 );
-        return responseDto;
+        return employees;
     }
 
     @Transactional

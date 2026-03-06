@@ -1,7 +1,7 @@
 import  { type TGlobalResponse } from "./types/TGlobalResponse.type";
 import { toast } from "sonner";
 
-const errorHandler = (error:TGlobalResponse<any>) => {
+const errorHandler = (error:TGlobalResponse<object>) => {
     
     console.log(error)
     if(error.status == 401 || error.status === "UNAUTHORIZED"){

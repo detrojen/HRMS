@@ -5,6 +5,7 @@ import com.hrms.backend.dtos.requestDto.ReviewTravelExpenseRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.*;
 import com.hrms.backend.dtos.requestParamDtos.TravelExpenseParamsDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
+import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import com.hrms.backend.dtos.responseDtos.travel.*;
 import com.hrms.backend.services.TravelServices.ExpenseCategoryService;
 import com.hrms.backend.services.TravelServices.TravelService;
@@ -60,8 +61,8 @@ public class TravelController {
     }
 
     @PatchMapping(value = "/travels/{travelId}/add-employees")
-    public ResponseEntity<GlobalResponseDto<TravelMinDetailResponseDto>> addEmployeeToTravel(@PathVariable Long travelId, @RequestBody AddEmployeesToTravelRequestDto requestDto){
-        TravelMinDetailResponseDto responseDto = travelService.addEmployeesToTravel(travelId,requestDto);
+    public ResponseEntity<GlobalResponseDto<List<EmployeeMinDetailsDto>>> addEmployeeToTravel(@PathVariable Long travelId, @RequestBody AddEmployeesToTravelRequestDto requestDto){
+        List<EmployeeMinDetailsDto> responseDto = travelService.addEmployeesToTravel(travelId,requestDto);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(responseDto,"Employees added"));
     }
 

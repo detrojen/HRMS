@@ -2,6 +2,7 @@ import api from "@/api/api";
 import useSwitchRoleMutation from "@/api/mutations/switch-role.mutation";
 import type { TSelfResponse } from "@/types/apiResponseTypes/TSelfResponse.type";
 import type { TGlobalResponse } from "@/types/TGlobalResponse.type";
+import {  useQueryClient } from "@tanstack/react-query";
 import { createContext, useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -13,6 +14,7 @@ type TAuthContext = {
 export const AuthContext = createContext<TAuthContext>(null!)
 
 const AuthContextProvider = ({ children }: { children: ReactNode }) => {
+    const queryClient = useQueryClient()
     const [user, setUser] = useState<TSelfResponse>(null!)
     const navTo = useNavigate()
     const switchRoleMutaion = useSwitchRoleMutation()
@@ -28,6 +30,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     useEffect(()=>{
         if(switchRoleMutaion.data?.data.status === "OK"){
             setUser(switchRoleMutaion.data.data.data)
+            queryClient.invalidateQueries()
         }
     },[switchRoleMutaion.data])
 
