@@ -18,7 +18,8 @@ export const useFetchInterestedEmployeeByNameLike = (payload: TQueryInterestedEm
     return useQuery(
         {
             queryKey: ["interested-employees", payload.nameLike],
-            queryFn: () => getIntrestedEmployeeByNameLike(payload)
+            queryFn: () => getIntrestedEmployeeByNameLike(payload),
+            enabled: payload.nameLike.trim().length > 0
         }
     )
 }

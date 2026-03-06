@@ -170,7 +170,6 @@ const TravelForm = () => {
 
 
     useEffect(() => {
-
         setIsLoading(createTravelMutation.isPending || updateTravelMutation.isPending)
     }, [createTravelMutation.isPending, updateTravelMutation.isPending])
     useEffect(() => {
@@ -179,12 +178,11 @@ const TravelForm = () => {
             form.setValue("title", travelDetails?.title ?? "")
             form.setValue("descripton", travelDetails?.descripton ?? "")
             form.setValue("maxReimbursementAmountPerDay", travelDetails?.maxReimbursementAmountPerDay ?? 0)
-            //    form.setValue("startDate", new Date("2026-09-08"))
             form.setValue("startDate", new Date(travelDetails?.startDate!))
             form.setValue("endDate", new Date(travelDetails?.endDate!))
             form.setValue("lastDateToSubmitExpense", new Date(travelDetails?.lastDateToSubmitExpense!))
         }
-    }, [travelQuery?.isSuccess])
+    }, [travelQuery.isSuccess])
     const handleSubmit = form.handleSubmit((values) => {
         if (values.id) {
             updateTravelMutation.mutate(values)

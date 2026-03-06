@@ -12,12 +12,13 @@ import type { TAddEmployeeToTravelRequest } from "@/types/apiRequestTypes/TAddEm
 import type { TCategory } from "@/types/apiResponseTypes/TCategory.type";
 import type { TDeleteExpenseProofRequest } from "@/types/apiRequestTypes/TDeleteExpenseProofRequest";
 import type { TTDeleteTravelDocumnetRequest } from "@/types/apiRequestTypes/TTDeleteTravelDocumnetRequest.type";
+import paramsBuilder from "@/utils/query-parameter-builder";
 
 export const createTravel = (payload: TCreateTravelRequest) => {
-    return api.post<TGlobalResponse<any>>("/api/travels", payload)
+    return api.post<TGlobalResponse<TTravelDetails>>("/api/travels", payload)
 }
 export const updateTravel = (payload: TCreateTravelRequest) => {
-    return api.patch<TGlobalResponse<any>>("/api/travels", payload)
+    return api.patch<TGlobalResponse<TTravelDetails>>("/api/travels", payload)
 }
 export const fetchTravels = (getAsa: string) => {
     return api.get<TGlobalResponse<TTravelMinDetail[]>>(`/api/travels/list/${getAsa}`)
@@ -94,8 +95,10 @@ export const addExpense = (payload: TAddUpdateExpense & { travelId: string | num
     const formData = new FormData()
     formData.append("expenseDetails", new Blob([JSON.stringify(payload.expenseDetails)], { type: "application/json" }))
 
-    for (let i = 0; i < payload.file?.length!; i++) {
-        formData.append("files", payload.file?.item(i)!)
+    if (payload.file) {
+        for (let i = 0; i < payload.file.length!; i++) {
+            formData.append("files", payload.file?.item(i)!)
+        }
     }
 
     return api.post(`/api/travels/${payload.travelId}/expenses`, formData, {
@@ -108,7 +111,7 @@ export const updateExpense = (payload: TAddUpdateExpense & { travelId: string | 
     const formData = new FormData()
     formData.append("expenseDetails", new Blob([JSON.stringify(payload.expenseDetails)], { type: "application/json" }))
     if (payload.file) {
-        for (let i = 0; i < payload.file?.length!; i++) {
+        for (let i = 0; i < payload.file.length!; i++) {
             formData.append("files", payload.file?.item(i)!)
         }
     }
@@ -120,13 +123,13 @@ export const updateExpense = (payload: TAddUpdateExpense & { travelId: string | 
     })
 }
 
-export const fetchExpenseAsHR = ({ travelId, category, dateFrom, dateTo, employeeId }: TTravelExpenseQueryParams) => {
-    var queryString = "".concat(category ? `category=${category}&` : "").concat(employeeId ? `employeeId=${employeeId}&` : "").concat(dateFrom ? `dateFrom=${dateFrom}&` : "").concat(dateTo ? `dateTo=${dateTo}&` : "")
-    return api.get<TGlobalResponse<TTravelExpenseResponse[]>>(`/api/travels/${travelId}/expenses?${queryString}`)
+export const fetchExpenseAsHR = (params: TTravelExpenseQueryParams) => {
+    const queryString = paramsBuilder(params)
+    return api.get<TGlobalResponse<TTravelExpenseResponse[]>>(`/api/travels/${params.travelId}/expenses${queryString}`)
 }
 
 export const reviewExpense = (payload: TReviewExpenseRequest) => {
-    return api.patch<TGlobalResponse<any>>("/api/travels/expenses", payload)
+    return api.patch<TGlobalResponse<TTravelExpenseResponse>>("/api/travels/expenses", payload)
 }
 
 export const addEmployeeToTravel = ({ travelId, employeeIds }: TAddEmployeeToTravelRequest) => {
@@ -137,12 +140,12 @@ export const fetchTraveExpensecategories = () => {
     return api.get<TGlobalResponse<TCategory[]>>("/api/travels/expenses/categories")
 }
 
-export const deleteExpenseDocument = (payload:TDeleteExpenseProofRequest) => {
+export const deleteExpenseDocument = (payload: TDeleteExpenseProofRequest) => {
     return api.delete<TGlobalResponse<boolean>>(`/api/travels/expenses/${payload.expenseId}/proofs/${payload.documentId}`)
 }
-export const deleteTravelDocument = (payload:TTDeleteTravelDocumnetRequest) => {
+export const deleteTravelDocument = (payload: TTDeleteTravelDocumnetRequest) => {
     return api.delete<TGlobalResponse<boolean>>(`/api/travels/${payload.travelId}/documents/${payload.documentId}`)
 }
-export const deleteTravelEmployeeDocument = (payload:TTDeleteTravelDocumnetRequest) => {
+export const deleteTravelEmployeeDocument = (payload: TTDeleteTravelDocumnetRequest) => {
     return api.delete<TGlobalResponse<boolean>>(`/api/travels/${payload.travelId}/employee-documents/${payload.documentId}`)
 }

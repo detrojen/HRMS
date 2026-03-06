@@ -1,4 +1,4 @@
-import { useFetchActiveSlots, useFetchSlotRequests } from "@/api/queries/game-scheduling.queries";
+import {  useFetchSlotRequests } from "@/api/queries/game-scheduling.queries";
 import { Card } from "../../ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../ui/select";
 import { Item, ItemContent, ItemDescription, ItemTitle } from "../../ui/item";

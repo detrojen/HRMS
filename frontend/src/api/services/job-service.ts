@@ -13,7 +13,7 @@ export const createJobRequest = (payload: TCreateJobRequest) => {
     const formData = new FormData()
     formData.append("jobDetail",new Blob([JSON.stringify(payload.jobDetail)], {type:"application/json"}))
     formData.append("jobDocument",payload.jdDocument!)
-    return api.post<TGlobalResponse<any>>("/api/jobs",formData,{
+    return api.post<TGlobalResponse<TJobResponse>>("/api/jobs",formData,{
         headers:{
             "Content-Type":"multipart/form-data"
         }
@@ -37,7 +37,7 @@ export const referJob = (payload:TReferJobRequest & {jobId: number}) => {
     const formData = new FormData()
     formData.append("applicantsDetail",new Blob([JSON.stringify(payload.basicDetail)], {type:"application/json"}))
     formData.append("cv",payload.cv)
-    return api.post<TGlobalResponse<any>>(`/api/jobs/${payload.jobId}/refer`,formData,{
+    return api.post<TGlobalResponse<boolean>>(`/api/jobs/${payload.jobId}/refer`,formData,{
         "headers":{
             "Content-Type" : "multipart/form-data"
         }
@@ -46,7 +46,7 @@ export const referJob = (payload:TReferJobRequest & {jobId: number}) => {
 
 export const shareJob = (payload:TShareJobPayload) => {
     
-    return api.post<TGlobalResponse<any>>(`/api/jobs/${payload.jobId}/share`,payload.data)
+    return api.post<TGlobalResponse<boolean>>(`/api/jobs/${payload.jobId}/share`,payload.data)
 }
 
 export const jobApplications = (page?:number|null,limit?:number|null) =>{

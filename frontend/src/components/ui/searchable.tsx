@@ -11,7 +11,9 @@ type TSearchableProps<T> = {
 function Searchable<T>({ data, setQuery, render, onSelectItem, children, className}: TSearchableProps<T> & PropsWithChildren & React.HTMLAttributes<HTMLDivElement>) {
     const [open,setOpen] = useState<boolean>(false)
     return (
-        <Popover open={open} onOpenChange={()=>{setOpen(!open)}}>
+        <Popover open={open} onOpenChange={()=>{setOpen(!open);if(open){
+            setQuery("")
+        }}}>
             <PopoverTrigger asChild>
                 <div 
                     className={className}

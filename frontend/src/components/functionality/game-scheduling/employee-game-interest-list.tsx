@@ -3,11 +3,11 @@ import { Item, ItemActions, ItemContent, ItemTitle } from "../../ui/item"
 import { Checkbox } from "../../ui/checkbox"
 import { useAppSelector } from "@/store/hooks"
 import { Link } from "react-router-dom"
-import updateGameInterestMutation from "@/api/mutations/update-game-interest.mutation"
+import useUpdateGameInterestMutation from "@/api/mutations/update-game-interest.mutation"
 import type { TUpdateGameInterest } from "@/types/apiRequestTypes/TUpdateGameInterest.type"
 
 const  EmployeeWiseGameInterestList = () => {
-    const updateGameInterest = updateGameInterestMutation()
+    const updateGameInterest = useUpdateGameInterestMutation()
     const data = useAppSelector(state=>state.gameInterest)
     const handleUpdate = (data: TUpdateGameInterest) => {
         updateGameInterest.mutate(data)

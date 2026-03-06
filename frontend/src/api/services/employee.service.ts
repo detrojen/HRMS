@@ -4,7 +4,7 @@ import type { TEmployeeWithNameOnly } from "@/types/TEmployeeWithNameOnly.type"
 import type{ TEmployeeMinDetail } from "@/types/TEmployeeMinDetail.type"
 
 export const getEmployeesByNameQuery = (nameLike:string) => {
-    return nameLike.trim() === "" ? null : api.get<TGlobalResponse<TEmployeeWithNameOnly[]>>(`/api/employees?nameLike=${nameLike.trim()}`)
+    return api.get<TGlobalResponse<TEmployeeWithNameOnly[]>>(`/api/employees?nameLike=${nameLike.trim()}`)
 }
 
 

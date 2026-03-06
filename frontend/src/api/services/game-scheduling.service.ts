@@ -23,7 +23,7 @@ export const getIntrestedEmployeeByNameLike = (payload:TQueryInterestedEmployeeB
 }
 
 export const requestSlot = (payload:{slotId:number,otherPlayersId:number[]}) => {
-    return api.post<TGlobalResponse<any>>("/api/game-slot/book",payload)
+    return api.post<TGlobalResponse<TSlotRequsetResponse>>("/api/game-slot/book",payload)
 }
 
 export const getActiveSlots = () => {
@@ -36,7 +36,7 @@ export const getSlotRequestsHistory = (params:TSlotRequestHistoryParams) => {
 }
 
 export const cancelRequestedSlot = (slotRequestId:number) => {
-    return api.delete<TGlobalResponse<any>>(`/api/game-slots/cancel/${slotRequestId}`)
+    return api.delete<TGlobalResponse<TSlotRequsetResponse>>(`/api/game-slots/cancel/${slotRequestId}`)
 }
 
 export const getGameInterests = () => {

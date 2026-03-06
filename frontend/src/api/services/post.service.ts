@@ -5,6 +5,7 @@ import  {type TPostMinResponse, type TPostWisthCommentsAndLikeResponse } from "@
 import type { TComment } from "@/types/apiRequestTypes/TCommentRequest.type"
 import type { TDeleteUnappropriateContent } from "@/types/apiRequestTypes/TDeleteUnappropriateContent.type"
 import type { TPageableResponse } from "@/types/apiResponseTypes/TPageableResponse.type"
+import paramsBuilder from "@/utils/query-parameter-builder"
 
 export const createPost = (payload:TCreatePostRequest) => {
     const formData = new FormData()
@@ -30,13 +31,13 @@ export const updatePost = (payload:TCreatePostRequest) => {
     })
 }
 
-export const fetchPosts = ({page,limit,query,postTo,postFrom}:{page?:string,limit?:string,query?:string, postTo?:string,postFrom?:string}) => {
-    var queryString = "".concat(page?`page=${page}&`:"").concat(limit?`limit=${limit}&`:"").concat(query?`query=${query}&`:"").concat(postTo?`postTo=${postTo}&`:"").concat(postFrom?`postFrom=${postFrom}&`:"")
-    return api.get<TGlobalResponse<TPageableResponse<TPostWisthCommentsAndLikeResponse>>>("/api/posts?"+queryString)
+export const fetchPosts = (params:{page?:string,limit?:string,query?:string, postTo?:string,postFrom?:string}) => {
+    const queryString = paramsBuilder(params)
+    return api.get<TGlobalResponse<TPageableResponse<TPostWisthCommentsAndLikeResponse>>>("/api/posts"+queryString)
 }
 
-export const fetchPostUploadedBySelf = ({page,limit,query, postTo,postFrom}:{page?:string,limit?:string,query?:string, postTo?:string,postFrom?:string}) => {
-    var queryString = "".concat(page?`page=${page}&`:"").concat(limit?`limit=${limit}&`:"").concat(query?`query=${query}&`:"").concat(postTo?`postTo=${postTo}&`:"").concat(postFrom?`postFrom=${postFrom}&`:"")
+export const fetchPostUploadedBySelf = (params:{page?:string,limit?:string,query?:string, postTo?:string,postFrom?:string}) => {
+    const queryString = paramsBuilder(params)
     return api.get<TGlobalResponse<TPageableResponse<TPostWisthCommentsAndLikeResponse>>>("/api/posts/uploaded-by-self?"+queryString)
 }
 

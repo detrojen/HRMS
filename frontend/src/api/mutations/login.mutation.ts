@@ -14,7 +14,7 @@ const useLoginMutation = () => {
     onSuccess: (data) => {
       if (data.data.status === "OK") {
         queryClient.invalidateQueries()
-        localStorage.setItem("HRMS_AUTH_TOKEN", data?.data.data.jwtToken!)
+        localStorage.setItem("HRMS_AUTH_TOKEN", data.data.data.jwtToken!)
         navTo("/")
       }else{
         errorHandler(data.data)

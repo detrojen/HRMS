@@ -33,7 +33,6 @@ const ReviewExpenseAction = (props:TReviewExpenseActionProps) => {
     useEffect(()=>{
         setIsLoading(reivewExpenseMutation.isPending)
         if(reivewExpenseMutation.isSuccess){
-
             setIsOpen(false)
         }
     },[reivewExpenseMutation.isPending, reivewExpenseMutation.isSuccess])

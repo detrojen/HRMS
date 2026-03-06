@@ -2,7 +2,7 @@ import type { TUpdateGameInterest } from "@/types/apiRequestTypes/TUpdateGameInt
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateGameInterest } from "../services/game-scheduling.service";
 
-const updateGameInterestMutation = () =>{
+const useUpdateGameInterestMutation = () =>{
     const queryClient = useQueryClient()
     return useMutation(
     {
@@ -15,4 +15,4 @@ const updateGameInterestMutation = () =>{
     }
 )}
 
-export default updateGameInterestMutation
+export default useUpdateGameInterestMutation

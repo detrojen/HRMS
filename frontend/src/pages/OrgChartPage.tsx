@@ -56,7 +56,7 @@ const OrgChartPage = () => {
     const [nameQuery, setNameQuery] = useState("")
     const debouncedNameQuery = useDebounce(nameQuery,500)
     const { data: employeeSearchQueryData } = useGetchEmployeesByNameLike(debouncedNameQuery);
-    const orgChartData = orgChartQuery.data?.data.data
+    const orgChartData = orgChartQuery.data
     if (orgChartQuery.isLoading) {
         return <div className="flex flex-col w-1/2 mx-auto gap-2 p-2 justify-center content-cente">
 
