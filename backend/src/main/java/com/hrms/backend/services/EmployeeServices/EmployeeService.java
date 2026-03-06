@@ -5,6 +5,7 @@ import com.hrms.backend.dtos.responseDtos.employee.*;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.repositories.EmployeeRepositories.EmployeeRepository;
+import com.hrms.backend.repositories.EmployeeRepositories.RoleRepository;
 import com.hrms.backend.specs.EmployeeSpecs;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

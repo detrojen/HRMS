@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee,Long>, JpaSpecificationExecutor<Employee> {
-    Optional<Employee> getEmployeeByEmailAndPassword(String email,String Password);
+
     @Query(value = "execute sp_getEmployeeWithOneLevelreport :employeeId",nativeQuery = true)
     List<EmployeeWithManagerIdDto> getOneLevelReport(Long employeeId);
     @Query(value = "select new com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto(e.id,e.firstName,e.lastName,e.email,e.designation) from Employee e join e.role r where r.roleTitle = 'HR'", nativeQuery = false)

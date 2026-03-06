@@ -1,5 +1,6 @@
 package com.hrms.backend.services.AuthServices;
 
+import com.hrms.backend.dtos.responseDtos.employee.RoleResponseDto;
 import com.hrms.backend.dtos.responseDtos.employee.SelfDetailResponseDto;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.exceptions.InvalidCredentialsException;
@@ -8,7 +9,10 @@ import com.hrms.backend.specs.LoginSpecs;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -22,8 +26,9 @@ public class AuthService {
     }
 
     public String login(String email, String password){
-        Employee employee = employeeRepository.getEmployeeByEmailAndPassword(email,password).orElse(null);
-        if(employee == null){
+        Employee employee = employeeRepository.getEmployeeByEmail(email).orElseThrow(()-> new InvalidCredentialsException());
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        if(passwordEncoder.matches(password,employee.getPassword())){
             throw new InvalidCredentialsException();
         }
         log.info("{} has logged in.", employee.getFullName());
