@@ -1,6 +1,7 @@
 package com.hrms.backend.services.GameSchedulingServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
+import com.hrms.backend.dtos.requestParamDtos.SlotRequestHistoryParamsDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.CurrentGameStatusResponse;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.GameSlotResponseDto;
@@ -29,8 +30,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +84,42 @@ public class SlotRequestService {
         return requests.stream().map(request->modelMapper.map(request,SlotRequsetResponseDto.class)).toList();
     }
 
+    public List<SlotRequsetResponseDto> getSlotRequests(SlotRequestHistoryParamsDto paramsDto){
+        JwtInfoDto jwtInfo = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Specification<SlotRequest> specs = SlotRequestSpecs.hasEmployee(jwtInfo.getUserId());
+        specs.and(SlotRequestSpecs.hasEmployee(jwtInfo.getUserId()));
+        LocalDate currentDate = LocalDate.now();
+        if(paramsDto.getSlots().isPresent()){
+            String slot = paramsDto.getSlots().get();
+            if(slot.equals("active")){
+                specs = specs.and(SlotRequestSpecs.areActive());
+            }else if(slot.equals("last 7 days")){
+                specs = specs
+                        .and(SlotRequestSpecs.hasSlotDateFrom(currentDate.minusDays(7)))
+                        .and(SlotRequestSpecs.hasSlotDateTo(currentDate));
+            }
+            else if(slot.equals("this month")){
+                specs = specs
+                        .and(SlotRequestSpecs.hasSlotDateFrom(LocalDate.of(currentDate.getYear(), currentDate.getMonth(),1)))
+                        .and(SlotRequestSpecs.hasSlotDateTo(currentDate));
+            } else if (slot.equals("previous month")) {
+                LocalDate lastMonthDate = currentDate.minusMonths(1);
+                specs = specs
+                        .and(SlotRequestSpecs.hasSlotDateFrom(lastMonthDate.withDayOfMonth(1)))
+                        .and(SlotRequestSpecs.hasSlotDateTo(lastMonthDate.withDayOfMonth(lastMonthDate.lengthOfMonth())));
+            } else if (slot.equals("this week")) {
+                specs = specs
+                        .and(SlotRequestSpecs.hasSlotDateFrom(currentDate.with(DayOfWeek.MONDAY)))
+                        .and(SlotRequestSpecs.hasSlotDateTo(currentDate));
+            }
+        }else{
+            specs = specs.and(SlotRequestSpecs.areActive());
+        }
+//        Specification<SlotRequest> specs =  SlotRequestSpecs.getActiveSlotsSpecs(jwtInfo.getUserId());
+        List<SlotRequest> requests = slotRequestRepository.findAll(specs);
+        return requests.stream().map(request->modelMapper.map(request,SlotRequsetResponseDto.class)).toList();
+    }
+
     public SlotRequsetResponseDto getSlotRequestDetail(Long id){
         SlotRequest slotRequest = slotRequestRepository.findById(id).orElseThrow(()->new ItemNotFoundExpection("slot request not found"));
         return modelMapper.map(slotRequest,SlotRequsetResponseDto.class);
@@ -118,9 +157,6 @@ public class SlotRequestService {
                 throw new SlotCanNotBeBookedException(employee.getFullName() +  "has reached todays limit");
             }
         }
-        if(otherPlayerIds.stream().map(id->employeeWiseGameInterestService.getEmployyeGameUsage(id,gameTypeDetails.getId()).isInterested()).toList().stream().anyMatch(flag->!flag)){
-            throw new SlotCanNotBeBookedException("One of the player is not interested in this game.");
-        }
     }
 
     @Transactional
@@ -130,13 +166,13 @@ public class SlotRequestService {
         otherPlayerIds.add(jwtInfo.getUserId());
         GameSlot slot = this.gameSlotService.getReference(slotId);
         GameType gameTypeDetails = gameTypeService.getById(slot.getGameType().getId());
+        otherPlayerIds = otherPlayerIds.stream().distinct().toList();
         validateSlotRequest(gameTypeDetails,slot,otherPlayerIds);
         Employee requestedBy = this.employeeService.getReference(jwtInfo.getUserId());
         SlotRequest slotRequest = new SlotRequest();
         slotRequest.setGameSlot(slot);
         slotRequest.setRequestedBy(requestedBy);
         SlotRequest savedSlotRequest = this.slotRequestRepository.save(slotRequest);
-
         var temp = savedSlotRequest;
         List<SlotRequestWiseEmployee> mappedEmployees = otherPlayerIds.stream().map(id->slotRequestWiseemployeeService.mapSlotsToEmployee(id,temp)).toList();
         if(slotDetails.isAvailable()){
@@ -171,8 +207,8 @@ public class SlotRequestService {
 
     public SlotRequsetResponseDto cancelRequest(Long requestId){
         SlotRequest slotRequest = slotRequestRepository.findById(requestId).orElseThrow(()->new ItemNotFoundExpection("slot request with this id does not exist"));
-        if(LocalDate.now().isBefore(slotRequest.getGameSlot().getSlotDate()) || (LocalDate.now().isEqual(slotRequest.getGameSlot().getSlotDate()) && LocalTime.now().isAfter(slotRequest.getGameSlot().getStartsFrom()))){
-            throw new InvalidActionException("You  can not cancel slot after slot starts or ended");
+        if(LocalDate.now().isAfter(slotRequest.getGameSlot().getSlotDate()) || (LocalDate.now().isEqual(slotRequest.getGameSlot().getSlotDate()) && LocalTime.now().isAfter(slotRequest.getGameSlot().getStartsFrom()))){
+            throw new InvalidActionException("You can not cancel slot after slot starts or ended");
         }
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(!jwtInfoDto.getUserId().equals(slotRequest.getRequestedBy().getId())){

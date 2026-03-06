@@ -56,4 +56,7 @@ public class TravelDocumentService {
         travelDocumentRepository.delete(document);
         return document.getDocumentPath();
     }
+    public int countDocuments(Long travelId){
+        return travelDocumentRepository.countByTravel_id(travelId);
+    }
 }

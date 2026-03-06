@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface TravelDocumentRepository extends JpaRepository<TravelDocument,Long> {
     Optional<TravelDocument> getByIdAndUploadedBy_Id(Long documentId, Long employeeId);
+    int countByTravel_id(Long travelId);
+
 }

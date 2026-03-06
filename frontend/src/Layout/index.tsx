@@ -12,9 +12,9 @@ const Layout = () => {
         <AuthContextProvider>
             <SidebarProvider>
                 <AppSidebar />
-                <div className="relative w-screen">
+                <div className="relative w-screen flex flex-col">
                     <Header />
-                    <div className="p-1">
+                    <div className="p-1 flex-1">
                         <Outlet context={{setIsLoading}}/>
                     </div>
                 </div>

@@ -15,8 +15,8 @@ const HomePage = () => {
     }
     return <>
 
-        <div className="grid grid-cols-10 w-full flex-col gap-2 p-3">
-            <Card className="row-span-4 col-span-4">
+        <div className="grid grid-cols-10 w-full gap-2 p-3 min-h-1/1">
+            <Card className="row-span-2 col-span-4">
                 <CardHeader>
                     <p>Upcoming slots</p>
                 </CardHeader>

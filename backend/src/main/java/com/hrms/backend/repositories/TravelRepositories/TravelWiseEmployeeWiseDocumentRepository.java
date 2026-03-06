@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface TravelWiseEmployeeWiseDocumentRepository extends JpaRepository<TravelWiseEmployeeWiseDocument, Long>, JpaSpecificationExecutor<TravelWiseEmployeeWiseDocument> {
     Optional<TravelWiseEmployeeWiseDocument> getByIdAndUploadedBy_Id(Long documentId,Long employeeId);
+    int countByTravel_id(Long travelId);
+
 }

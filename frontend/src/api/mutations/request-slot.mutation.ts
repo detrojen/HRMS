@@ -9,9 +9,10 @@ const useRequestSlotMutation = () => {
         {
             mutationFn: (payload: { slotId: number; otherPlayersId: number[]; }) => requestSlot(payload),
             onSuccess: (data) => {
+                debugger
                 if (data.data.status === "OK") {
                     navTo("/game")
-                    queryClient.invalidateQueries({ queryKey: ["active-slots"] })
+                    queryClient.invalidateQueries({ queryKey: ["slot-request-history"] })
                 }
 
             }

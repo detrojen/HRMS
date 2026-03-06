@@ -12,7 +12,6 @@ const useLoginMutation = () => {
       return login(data)
     },
     onSuccess: (data) => {
-      debugger
       if (data.data.status === "OK") {
         queryClient.invalidateQueries()
         localStorage.setItem("HRMS_AUTH_TOKEN", data?.data.data.jwtToken!)

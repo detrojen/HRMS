@@ -55,4 +55,8 @@ public class TravelWiseEmployeeDetailService {
         return true;
     }
 
+    public int countEmployees(Long travelId){
+        return travelWiseEmployeeDetailRepsitory.countByTravel_id(travelId);
+    }
+
 }

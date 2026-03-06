@@ -36,4 +36,81 @@ public class SlotRequestSpecs {
 
         );
     }
+
+    public static Specification<SlotRequest> getTodaysSlotsSpecs(Long employeeId){
+        return ((root, query, criteriaBuilder) ->{
+            Join<SlotRequest,Employee> slotRequestSlotRequestWiseEmployeeJoin = root.join("slotRequestWiseEmployee").join("employee");
+            Join<SlotRequest, GameSlot> gameSlotJoin = root.join("gameSlot");
+            java.sql.Date.valueOf(LocalDate.now());
+            return criteriaBuilder.and(
+                    criteriaBuilder.equal(gameSlotJoin.get("slotDate"), java.sql.Date.valueOf(LocalDate.now())),
+                    criteriaBuilder.equal(slotRequestSlotRequestWiseEmployeeJoin.get("id"),employeeId)
+            );
+        }
+
+        );
+    }
+
+    public static Specification<SlotRequest> hasEmployee(Long employeeId){
+        return ((root, query, criteriaBuilder) ->{
+            Join<SlotRequest,Employee> slotRequestSlotRequestWiseEmployeeJoin = root.join("slotRequestWiseEmployee").join("employee");
+            return criteriaBuilder.equal(slotRequestSlotRequestWiseEmployeeJoin.get("id"),employeeId);
+        }
+
+        );
+
+    }
+    public static Specification<SlotRequest> hasSlotDate(LocalDate date){
+        return ((root, query, criteriaBuilder) ->{
+            Join<SlotRequest,Employee> slotRequestSlotRequestWiseEmployeeJoin = root.join("slotRequestWiseEmployee").join("employee");
+            Join<SlotRequest, GameSlot> gameSlotJoin = root.join("gameSlot");
+            java.sql.Date.valueOf(LocalDate.now());
+            return criteriaBuilder.equal(gameSlotJoin.get("slotDate"), date);
+        }
+
+        );
+    }
+    public static Specification<SlotRequest> hasSlotDateFrom(LocalDate date){
+        return ((root, query, criteriaBuilder) ->{
+            Join<SlotRequest,Employee> slotRequestSlotRequestWiseEmployeeJoin = root.join("slotRequestWiseEmployee").join("employee");
+            Join<SlotRequest, GameSlot> gameSlotJoin = root.join("gameSlot");
+            java.sql.Date.valueOf(LocalDate.now());
+            return criteriaBuilder.greaterThanOrEqualTo(gameSlotJoin.get("slotDate"), date);
+        }
+
+        );
+    }
+
+    public static Specification<SlotRequest> hasSlotDateTo(LocalDate date){
+        return ((root, query, criteriaBuilder) ->{
+            Join<SlotRequest,Employee> slotRequestSlotRequestWiseEmployeeJoin = root.join("slotRequestWiseEmployee").join("employee");
+            Join<SlotRequest, GameSlot> gameSlotJoin = root.join("gameSlot");
+            java.sql.Date.valueOf(LocalDate.now());
+            return criteriaBuilder.lessThanOrEqualTo(gameSlotJoin.get("slotDate"), date);
+        }
+
+        );
+    }
+
+    public static Specification<SlotRequest> areActive(){
+        return ((root, query, criteriaBuilder) ->{
+            Join<SlotRequest, GameSlot> gameSlotJoin = root.join("gameSlot");
+            java.sql.Date.valueOf(LocalDate.now());
+            return criteriaBuilder.and(
+                    criteriaBuilder.or(
+                            criteriaBuilder.equal(root.get("status"), "Confirm"),
+                            criteriaBuilder.equal(root.get("status"),"On hold")
+                    ),
+                    criteriaBuilder.or(
+                            criteriaBuilder.greaterThan(gameSlotJoin.get("slotDate"), java.sql.Date.valueOf(LocalDate.now())),
+                            criteriaBuilder.and(
+                                    criteriaBuilder.equal(gameSlotJoin.get("slotDate"), java.sql.Date.valueOf(LocalDate.now())),
+                                    criteriaBuilder.greaterThan(gameSlotJoin.get("startsFrom"),LocalTime.now())
+                            )
+                    )
+            );
+        }
+
+        );
+    }
 }

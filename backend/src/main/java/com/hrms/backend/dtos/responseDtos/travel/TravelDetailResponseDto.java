@@ -24,6 +24,8 @@ public class TravelDetailResponseDto {
     private List<TravelDocumentResponseDto> employeeDocuments;
     private List<TravelDocumentResponseDto> personalDocumnets;
     private List<TravelExpenseResponseDto> expensesMadeByMe;
+
+    private TravelDetailsStatsResponseDto stats;
     public void setEmployees(List<EmployeeMinDetailsDto> employees,Long employeeId){
         this.employees = employees;
         this.isInEmployeeList = employees.stream().anyMatch(employee->employee.getId().equals(employeeId));

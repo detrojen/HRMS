@@ -90,4 +90,8 @@ public class TravelWiseEmployeeDocumentService {
         return document.getDocumentPath();
     }
 
+    public int countDocuments(Long travelId){
+        return repository.countByTravel_id(travelId);
+    }
+
 }

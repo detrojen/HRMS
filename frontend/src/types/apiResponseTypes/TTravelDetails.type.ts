@@ -10,11 +10,22 @@ export type TTravelDetails = {
     startDate: string
     endDate: string
     lastDateToSubmitExpense: string
-    employees : TEmployeeWithNameOnly[];
+    employees: TEmployeeWithNameOnly[];
     initiatedBy: TEmployeeWithNameOnly;
     travelDocuments: TTravelDoucmentResponse[];
-    personalDocumnets:TTravelDoucmentResponse[];
+    personalDocumnets: TTravelDoucmentResponse[];
     employeeDocuments: TTravelDoucmentResponse[]
-    inEmployeeList:boolean
+    inEmployeeList: boolean
     expensesMadeByMe: TTravelExpenseResponse[]
+
+    stats: {
+        totalEmployees: number,
+        totalDocuments: number,
+        totalEmployeeDocuments: number,
+        totalExpenses: number,
+        totalAskedExpenseAmount: number,
+        totalApprovedExpenseAmount: number,
+        totalPendingExpensesToReview: number,
+        totalReviewedExpense: number,
+    }
 }

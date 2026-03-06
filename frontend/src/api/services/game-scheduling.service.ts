@@ -11,6 +11,8 @@ import type { TCurrentGameStatusResponse } from "@/types/apiResponseTypes/TCurre
 import type { TGameSlotResponse } from "@/types/apiResponseTypes/TGameSlotResponse.type";
 import type { TSlotRequsetResponse } from "@/types/apiResponseTypes/TSlotRequsetResponse.type";
 import type { TCreateUpdateGameTypeRequest } from "@/types/apiRequestTypes/TCreateUpdateGameTypeRequest.type";
+import type { TSlotRequestHistoryParams } from "@/types/apiRequestTypes/TSlotRequestHistoryParams.type";
+import paramsBuilder from "@/utils/query-parameter-builder";
 
 export const getGameSlotByGameTypeIdOfDate = (payload:TQueryGameSlots)  => {
     return api.get<TGlobalResponse<TGameSlotResponse[]>>(`/api/game-slots/${payload.gameTypeId}?slotDate=${payload.date}`)
@@ -26,6 +28,11 @@ export const requestSlot = (payload:{slotId:number,otherPlayersId:number[]}) => 
 
 export const getActiveSlots = () => {
     return api.get<TGlobalResponse<TSlotRequsetResponse[]>>("/api/game-slots/active")
+}
+
+export const getSlotRequestsHistory = (params:TSlotRequestHistoryParams) => {
+    const searchParams = paramsBuilder(params);
+    return api.get<TGlobalResponse<TSlotRequsetResponse[]>>("/api/game-slots/history"+searchParams);
 }
 
 export const cancelRequestedSlot = (slotRequestId:number) => {

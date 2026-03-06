@@ -3,14 +3,12 @@ package com.hrms.backend.services.TravelServices;
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.requestDto.travel.*;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
-import com.hrms.backend.dtos.responseDtos.travel.TravelExpenseResponseDto;
-import com.hrms.backend.dtos.responseDtos.travel.TravelDetailResponseDto;
-import com.hrms.backend.dtos.responseDtos.travel.TravelDocumentResponseDto;
-import com.hrms.backend.dtos.responseDtos.travel.TravelMinDetailResponseDto;
+import com.hrms.backend.dtos.responseDtos.travel.*;
 import com.hrms.backend.emailTemplates.TravelAndExpenseEmailTemplates;
 import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.enums.NotificationType;
+import com.hrms.backend.enums.TravelExpenseStatus;
 import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.exceptions.TravelNotFoundException;
@@ -287,7 +285,6 @@ public class TravelService {
         }
         Travel travel = travelRepository.findById(travelId).orElseThrow(()->new ItemNotFoundExpection("travel detail not found"));
         TravelDetailResponseDto responseDto = modelMapper.map(travel, TravelDetailResponseDto.class);
-
         responseDto.setEmployees(travel.getTravelWiseEmployees().stream().map(travelWiseEmployee -> modelMapper.map(travelWiseEmployee.getEmployee(), EmployeeMinDetailsDto.class)).toList(),jwtInfoDto.getUserId());
         List<TravelDocumentResponseDto> personalDocuments = travelWiseEmployeeDocumentService.getPersonalDocumnets(travelId);
         List<TravelDocumentResponseDto> employeeDocuments = travelWiseEmployeeDocumentService.getEmployeesDocuments(travelId);
@@ -295,6 +292,18 @@ public class TravelService {
         responseDto.setEmployeeDocuments(employeeDocuments);
         if(responseDto.isInEmployeeList()){
             responseDto.setExpensesMadeByMe(travelWiseExpenseService.getExpenses(travelId));
+        }
+        if(jwtInfoDto.getRoleTitle().equals("HR")){
+            TravelDetailsStatsResponseDto stats = new TravelDetailsStatsResponseDto();
+            stats.setTotalEmployees(travelWiseEmployeeDetailService.countEmployees(travelId));
+            stats.setTotalDocuments(travelDocumentService.countDocuments(travelId));
+            stats.setTotalEmployeeDocuments(travelWiseEmployeeDocumentService.countDocuments(travelId));
+            stats.setTotalExpenses(travelWiseExpenseService.countExpense(travelId));
+            stats.setTotalPendingExpensesToReview(travelWiseExpenseService.countExpense(travelId, TravelExpenseStatus.PENDING.toString()));
+            stats.setTotalReviewedExpense(stats.getTotalExpenses() - stats.getTotalPendingExpensesToReview());
+            stats.setTotalAskedExpenseAmount(travelWiseExpenseService.sumTotalAskedAmount(travelId).orElse(0));
+            stats.setTotalApprovedExpenseAmount(travelWiseExpenseService.sumTotalApprovedAmount(travelId).orElse(0));
+            responseDto.setStats(stats);
         }
         return responseDto;
     }

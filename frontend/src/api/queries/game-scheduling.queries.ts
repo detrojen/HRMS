@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
-import { getActiveSlots, getAllGameTypes, getCurrentGameStatus, getGameInterests, getGameSlotByGameTypeIdOfDate, getGameTypeById, getIntrestedEmployeeByNameLike, getRequestedSlotDetail } from "../services/game-scheduling.service"
+import { getActiveSlots, getAllGameTypes, getCurrentGameStatus, getGameInterests, getGameSlotByGameTypeIdOfDate, getGameTypeById, getIntrestedEmployeeByNameLike, getRequestedSlotDetail, getSlotRequestsHistory } from "../services/game-scheduling.service"
 import type { TQueryGameSlots } from "@/types/apiRequestTypes/TQueryGameSlots.type"
 import type { TQueryInterestedEmployeeByNameLike } from "@/types/apiRequestTypes/TQueryInterestedEmployeeByNameLike.type"
+import type { TSlotRequestHistoryParams } from "@/types/apiRequestTypes/TSlotRequestHistoryParams.type"
 
 
 export const useQueryGameSlots = (data: TQueryGameSlots) => {
@@ -27,6 +28,14 @@ export const useFetchActiveSlots = () => {
         {
             queryKey: ["active-slots"],
             queryFn: () => getActiveSlots()
+        }
+    )
+}
+export const useFetchSlotRequests = (params:TSlotRequestHistoryParams) => {
+    return useQuery(
+        {
+            queryKey: ["slot-request-history", params],
+            queryFn: () => getSlotRequestsHistory(params)
         }
     )
 }

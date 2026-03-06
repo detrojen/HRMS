@@ -4,6 +4,7 @@ import com.hrms.backend.dtos.markers.OnUpdate;
 import com.hrms.backend.dtos.requestDto.gameScheduling.BookSlotRequestDto;
 import com.hrms.backend.dtos.requestDto.gameScheduling.CreateUpdateGameTypeRequestDto;
 import com.hrms.backend.dtos.requestDto.gameScheduling.UpdateGameInterestRequestDto;
+import com.hrms.backend.dtos.requestParamDtos.SlotRequestHistoryParamsDto;
 import com.hrms.backend.dtos.responseDtos.*;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeWithNameOnlyDto;
 import com.hrms.backend.dtos.responseDtos.gameSheduling.*;
@@ -46,12 +47,14 @@ public class GameSchedulingController {
     @PostMapping("/game-slot/book")
     public ResponseEntity<GlobalResponseDto<SlotRequsetResponseDto>> bookSlot(@Valid @RequestBody BookSlotRequestDto requestDto){
         SlotRequsetResponseDto bookedSlot = this.slotRequestService.bookSlot(requestDto.getSlotId(), requestDto.getOtherPlayersId());
-        return ResponseEntity.ok().body(new GlobalResponseDto<>(bookedSlot,"Your slot is requested",null));
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(bookedSlot,"Your slot is requested"));
     }
 
     @DeleteMapping("/game-slots/cancel/{slotRequestId}")
-    public SlotRequsetResponseDto cancel(@PathVariable Long slotRequestId){
-        return slotRequestService.cancelRequest(slotRequestId);
+    public ResponseEntity<GlobalResponseDto<SlotRequsetResponseDto>> cancel(@PathVariable Long slotRequestId){
+        SlotRequsetResponseDto responseDto = slotRequestService.cancelRequest(slotRequestId);
+        return ResponseEntity.ok()
+                .body(new GlobalResponseDto<>(responseDto,"Slot cancelled successfully"));
     }
 
     @GetMapping("/employee/interested-game/{gameTypeId}")
@@ -63,6 +66,11 @@ public class GameSchedulingController {
     @GetMapping("/game-slots/active")
     public ResponseEntity<GlobalResponseDto<List<SlotRequsetResponseDto>>> getActiveSlots(){
         List<SlotRequsetResponseDto> slotRequsetResponseDtos = slotRequestService.getActiveSlotRequests();
+        return ResponseEntity.ok(new GlobalResponseDto<>(slotRequsetResponseDtos));
+    }
+    @GetMapping("/game-slots/history")
+    public ResponseEntity<GlobalResponseDto<List<SlotRequsetResponseDto>>> getSlotHistory(@ModelAttribute SlotRequestHistoryParamsDto params){
+        List<SlotRequsetResponseDto> slotRequsetResponseDtos = slotRequestService.getSlotRequests(params);
         return ResponseEntity.ok(new GlobalResponseDto<>(slotRequsetResponseDtos));
     }
 

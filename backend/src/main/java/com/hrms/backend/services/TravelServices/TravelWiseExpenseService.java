@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -202,4 +203,17 @@ public class TravelWiseExpenseService {
         return modelMapper.map(expense, TravelExpenseResponseDto.class);
     }
 
+    public int countExpense(Long travelId){
+        return travelWiseExpenseRepository.countByTravel_Id(travelId);
+    }
+    public int countExpense(Long travelId, String status){
+        return travelWiseExpenseRepository.countByTravel_IdAndStatus(travelId,status);
+    }
+
+    public Optional<Integer> sumTotalAskedAmount(Long travelId){
+        return travelWiseExpenseRepository.sumOfAskedAmountByTravelId(travelId);
+    }
+    public Optional<Integer> sumTotalApprovedAmount(Long travelId){
+        return travelWiseExpenseRepository.sumOfApprovedAmountByTravelId(travelId);
+    }
 }
