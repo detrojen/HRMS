@@ -1,18 +1,27 @@
 import { Eye } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./dialog"
+import { useEffect, useState } from "react"
 
 const DocRenderer = ({ url }: { url: string }) => {
-    
+    const [data, setData] = useState("")
+    useEffect(() => {
+        fetch(url)
+            .then(async res => {
+                const blob = await res.blob()
+                const objectUrl = URL.createObjectURL(blob)
+                setData(objectUrl)
+            })
+    }, [])
     if (url.includes(".pdf")) {
         return <object
             type="application/pdf"
-            data={url}
-            width="900"
-            height="600">
-                fallback
+            data={data}
+            className="min-h-500 h-1/1 w-1/1"
+            >
+            fallback
         </object>
     } else if (url.includes(".png") || url.includes(".jpg")) {
-        return <img src={url} width="800"
+        return <img src={data} width="800"
             height="500" />
     }
     return <>provided file url can not be rendered</>
@@ -20,10 +29,10 @@ const DocRenderer = ({ url }: { url: string }) => {
 
 const DocViewer = ({ url }: { url: string }) => {
     return (
-        <Dialog >
-            <DialogTrigger><Eye className="text-blue-500"/></DialogTrigger>
+        <Dialog>
+            <DialogTrigger><Eye className="text-blue-500" /></DialogTrigger>
 
-            <DialogContent>
+            <DialogContent className="w-9/10 h-9/10">
                 <DialogHeader>
                     <DialogTitle>Documnet</DialogTitle>
                     <DocRenderer url={url} />
@@ -34,4 +43,4 @@ const DocViewer = ({ url }: { url: string }) => {
 }
 
 export default DocViewer
-export {DocRenderer}
+export { DocRenderer }
