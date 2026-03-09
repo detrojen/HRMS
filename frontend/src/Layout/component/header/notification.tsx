@@ -27,7 +27,7 @@ const Notification = () => {
                     </div>
                 </PopoverTrigger>
                 <PopoverContent className="w-100 absolute top-2 -right-60 h-100" align="start">
-                    <ScrollArea className="z-100  overflow-scroll0">
+                    <ScrollArea className="z-100 h-1/1 overflow-y-scroll">
                                 {
                                     notifications?.map(
                                         (notifiction) =>

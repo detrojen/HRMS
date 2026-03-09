@@ -15,6 +15,7 @@ import useDeletePostMutation from "@/api/mutations/delete-post.mutation"
 import useCommentMutation from "@/api/mutations/comment-mutation"
 import { Link } from "react-router-dom"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 const PostDetailCard = ({ post }: { post: TPostWisthCommentsAndLikeResponse }) => {
     const { user } = useContext(AuthContext);
@@ -77,7 +78,21 @@ const PostDetailCard = ({ post }: { post: TPostWisthCommentsAndLikeResponse }) =
                 <div className="flex justify-between">
                     <div>
                         <div className="flex gap-1"><Heart className={`${isLiked ? "text-red-500" : ""}`} onClick={() => { postLikeUnlikeMutation.mutate(post.id) }} /> {post.likeCount}</div>
-                        <div>Liked by...</div>
+                        <div className="flex relative mt-2">
+                            {post.recentLikedBy.map((likedBy, idx) => (
+                                <Tooltip>
+                                    <TooltipTrigger>
+                                        <Avatar key={likedBy.id} className={` h-8 w-8  border border-black rounded-4xl my-auto relative right-${idx * 2}`}>
+                                            <AvatarFallback className="rounded-lg hover:bg-blue-300 hover:text-white">{likedBy.firstName[0] + likedBy.lastName[0]}</AvatarFallback>
+                                        </Avatar>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{likedBy.firstName + " " + likedBy.lastName}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+
+                            ))}
+                        </div>
                     </div>
                     <div>
                         <div className="flex gap-1"><CommentAction mutation={useCommentMutation} postId={post.id} /> {post.commentCount}</div>

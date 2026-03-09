@@ -21,6 +21,7 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
@@ -310,16 +311,17 @@ public class TravelService {
 
     public List<TravelMinDetailResponseDto> getTravels(String getAsa){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Sort sort = Sort.by(Sort.Direction.DESC,"createdAt");
         if(getAsa.equals("as-a-manager")){
             Specification<Travel> specs = TravelSpecs.hasManger(jwtInfoDto.getUserId());
-            List<Travel> travels = travelRepository.findAll(specs);
+            List<Travel> travels = travelRepository.findAll(specs,sort);
             return travels.stream().map(travel -> modelMapper.map(travel, TravelMinDetailResponseDto.class)).toList();
         }else if(getAsa.equals("assigned")){
             Specification<Travel> specs = TravelSpecs.hasEmployee(jwtInfoDto.getUserId());
-            List<Travel> travels = travelRepository.findAll(specs);
+            List<Travel> travels = travelRepository.findAll(specs,sort);
             return travels.stream().map(travel -> modelMapper.map(travel, TravelMinDetailResponseDto.class)).toList();
         } else if (getAsa.equals("hr")) {
-            List<Travel> travels = travelRepository.findAll();
+            List<Travel> travels = travelRepository.findAll(sort);
             return travels.stream().map(travel -> modelMapper.map(travel, TravelMinDetailResponseDto.class)).toList();
         }
         return new ArrayList<>();
