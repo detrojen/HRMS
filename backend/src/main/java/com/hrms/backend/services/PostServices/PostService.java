@@ -33,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -67,13 +68,15 @@ public class PostService {
         }
         Pageable pageable = PageRequest.of(params.getPageNumber(),params.getLimit(), Sort.by("createdAt").descending());
 
-        Page<Post> posts = postRepository.findAll(specs,pageable);
+        JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Page<PostWithCommentsAndLikesDto> newposts = postRepository.getAll(jwtInfoDto.getUserId(),pageable);
         log.info("read the post data");
-        return posts.map(post->{
-            PostWithCommentsAndLikesDto dto = modelMapper.map(post,PostWithCommentsAndLikesDto.class);
-            dto.setRecentComments(postCommentService.getRecentComments(post.getId()));
-            dto.setRecentLikedBy(postLikeService.getRecentLikes(post.getId()));
-            return dto;
+        return newposts.map(post->{
+
+            post.setRecentComments(postCommentService.getRecentComments(post.getId()));
+            post.setRecentLikedBy(postLikeService.getRecentLikes(post.getId()));
+            return post;
         });
     }
 

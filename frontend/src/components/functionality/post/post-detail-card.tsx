@@ -21,13 +21,7 @@ const PostDetailCard = ({ post }: { post: TPostWisthCommentsAndLikeResponse }) =
     const { user } = useContext(AuthContext);
     const postLikeUnlikeMutation = usePostLikeUnlikeMutation()
     const deletePostMutation = useDeletePostMutation()
-    const [isLiked, setIsLiked] = useState<boolean>(false);
-    useEffect(() => {
-
-        if (postLikeUnlikeMutation.isSuccess && postLikeUnlikeMutation.data.data.status === "OK") {
-            setIsLiked(!isLiked)
-        }
-    }, [postLikeUnlikeMutation.isSuccess])
+    
     return (
         <Card className="w-1/1 mx-2 md:mx-auto">
             <CardHeader className="flex justify-between">
@@ -77,7 +71,7 @@ const PostDetailCard = ({ post }: { post: TPostWisthCommentsAndLikeResponse }) =
                 <Separator />
                 <div className="flex justify-between">
                     <div>
-                        <div className="flex gap-1"><Heart className={`${isLiked ? "text-red-500" : ""}`} onClick={() => { postLikeUnlikeMutation.mutate(post.id) }} /> {post.likeCount}</div>
+                        <div className="flex gap-1"><Heart className={`${post.liked ? "text-red-500" : ""}`} onClick={() => { postLikeUnlikeMutation.mutate(post.id) }} /> {post.likeCount}</div>
                         <div className="flex relative mt-2">
                             {post.recentLikedBy.map((likedBy, idx) => (
                                 <Tooltip>

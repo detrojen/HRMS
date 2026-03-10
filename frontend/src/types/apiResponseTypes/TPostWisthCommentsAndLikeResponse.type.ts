@@ -9,6 +9,7 @@ id: number
     createdBy: TEmployeeMinDetail;
     likeCount: number
     commentCount:number
+    liked:boolean
 }
 export type TPostWisthCommentsAndLikeResponse = TPostMinResponse & {
     recentComments: TCommentResponse[];
