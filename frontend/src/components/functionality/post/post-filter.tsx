@@ -1,6 +1,7 @@
 import { DatePicker } from "@/components/ui/date-picker"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import resetPageSearchparams from "@/utils/reset-page-search-params"
 import { useRef } from "react"
 import { useSearchParams } from "react-router-dom"
 
@@ -9,6 +10,7 @@ const PostFilter = () => {
     const debouceRef = useRef<number | null>(null)
 
     const handleFilterChange = (key: string, value: string) => {
+        resetPageSearchparams(serachParams)
         if (value === "all") {
             serachParams.delete(key)
         } else {

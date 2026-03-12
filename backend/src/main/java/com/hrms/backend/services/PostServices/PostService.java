@@ -55,25 +55,11 @@ public class PostService {
     }
 
     public Page<PostWithCommentsAndLikesDto> getPosts(PostQueryParamsDto params){
-        Specification<Post> specs = ((root, query, criteriaBuilder) -> criteriaBuilder.and(criteriaBuilder.isFalse(root.get("isDeleted")),criteriaBuilder.isFalse(root.get("isDeletedByHr")),criteriaBuilder.like(root.get("tags"),"%"+params.getQuery()+"%")));
-        if(params.getPostTo() != null){
-            specs = specs.and(
-                    PostSpecs.postedBefore(params.getPostTo())
-            );
-        }
-        if(params.getPostFrom() != null){
-            specs = specs.and(
-                    PostSpecs.postedAfter(params.getPostFrom())
-            );
-        }
         Pageable pageable = PageRequest.of(params.getPageNumber(),params.getLimit(), Sort.by("createdAt").descending());
-
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Page<PostWithCommentsAndLikesDto> newposts = postRepository.getAll(jwtInfoDto.getUserId(),pageable);
+        Page<PostWithCommentsAndLikesDto> newposts = postRepository.getAll(jwtInfoDto.getUserId(),"%"+params.getQuery() + "%",params.getPostFrom(),params.getPostTo(),pageable);
         log.info("read the post data");
         return newposts.map(post->{
-
             post.setRecentComments(postCommentService.getRecentComments(post.getId()));
             post.setRecentLikedBy(postLikeService.getRecentLikes(post.getId()));
             return post;
