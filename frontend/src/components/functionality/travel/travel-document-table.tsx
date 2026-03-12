@@ -14,11 +14,11 @@ import type { TTDeleteTravelDocumnetRequest } from "@/types/apiRequestTypes/TTDe
 
 type TTravelDocumentTableProps = {
     documents: TTravelDoucmentResponse[],
-    canUpdate: boolean,
-    deleteMutation: () => UseMutationResult<AxiosResponse<TGlobalResponse<boolean>, any, {}>, Error, TTDeleteTravelDocumnetRequest, unknown>
-    updateMutation?: () => UseMutationResult<AxiosResponse<any, any, {}>, Error, TUploadTravelDocumnetRequest, unknown>
+    canAddOrModify: boolean,
+    deleteMutation: () => UseMutationResult<AxiosResponse<TGlobalResponse<boolean>, unknown, object>, Error, TTDeleteTravelDocumnetRequest, unknown>
+    updateMutation?: () => UseMutationResult<AxiosResponse<unknown, unknown, object>, Error, TUploadTravelDocumnetRequest, unknown>
 }
-const TravelDocumentTable = ({ documents, canUpdate, updateMutation, deleteMutation }: TTravelDocumentTableProps) => {
+const TravelDocumentTable = ({ documents, canAddOrModify, updateMutation, deleteMutation }: TTravelDocumentTableProps) => {
     const { id } = useContext(TravelDetailContext);
     const {user} = useContext(AuthContext)
     const deleteMutationInstance = deleteMutation()
@@ -47,12 +47,12 @@ const TravelDocumentTable = ({ documents, canUpdate, updateMutation, deleteMutat
                             <TableCell>{document.uploadedBy.firstName} {document.uploadedBy.lastName}</TableCell>
                             <TableCell className="flex">
                                 <DocViewer url={`/api/resource/travel-documents/${document.documentPath}`} />
-                                {canUpdate ? <AddUpdateTravelDocumnetAction Actionicon={Edit} mutation={updateMutation!} travelId={id} defaultValues={{
+                                {canAddOrModify ? <AddUpdateTravelDocumnetAction Actionicon={Edit} mutation={updateMutation!} travelId={id} defaultValues={{
                                     documentDetails: {
                                         id: document.id, type: document.type, description: document.description, documentPath: document.documentPath
                                     }
                                 }} /> : <></>}
-                                {user.id == document.uploadedBy.id &&<Trash className="text-red-400" onClick={()=>{handleDelete(document.id)}}/>}
+                                {user.id == document.uploadedBy.id && canAddOrModify &&<Trash className="text-red-400" onClick={()=>{handleDelete(document.id)}}/>}
                             </TableCell>
                         </TableRow>
                     ))

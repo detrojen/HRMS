@@ -19,8 +19,7 @@ const GameSlotBook = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const gameId = searchParams.get("game-id")
   const [selectedSlot, setSelectedSlot] = useState(0)
-  const [nameQuery, setNameQuery] = useState("")
-  const debouncedNameQuery = useDebounce(nameQuery,500)
+  const [_,debouncedNameQuery,setNameQuery] = useDebounce("",500)
   const [plyers, setPlayers] = useState<TEmployeeWithNameOnly[]>([]);
 
   const { data:slotQueryData } = useQueryGameSlots({ gameTypeId: gameId ?? "0", date: searchParams.get("slotDate") ?? (new Date()).toLocaleDateString('en-CA') })

@@ -28,13 +28,13 @@ const calcReducedExpense= (acc:TReducedExpense,expense:TTravelExpenseResponse):T
 }
 
 const ExpenseTab = () => {
-    const { expensesMadeByMe, id: travelId } = useContext(TravelDetailContext)
+    const { expensesMadeByMe, id: travelId, status } = useContext(TravelDetailContext)
     const reducedData = expensesMadeByMe.reduce<TReducedExpense>((acc:TReducedExpense,expense)=>{return calcReducedExpense(acc,expense)}, {askedAmount:0,approvedAmount:0,totalApproved:0,totalRejected:0,totalPending:0})
     return (
         <>
             <Card>
                 <div className="flex justify-end pe-2">
-                <AddUpdateExpenseAction title="add" travelId={travelId} mutation={useAddExpenseMutation} />
+                {status==="STARTED" || status==="ENDED"  &&<AddUpdateExpenseAction title="add" travelId={travelId} mutation={useAddExpenseMutation} />}
                 </div>
 
                 <Table className="table-bordered">
@@ -73,13 +73,13 @@ const ExpenseTab = () => {
                                         {/* <DocViewer url={`/api/resource/expenses/${expense.reciept}`} /> */}
                                         <ViewExpenseProofAction expenseId={expense.id} proofs={expense.proofs}/>
 
-                                        <AddUpdateExpenseAction title="update" icon={Home} travelId={travelId}
+                                        {status==="STARTED" || status==="ENDED" &&<AddUpdateExpenseAction title="update" icon={Home} travelId={travelId}
                                             expense={{
                                                 expenseDetails: {
                                                     categoryId: expense.category.id,
                                                     ...expense
                                                 }
-                                            }} mutation={useUpdateExpenseMutation} />
+                                            }} mutation={useUpdateExpenseMutation} />}
                                     </TableCell>
                                 </TableRow>
                             ))

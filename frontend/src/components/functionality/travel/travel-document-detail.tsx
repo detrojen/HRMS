@@ -11,14 +11,15 @@ import useDeleteTravelDocumnetMutation from "@/api/mutations/delete-travel-docum
 
 const TravelDocumnetDetails = () => {
     const { user } = useContext(AuthContext);
-    const { travelDocuments: documents, id: travelId } = useContext(TravelDetailContext)
+    const { travelDocuments: documents, id: travelId ,status} = useContext(TravelDetailContext)
+    const canAddOrModify = user.role == "HR" && (status==="STARTED" || status==="INITIATED")
     return (
         <Card className="w-1/1">
             <CardContent>
-                {user.role == "HR" ? <div className="w-1/1 flex justify-end ">
+                {canAddOrModify ? <div className="w-1/1 flex justify-end ">
                     <AddUpdateTravelDocumnetAction travelId={travelId} mutation={useUploadTravelDocumentMutation} Actionicon={Plus} />
                 </div> : <></>}
-                <TravelDocumentTable deleteMutation={useDeleteTravelDocumnetMutation} updateMutation={useUpdateTravelDocumentMutation} documents={documents} canUpdate={user.role == "HR"} />
+                <TravelDocumentTable deleteMutation={useDeleteTravelDocumnetMutation} updateMutation={useUpdateTravelDocumentMutation} documents={documents} canAddOrModify={canAddOrModify} />
             </CardContent>
         </Card>
     )

@@ -9,14 +9,15 @@ import { PlusCircle } from "lucide-react"
 import useDeleteTravelEmployeeDocumnetMutation from "@/api/mutations/delete-travel-employee-documnet.mutation"
 
 const TravelPersonalDocumnetDetails = () => {
-    const { personalDocumnets: documents, id: travelId } = useContext(TravelDetailContext)
+    const { personalDocumnets: documents, id: travelId, status } = useContext(TravelDetailContext)
+    const canAddOrModify = status === "INITIATED" || status === "STARTED"
     return (
         <Card className="w-1/1">
             <CardContent>
                 <div className="w-1/1 flex justify-end ">
                     <AddUpdateTravelDocumnetAction Actionicon={PlusCircle} travelId={travelId} mutation={useUploadEmployeeTravelDocumentMutation} />
                 </div>
-                <TravelDocumentTable deleteMutation={useDeleteTravelEmployeeDocumnetMutation} documents={documents} canUpdate={true} updateMutation={useUpdateEmployeeTravelDocumentMutation}/>
+                <TravelDocumentTable deleteMutation={useDeleteTravelEmployeeDocumnetMutation} documents={documents} canAddOrModify={canAddOrModify} updateMutation={useUpdateEmployeeTravelDocumentMutation}/>
             </CardContent>
         </Card>
     )

@@ -20,9 +20,8 @@ import { useEffect, useState } from "react"
 import { Controller, useForm, type UseFormReturn } from "react-hook-form"
 import { useOutletContext, useParams } from "react-router-dom"
 
-const TravelAddEmployeesField = ({ form }: { form: UseFormReturn<TCreateTravelRequest, any, TCreateTravelRequest> }) => {
-    const [nameQuery, setNameQuery] = useState("")
-    const debouncedNameQuery = useDebounce(nameQuery,500)
+const TravelAddEmployeesField = ({ form }: { form: UseFormReturn<TCreateTravelRequest, unknown, TCreateTravelRequest> }) => {
+    const [_,debouncedNameQuery,setNameQuery] = useDebounce("",500)
     const { data: emplyeeQueryData } = useGetchEmployeesByNameLike(debouncedNameQuery);
     const [employees, seEmployees] = useState<TEmployeeWithNameOnly[]>([])
     const employeeSearchData = emplyeeQueryData == null ? [] : emplyeeQueryData?.data.data
@@ -130,7 +129,7 @@ const TravelBasicDetailFields = ({ form }: { form: UseFormReturn<TCreateTravelRe
     )
 }
 
-const TravelDescriptionField = ({ form }: { form: UseFormReturn<TCreateTravelRequest, any, TCreateTravelRequest> }) => {
+const TravelDescriptionField = ({ form }: { form: UseFormReturn<TCreateTravelRequest, unknown, TCreateTravelRequest> }) => {
     return (
         <Controller
             control={form.control}

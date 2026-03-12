@@ -6,14 +6,29 @@ import { Edit } from "lucide-react"
 import { Link } from "react-router-dom"
 import AddEmployeeToTravelAction from "./add-employee-to-travel-action"
 import { AuthContext } from "@/contexts/AuthContextProvider"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import useCancelTravleMutation from "@/api/mutations/cancel-travel-mutation"
 const TravelBasicDetail = () => {
-    const { descripton, startDate, endDate, lastDateToSubmitExpense, title, employees, id, stats } = useContext(TravelDetailContext)
+    const { descripton, startDate, endDate, lastDateToSubmitExpense, title, employees, id, stats, status } = useContext(TravelDetailContext)
     const { user } = useContext(AuthContext)
+    const cancelTravleMutation = useCancelTravleMutation()
+    const handleCancel = (travelId:number) => {
+        if(confirm("Are you sure want to cancel this travel? this step can not be undo")){
+            cancelTravleMutation.mutate(travelId)
+        }
+    }
     return (
         <Card>
-            <CardHeader className="flex gap-3 justify-between">
-                <h1>{title}</h1>
-                {user.role === "HR" && <Link to={"/travels/update/" + id}><Edit /></Link>}
+            <CardHeader className="flex flex-col gap-3 justify-between">
+                <div className="flex gap-3">
+                    <Badge className={"travel-status-" + status.toLowerCase()}>{status}</Badge>
+                    {user.role==="HR" && status === "INITIATED" &&<Button variant={"destructive"} onClick={()=>handleCancel(id)}>Cancel</Button>}
+                </div>
+                <div className="flex gap-3 justify-between w-1/1">
+                    <h1>{title}</h1>
+                    {user.role === "HR" && status === "INITIATED" &&<Link to={"/travels/update/" + id}><Edit /></Link>}
+                </div>
             </CardHeader>
             <CardContent>
                 <div className="flex flex-col gap-1 ">
@@ -30,14 +45,14 @@ const TravelBasicDetail = () => {
                 <div className="flex flex-col gap-3 my-5">
                     <div className="flex w-1/1 gap-2">
                         <h4>Assigned Employees</h4>
-                        {user.role === "HR" && <AddEmployeeToTravelAction travelId={id} />}
+                        {user.role==="HR" && status === "INITIATED" && <AddEmployeeToTravelAction travelId={id} />}
                     </div>
                     <div className="grid gird-cols-1 md:grid-cols-4 gap-5">
                         {employees.map(employee => <EmployeeMinDetailCard id={employee.id} key={employee.id} firstName={employee.firstName} lastName={employee.lastName} designation={""} />)}
                     </div>
                 </div>
 
-                {user.role === "HR" && <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                {user.role === "HR" && status === "INITIATED" && <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <Card>
                         <CardHeader>
                             <CardTitle>Total Employees</CardTitle>

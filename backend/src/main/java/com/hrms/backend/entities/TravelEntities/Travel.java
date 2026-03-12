@@ -1,6 +1,7 @@
 package com.hrms.backend.entities.TravelEntities;
 
 import com.hrms.backend.entities.EmployeeEntities.Employee;
+import com.hrms.backend.enums.TravelStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -28,6 +29,10 @@ public class Travel {
     private LocalDate endDate;
 
     private LocalDate lastDateToSubmitExpense;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "default null")
+    private TravelStatus status;
 
     @ManyToOne
     @JoinColumn()

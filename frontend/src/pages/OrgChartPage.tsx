@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator"
 import SkeletonList from "@/components/ui/SkeletonList"
 import { AuthContext } from "@/contexts/AuthContextProvider"
 import { ArrowDown } from "lucide-react"
-import { useContext, useState } from "react"
+import { useContext } from "react"
 import { useSearchParams } from "react-router-dom"
 import EmployeeMinDetailSkeletonCard from "@/components/ui/skeleton-cards/employee-min-detail-skeleton-card"
 import useDebounce from "@/hooks/use-debounce"
@@ -53,8 +53,7 @@ const RecursiveComp = ({ emp }: { emp: TEmp }) => {
 const OrgChartPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const orgChartQuery = useFetchOrgChart(searchParams.get("employeeId"))
-    const [nameQuery, setNameQuery] = useState("")
-    const debouncedNameQuery = useDebounce(nameQuery,500)
+    const [_,debouncedNameQuery,setNameQuery] = useDebounce("",500)
     const { data: employeeSearchQueryData } = useGetchEmployeesByNameLike(debouncedNameQuery);
     const orgChartData = orgChartQuery.data
     if (orgChartQuery.isLoading) {

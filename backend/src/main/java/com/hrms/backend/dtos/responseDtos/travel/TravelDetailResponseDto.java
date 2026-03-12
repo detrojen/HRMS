@@ -19,6 +19,7 @@ public class TravelDetailResponseDto {
     private LocalDate lastDateToSubmitExpense;
     private List<EmployeeMinDetailsDto> employees;
     private EmployeeWithNameOnlyDto initiatedBy;
+    private String status;
     private List<TravelDocumentResponseDto> travelDocuments;
 
     private List<TravelDocumentResponseDto> employeeDocuments;

@@ -4,6 +4,7 @@ import com.hrms.backend.dtos.markers.OnUpdate;
 import com.hrms.backend.dtos.requestDto.ReviewTravelExpenseRequestDto;
 import com.hrms.backend.dtos.requestDto.travel.*;
 import com.hrms.backend.dtos.requestParamDtos.TravelExpenseParamsDto;
+import com.hrms.backend.dtos.requestParamDtos.TravelParamsDto;
 import com.hrms.backend.dtos.responseDtos.GlobalResponseDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import com.hrms.backend.dtos.responseDtos.travel.*;
@@ -154,8 +155,8 @@ public class TravelController {
     }
 
     @GetMapping("/travels/list/{getAsa}")
-    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getTravelsAsManager(@PathVariable String getAsa){
-        List<TravelMinDetailResponseDto> travels = travelService.getTravels(getAsa);
+    public ResponseEntity<GlobalResponseDto<List<TravelMinDetailResponseDto>>> getTravelsAsManager(@PathVariable String getAsa, @ModelAttribute TravelParamsDto params){
+        List<TravelMinDetailResponseDto> travels = travelService.getTravels(getAsa,params);
         return ResponseEntity.ok().body(
                 new GlobalResponseDto<>(travels)
         );
@@ -195,5 +196,11 @@ public class TravelController {
         String filePath = travelService.deleteEmployeeDocument(travelId, documentId);
         FileUtility.delete(travelExpenseDir, filePath);
         return ResponseEntity.ok().body(new GlobalResponseDto<>(true));
+    }
+
+    @DeleteMapping("/travels/cancel/{travelId}")
+    public ResponseEntity<GlobalResponseDto<Boolean>> cancelTravel(@PathVariable Long travelId){
+        boolean flag = travelService.cancelTravel(travelId);
+        return ResponseEntity.ok().body(new GlobalResponseDto<>(flag));
     }
 }

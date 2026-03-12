@@ -21,8 +21,9 @@ export const createTravel = (payload: TCreateTravelRequest) => {
 export const updateTravel = (payload: TCreateTravelRequest) => {
     return api.patch<TGlobalResponse<TTravelDetails>>("/api/travels", payload)
 }
-export const fetchTravels = (getAsa: string) => {
-    return api.get<TGlobalResponse<TTravelMinDetail[]>>(`/api/travels/list/${getAsa}`)
+export const fetchTravels = (getAsa: string,params:unknown) => {
+    const searchParams = paramsBuilder(params); 
+    return api.get<TGlobalResponse<TTravelMinDetail[]>>(`/api/travels/list/${getAsa}${searchParams}`)
 }
 // export const fetchAssignedTravels = () => {
 //     return api.get<TGlobalResponse<TTravelMinDetail>>("/api/travels/assigned-travels")
@@ -149,4 +150,8 @@ export const deleteTravelDocument = (payload: TTDeleteTravelDocumnetRequest) => 
 }
 export const deleteTravelEmployeeDocument = (payload: TTDeleteTravelDocumnetRequest) => {
     return api.delete<TGlobalResponse<boolean>>(`/api/travels/${payload.travelId}/employee-documents/${payload.documentId}`)
+}
+
+export const cancelTravelById = (travelId: number) => {
+    return api.delete<TGlobalResponse<boolean>>("/api/travels/cancel/"+travelId)
 }

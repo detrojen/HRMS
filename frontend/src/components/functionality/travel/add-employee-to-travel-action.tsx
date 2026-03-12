@@ -13,11 +13,10 @@ import { useOutletContext } from "react-router-dom";
 
 const AddEmployeeToTravelAction = ({travelId}:{travelId:number}) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [nameQuery, setNameQuery] = useState("")
     const { setIsLoading } = useOutletContext<TLayoutContext>()
 
     const addEmployeeToTravelMutation = useAddEmployeeToTravelMutation()
-    const debouncedNameQuery = useDebounce(nameQuery,500)
+    const [_,debouncedNameQuery,setNameQuery] = useDebounce("",500)
     const { data: employeesData } = useGetchEmployeesByNameLike(debouncedNameQuery);
 
     const [employees, setEmployees] = useState<TEmployeeWithNameOnly[]>([])
@@ -28,7 +27,9 @@ const AddEmployeeToTravelAction = ({travelId}:{travelId:number}) => {
         }
     },[addEmployeeToTravelMutation.isPending, addEmployeeToTravelMutation.isSuccess])
     useEffect(()=>{
-        setEmployees([])
+        if(isOpen){
+            setEmployees([])
+        }
     },[isOpen])
     return (
         <Dialog open={isOpen} onOpenChange={() => { setIsOpen(!isOpen) }}>

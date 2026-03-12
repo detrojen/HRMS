@@ -209,4 +209,17 @@
   .expense-rejected {
     @apply bg-red-400
   }
+
+  .travel-status-started{
+    @apply bg-green-500 text-white border-green-700 hover:bg-green-600 border-2
+  }
+  .travel-status-initiated{
+    @apply bg-amber-500 text-white border-amber-700 hover:bg-amber-600 border-2
+  }
+  .travel-status-cancelled{
+    @apply bg-red-500 text-white border-red-700 hover:bg-red-600 border-2
+  }
+  .travel-status-ended{
+    @apply bg-slate-500 text-white border-slate-700 hover:bg-slate-600 border-2
+  }
 }

@@ -9,7 +9,7 @@ const TravelEmployeeDocumnetDetails = () => {
     return (
         <Card className="w-1/1">
             <CardContent>
-                <TravelDocumentTable deleteMutation={useDeleteTravelEmployeeDocumnetMutation} documents={documents} canUpdate={false} />
+                <TravelDocumentTable deleteMutation={useDeleteTravelEmployeeDocumnetMutation} documents={documents} canAddOrModify={false} />
             </CardContent>
         </Card>
     )

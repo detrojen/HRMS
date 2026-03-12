@@ -18,7 +18,7 @@ import { jobCreateSchema } from "@/validation-schema/job-schema";
 import Searchable from "@/components/ui/searchable";
 import useDebounce from "@/hooks/use-debounce";
 
-const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
+const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, unknown, TCreateJobRequest> }) => {
     const { data: hrListQueryData } = useFetchHrList()
     const hrs = hrListQueryData?.data.data
     return (
@@ -111,7 +111,7 @@ const JobBasicDetailForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, a
     )
 }
 
-const JobDescriptionForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
+const JobDescriptionForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, unknown, TCreateJobRequest> }) => {
     return (
         <Form {...form}>
             <FieldGroup className="w-full">
@@ -131,7 +131,7 @@ const JobDescriptionForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, a
     )
 }
 
-const JobDocumentUploadForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
+const JobDocumentUploadForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, unknown, TCreateJobRequest> }) => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>, field: ControllerRenderProps<TCreateJobRequest, "jdDocument">) => {
         if (e.target.files != null && e.target.files.length > 0) {
             form.setValue(field.name, e.target.files[0]);
@@ -158,10 +158,9 @@ const JobDocumentUploadForm = ({ form }: { form: UseFormReturn<TCreateJobRequest
     )
 }
 
-const JobAddCvReviewrersForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, any, TCreateJobRequest> }) => {
-    const [nameQuery, setNameQuery] = useState("")
+const JobAddCvReviewrersForm = ({ form }: { form: UseFormReturn<TCreateJobRequest, unknown, TCreateJobRequest> }) => {
     const [reviewers, setReviewers] = useState<TEmployeeWithNameOnly[]>([])
-    const debouncedNameQuery = useDebounce(nameQuery,500)
+    const [_,debouncedNameQuery,setNameQuery] = useDebounce("",500)
     const { data:employeeQueryData } = useGetchEmployeesByNameLike(debouncedNameQuery);
     const employees = employeeQueryData&& employeeQueryData==null?[]:employeeQueryData?.data.data
     useEffect(() => {

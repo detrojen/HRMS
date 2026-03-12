@@ -5,13 +5,12 @@ import { Item, ItemContent, ItemDescription, ItemTitle } from "../../ui/item";
 import { Badge } from "../../ui/badge";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "@/hooks/use-debounce";
-import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const SlotHistory = () => {
     const navTo = useNavigate();
-    const [slots, setSlots] = useState("active")
-    const { data } = useFetchSlotRequests(useDebounce({ slots }, 100));
+    const [slots,debouncedSlots,setSlots] = useDebounce("active",100)
+    const { data } = useFetchSlotRequests({slots:debouncedSlots});
     const slotRequests = data?.data.data
     return (
         <>

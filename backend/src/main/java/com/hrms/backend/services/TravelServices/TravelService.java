@@ -2,6 +2,7 @@ package com.hrms.backend.services.TravelServices;
 
 import com.hrms.backend.dtos.globalDtos.JwtInfoDto;
 import com.hrms.backend.dtos.requestDto.travel.*;
+import com.hrms.backend.dtos.requestParamDtos.TravelParamsDto;
 import com.hrms.backend.dtos.responseDtos.employee.EmployeeMinDetailsDto;
 import com.hrms.backend.dtos.responseDtos.travel.*;
 import com.hrms.backend.emailTemplates.TravelAndExpenseEmailTemplates;
@@ -9,6 +10,7 @@ import com.hrms.backend.entities.EmployeeEntities.Employee;
 import com.hrms.backend.entities.TravelEntities.Travel;
 import com.hrms.backend.enums.NotificationType;
 import com.hrms.backend.enums.TravelExpenseStatus;
+import com.hrms.backend.enums.TravelStatus;
 import com.hrms.backend.exceptions.InvalidActionException;
 import com.hrms.backend.exceptions.ItemNotFoundExpection;
 import com.hrms.backend.exceptions.TravelNotFoundException;
@@ -80,6 +82,7 @@ public class TravelService {
             throw new InvalidActionException("You can not set start date of past");
         }
         Travel travel = modelMapper.map(travelRequestDto,Travel.class);
+        travel.setStatus(TravelStatus.INITIATED);
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Employee employee = employeeService.getEmployeeById(jwtInfoDto.getUserId());
         travel.setInitiatedBy(employee);
@@ -110,6 +113,9 @@ public class TravelService {
             throw new InvalidActionException("last date for submit expense must be after travel ends date");
         }
         Travel travel = travelRepository.findById(travelRequestDto.getId()).orElseThrow(TravelNotFoundException::new);
+        if(!travel.getStatus().equals(TravelStatus.INITIATED)){
+            throw new InvalidActionException("Travel has been "+travel.getStatus().toString().toLowerCase()+" you can not edit travel details.");
+        }
         if(travel.getStartDate().isBefore(LocalDate.now())){
             throw new InvalidActionException("travel has already began , you can not update travel after starting of travel.");
         }
@@ -142,6 +148,9 @@ public class TravelService {
     @Transactional
     public TravelDocumentResponseDto addDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto, String filePath){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
+        if(travel.getStatus().equals(TravelStatus.CANCELLED) || travel.getStatus().equals(TravelStatus.ENDED)){
+            throw new InvalidActionException("Travel has been "+travel.getStatus().toString().toLowerCase()+" you can not edit or add document.");
+        }
         if(travel.getEndDate().isBefore(LocalDate.now())){
             throw new InvalidActionException("travel has been completed");
         }
@@ -165,6 +174,9 @@ public class TravelService {
     @Transactional
     public TravelDocumentResponseDto updateDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
+        if(travel.getStatus().equals(TravelStatus.CANCELLED) || travel.getStatus().equals(TravelStatus.ENDED)){
+            throw new InvalidActionException("Travel has been "+travel.getStatus().toString().toLowerCase()+" you can not edit or add document.");
+        }
         if(travel.getEndDate().isBefore(LocalDate.now())){
             throw new InvalidActionException("travel has been completed");
         }
@@ -187,22 +199,25 @@ public class TravelService {
 
     public String deleteDocument(Long travelId,Long documentId){
         Travel travel = travelRepository.getByIdAndTravelDocuments_Id(travelId,documentId).orElseThrow(()->new ItemNotFoundExpection("Travel with associated this document not found"));
-        if(travel.getEndDate().isBefore(LocalDate.now())){
-            throw new InvalidActionException("travel has been completed");
+        if(travel.getStatus().equals(TravelStatus.CANCELLED) || travel.getStatus().equals(TravelStatus.ENDED)){
+            throw new InvalidActionException("Travel has been "+travel.getStatus().toString().toLowerCase()+" you can not edit or delete or add document.");
         }
         return travelDocumentService.deleteDocument(documentId);
     }
 
     public String deleteEmployeeDocument(Long travelId,Long documentId){
         Travel travel = travelRepository.getByIdAndTravelDocuments_Id(travelId,documentId).orElseThrow(()->new ItemNotFoundExpection("Travel with associated this document not found"));
-        if(travel.getEndDate().isBefore(LocalDate.now())){
-            throw new InvalidActionException("travel has been completed");
+        if(travel.getStatus().equals(TravelStatus.CANCELLED) || travel.getStatus().equals(TravelStatus.ENDED)){
+            throw new InvalidActionException("Travel has been "+travel.getStatus().toString().toLowerCase()+" you can not edit or delete or add document.");
         }
         return travelWiseEmployeeDocumentService.deleteDocument(documentId);
     }
 
     public List<EmployeeMinDetailsDto> addEmployeesToTravel(Long travelId, AddEmployeesToTravelRequestDto requestDto){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
+        if(!travel.getStatus().equals(TravelStatus.INITIATED)){
+            throw new InvalidActionException("Travel has been "+travel.getStatus().toString().toLowerCase()+". you can not edit or add employee.");
+        }
         if(travel.getEndDate().isBefore(LocalDate.now())){
             throw new InvalidActionException("travel has been completed");
         }
@@ -231,12 +246,10 @@ public class TravelService {
     @Transactional
     public TravelDocumentResponseDto addEmployeeDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto, String filePath){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
-        if(travel.getEndDate().isBefore(LocalDate.now())){
-            throw new InvalidActionException("travel has been completed");
+        if(travel.getStatus().equals(TravelStatus.CANCELLED) || travel.getStatus().equals(TravelStatus.ENDED)){
+            throw new InvalidActionException("Travel has been "+travel.getStatus().toString().toLowerCase()+" you can not edit or delete or add document.");
         }
-        if(travel.getStartDate().isBefore(LocalDate.now())){
-            throw new InvalidActionException("Travel has began , now you can not delete any document");
-        }
+
         TravelDocumentResponseDto documentResponseDto = travelWiseEmployeeDocumentService.addDocument(travel,requestDto,filePath);
         List<EmployeeMinDetailsDto> hrs = employeeService.getEmployeeWhoHr();
 
@@ -257,8 +270,8 @@ public class TravelService {
     }
     public TravelDocumentResponseDto updateEmployeeDocument(Long travelId, AddUpdateTravelDocumentRequestDto requestDto){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
-        if(travel.getEndDate().isBefore(LocalDate.now())){
-            throw new InvalidActionException("travel has been completed");
+        if(travel.getStatus().equals(TravelStatus.CANCELLED) || travel.getStatus().equals(TravelStatus.ENDED)){
+            throw new InvalidActionException("Travel has been "+travel.getStatus().toString().toLowerCase()+" you can not edit or delete or add document.");
         }
 
         TravelDocumentResponseDto documentResponseDto = travelWiseEmployeeDocumentService.updateDocument(travel,requestDto);
@@ -309,19 +322,46 @@ public class TravelService {
         return responseDto;
     }
 
-    public List<TravelMinDetailResponseDto> getTravels(String getAsa){
+    public List<TravelMinDetailResponseDto> getTravels(String getAsa, TravelParamsDto params){
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Sort sort = Sort.by(Sort.Direction.DESC,"createdAt");
+        Specification<Travel> filterSpecs = null;
+        if(params.getStatus().isPresent()){
+            filterSpecs = TravelSpecs.concatWithAnd(filterSpecs,TravelSpecs.hasStatus( params.getStatus().get()));
+        }
+        if(params.getEmployees().isPresent()){
+            filterSpecs = TravelSpecs.concatWithAnd(filterSpecs,TravelSpecs.hasAnyEmployee( params.getEmployees().get()));
+        }
+        if(params.getTitle().isPresent()){
+            filterSpecs = TravelSpecs.concatWithAnd(filterSpecs,TravelSpecs.hasTitleLike( params.getTitle().get()));
+        }
+        if(params.getStartDate().isPresent()){
+            filterSpecs = TravelSpecs.concatWithAnd(filterSpecs,TravelSpecs.startFrom( params.getStartDate().get()));
+        }
+        if(params.getEndDate().isPresent()){
+            filterSpecs = TravelSpecs.concatWithAnd(filterSpecs,TravelSpecs.endTo( params.getEndDate().get()));
+        }
         if(getAsa.equals("as-a-manager")){
             Specification<Travel> specs = TravelSpecs.hasManger(jwtInfoDto.getUserId());
+            if(filterSpecs != null){
+                specs = specs.and(filterSpecs);
+            }
             List<Travel> travels = travelRepository.findAll(specs,sort);
             return travels.stream().map(travel -> modelMapper.map(travel, TravelMinDetailResponseDto.class)).toList();
         }else if(getAsa.equals("assigned")){
             Specification<Travel> specs = TravelSpecs.hasEmployee(jwtInfoDto.getUserId());
+            if(filterSpecs != null){
+                specs = specs.and(filterSpecs);
+            }
             List<Travel> travels = travelRepository.findAll(specs,sort);
             return travels.stream().map(travel -> modelMapper.map(travel, TravelMinDetailResponseDto.class)).toList();
         } else if (getAsa.equals("hr")) {
-            List<Travel> travels = travelRepository.findAll(sort);
+            List<Travel> travels;
+            if(filterSpecs!=null){
+                travels = travelRepository.findAll(filterSpecs,sort);
+            }else{
+                travels = travelRepository.findAll(sort);
+            }
             return travels.stream().map(travel -> modelMapper.map(travel, TravelMinDetailResponseDto.class)).toList();
         }
         return new ArrayList<>();
@@ -331,6 +371,9 @@ public class TravelService {
     @Transactional
     public TravelExpenseResponseDto addExpense(Long travelId, AddUpdateTravelExpenseRequestDto requestDto, String[] proofs){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
+        if(travel.getStatus().equals(TravelStatus.CANCELLED)){
+            throw new InvalidActionException("Travel has been "+travel.getStatus().toString().toLowerCase()+" you can add expense");
+        }
         if(travel.getLastDateToSubmitExpense().isBefore(LocalDate.now())){
             throw new InvalidActionException("Can not submit or update expense now");
         }
@@ -360,6 +403,9 @@ public class TravelService {
 
     public TravelExpenseResponseDto updateExpense(Long travelId, AddUpdateTravelExpenseRequestDto requestDto, String[] proofs){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
+        if(travel.getStatus().equals(TravelStatus.CANCELLED)){
+            throw new InvalidActionException("Travel has been "+travel.getStatus().toString().toLowerCase()+" you can update expense");
+        }
         if(travel.getLastDateToSubmitExpense().isBefore(LocalDate.now())){
             throw new InvalidActionException("Can not submit or update expense now");
         }
@@ -386,7 +432,7 @@ public class TravelService {
 
     public List<TravelMinDetailResponseDto> getUpcomingTravels(){
 
-        Specification<Travel> specs = TravelSpecs.isNotStartedOrNotEnded();
+        Specification<Travel> specs = TravelSpecs.isNotEnded();
         JwtInfoDto jwtInfoDto = (JwtInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(!jwtInfoDto.getRoleTitle().equals("HR")){
             specs = specs.and(
@@ -399,5 +445,22 @@ public class TravelService {
     public TravelMinDetailResponseDto getTravelMinDetail(Long travelId){
         Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
         return modelMapper.map(travel,TravelMinDetailResponseDto.class);
+    }
+
+    @Transactional
+    public boolean cancelTravel(Long travelId){
+        Travel travel = travelRepository.findById(travelId).orElseThrow(()-> new TravelNotFoundException());
+        if(!travel.getStatus().equals(TravelStatus.INITIATED)){
+            throw new InvalidActionException("You can not cancel travel once travel "+travel.getStatus().toString().toLowerCase());
+        }
+        travel.setStatus(TravelStatus.CANCELLED);
+        travelRepository.save(travel);
+        return true;
+    }
+
+    @Transactional
+    public void updateTravelStatusByStartDateAndEndDate(){
+        travelRepository.updateTravelStatusToStart();
+        travelRepository.updateTravelStatusToEnd();
     }
 }

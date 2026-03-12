@@ -5,7 +5,15 @@ function paramsBuilder<T>(data:T) {
     let params = "?"
     for(const key in data){
         if(data[key]){
-            params+=key + "="+data[key]+"&"
+            
+            if(Array.isArray(data[key])){
+                for(let i =0;i<data[key].length; i++){
+                    params+=key + "="+data[key][i]+"&"
+                }
+            }
+            else{
+                params+=key + "="+data[key]+"&"
+            }
         }
     }
     return params

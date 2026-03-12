@@ -16,6 +16,7 @@ export type TTravelDetails = {
     personalDocumnets: TTravelDoucmentResponse[];
     employeeDocuments: TTravelDoucmentResponse[]
     inEmployeeList: boolean
+    status:"INITIATED"|"STARTED"|"ENDED" |"CANCELLED"
     expensesMadeByMe: TTravelExpenseResponse[]
 
     stats: {
